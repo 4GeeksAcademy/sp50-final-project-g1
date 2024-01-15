@@ -3,7 +3,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 """
 from flask import Flask, request, jsonify, Blueprint
 from flask_cors import CORS
-from api.models import db, Users
+from api.models import db, Pros
 
 
 api = Blueprint('api', __name__)
