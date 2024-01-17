@@ -3,7 +3,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 """
 from flask import Flask, request, jsonify, Blueprint
 from flask_cors import CORS
-from api.models import db, Pros, Hours, Patients
+from api.models import db, Pros, Hours, Patients, Bookings, Locations
 
 
 api = Blueprint('api', __name__)
@@ -136,4 +136,147 @@ def specific_patient(patientid):
         db.session.commit()
         return jsonify({"message": "Patient deleted successfully"}), 200
 
+
+
+##############################################################
+# booking
+
+
+# Get all records and add a new record to the 'booking' table
+@api.route("/bookings/", methods=['GET', 'POST'])
+def get_add_bookings():
+    if request.method == 'GET':
+        bookings_list = Bookings.query.all()
+        serialized_bookings = [booking.serialize() for booking in bookings_list]
+        return jsonify(serialized_bookings), 200
+    elif request.method == 'POST':
+        data = request.json
+
+        # Check if the required fields are present in the request
+        required_fields = ['date', 'starting_time', 'status', 'pro_service_id', 'patient_id']
+        if not all(field in data for field in required_fields):
+            return jsonify({"message": "Incomplete data. Please provide date, starting_time, status, pro_service_id, and patient_id."}), 400
+
+        new_booking = Bookings(
+            date=data['date'],
+            starting_time=data['starting_time'],
+            status=data['status'],
+            pro_service_id=data['pro_service_id'],
+            patient_id=data['patient_id'],
+            pro_note=data.get('pro_note'),   # using .get method begause we can set default value
+            patient_note=data.get('patient_note')  # using .get method begause we can set default value
+        )
+
+        db.session.add(new_booking)
+        db.session.commit()
+
+        return jsonify({"message": "Booking added successfully"}), 201
+
+
+# Get and Update a specific record in the 'booking' table
+@api.route("/bookings/<int:bookingid>", methods=['GET', 'PUT'])
+def specific_booking(bookingid):
+    booking = Bookings.query.get(bookingid)
+
+    if not booking:
+        return jsonify({"message": "Record not found"}), 404
+
+    if request.method == 'GET':
+        return jsonify(booking.serialize()), 200
+    elif request.method == 'PUT':
+        data = request.json
+        booking.date = data.get('date', booking.date)
+        booking.starting_time = data.get('starting_time', booking.starting_time)
+        booking.status = data.get('status', booking.status)
+        booking.pro_service_id = data.get('pro_service_id', booking.pro_service_id)
+        booking.patient_id = data.get('patient_id', booking.patient_id)
+        booking.pro_note = data.get('pro_note', booking.pro_note)
+        booking.patient_note = data.get('patient_note', booking.patient_note)
+        db.session.commit()
+        return jsonify({"message": "Record updated successfully"}), 200
+
+
+#  Delete a specific record in the 'booking' table
+@api.route("/bookings/<int:bookingid>", methods=['DELETE'])
+def specific_booking(bookingid):
+    booking = Bookings.query.get(bookingid)
+
+    if not booking:
+        return jsonify({"message": "Record not found"}), 404
+
+    elif request.method == 'DELETE':
+        db.session.delete(booking)
+        db.session.commit()
+        return jsonify({"message": "Record deleted successfully"}), 200
+
+
+# Get records filtered by pro_id
+@api.route("/bookings/<int:proid>", methods=['GET'])
+def bookings_by_pro_id(proid):
+    bookings_by_pro = Bookings.query.filter_by(pro_service_id=proid).all()
+
+    if not bookings_by_pro:
+        return jsonify({"message": "No records found for the specified pro_id"}), 404
+
+    serialized_bookings = [booking.serialize() for booking in bookings_by_pro]
+    return jsonify(serialized_bookings), 200
+
+
+
+
+################################################################
+# Locations
+
+
+# Get all records and add a new record to the 'locations' table
+@app.route("/api/locations/", methods=['GET', 'POST'])
+def get_add_locations():
+    if request.method == 'GET':
+        locations_list = Locations.query.all()
+        serialized_locations = [location.serialize() for location in locations_list]
+        return jsonify(serialized_locations), 200
+    elif request.method == 'POST':
+        data = request.json
+        new_location = Locations(**data)
+        db.session.add(new_location)
+        db.session.commit()
+        return jsonify({"message": "Record added successfully"}), 201
+
+
+# Get, Update, and Delete a specific record in the 'locations' table
+@app.route("/api/locations/<int:locationid>", methods=['GET', 'PUT', 'DELETE'])
+def specific_location(locationid):
+    location = Locations.query.get(locationid)
+
+    if not location:
+        return jsonify({"message": "Record not found"}), 404
+
+    if request.method == 'GET':
+        return jsonify(location.serialize()), 200
+    elif request.method == 'PUT':
+        data = request.json
+        location.name = data.get('name', location.name)
+        location.address = data.get('address', location.address)
+        location.city = data.get('city', location.city)
+        location.country = data.get('country', location.country)
+        location.duration = data.get('duration', location.duration)
+        location.pro_id = data.get('pro_id', location.pro_id)
+        db.session.commit()
+        return jsonify({"message": "Record updated successfully"}), 200
+    elif request.method == 'DELETE':
+        db.session.delete(location)
+        db.session.commit()
+        return jsonify({"message": "Record deleted successfully"}), 200
+
+
+# Get locations associated with a specific pro_id
+@app.route("/api/locations/<int:proid>", methods=['GET'])
+def locations_by_pro_id(proid):
+    locations_by_pro = Locations.query.filter_by(pro_id=proid).all()
+
+    if not locations_by_pro:
+        return jsonify({"message": "No records found for the specified pro_id"}), 404
+
+    serialized_locations = [location.serialize() for location in locations_by_pro]
+    return jsonify(serialized_locations), 200
 
