@@ -37,7 +37,7 @@ class Locations(db.Model):
     city = db.Column(db.String, nullable=False)
     country = db.Column(db.String, nullable=False)
     duration = db.Column(db.Integer, nullable=False)
-    pro_id = db.Column(ForeignKey("pros.id"), unique=True, nullable=False)
+    pro_id = db.Column(db.ForeignKey("pros.id"), unique=True, nullable=False)
     pro = db.relationship("Pros")
 
     def __repr__(self):
@@ -57,7 +57,7 @@ class Hours(db.Model):
     working_day = db.Column(db.Integer, nullable=False) 
     starting_hour = db.Column(db.String, nullable=False)
     ending_hour = db.Column(db.String, nullable=False)
-    pro_id = db.Column(ForeignKey("pros.id"), nullable=False)
+    pro_id = db.Column(db.ForeignKey("pros.id"), nullable=False)
     pro = db.relationship("Pros")
 
     def __repr__(self):
@@ -73,11 +73,11 @@ class Hours(db.Model):
 class InactivityDays(db.Model):
     __tablename__ = "inactivity"
     id = db.Column(db.Integer, primary_key=True)
-    starting_date = db_Column(db.String, nullable=False)
-    ending_date = db_Column(db.String)
-    starting_hour = db_Column(db.String)
-    ending_hour = db_Column(db.String)
-    pro_id = db.Column(ForeignKey("pros.id"), nullable=False)
+    starting_date = db.Column(db.String, nullable=False)
+    ending_date = db.Column(db.String)
+    starting_hour = db.Column(db.String)
+    ending_hour = db.Column(db.String)
+    pro_id = db.Column(db.ForeignKey("pros.id"), nullable=False)
     pro = db.relationship("Pros")
 
     def __repr__(self):
@@ -111,8 +111,8 @@ class ProServices(db.Model):
     __tablename__ = "pro_services"
     id = db.Column(db.Integer, primary_key=True)
     price = db.Column(db.Integer)
-    pro_id = db.Column(ForeignKey("pros.id"), nullable=False)
-    service_id = db.Column(ForeignKey("services.id"), nullable=False)
+    pro_id = db.Column(db.ForeignKey("pros.id"), nullable=False)
+    service_id = db.Column(db.ForeignKey("services.id"), nullable=False)
     services = db.relationship("Services")
     pros = db.relationship("Pros")
 
@@ -141,15 +141,15 @@ class Patients(db.Model):
                 "email": self.email,
                 "phone": self.phone}
 
-class Booking(db.Model):
+class Bookings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.String, nullable=False)
     starting_time = db.Column(db.String, nullable=False)
     status = db.Column(db.String, nullable=False)
     pro_notes = db.Column(db.String)
     patient_notes = db.Column(db.String)
-    pro_service_id = db.Column(ForeignKey("pro_services.id"), nullable=False)
-    patient_id = db.Column(ForeignKey("patients.id"), nullable=False)
+    pro_service_id = db.Column(db.ForeignKey("pro_services.id"), nullable=False)
+    patient_id = db.Column(db.ForeignKey("patients.id"), nullable=False)
     pro_service = db.relationship("ProServices")
     patient = db.relationship("Patient")
 
