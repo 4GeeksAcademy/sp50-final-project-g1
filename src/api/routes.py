@@ -3,7 +3,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 """
 from flask import Flask, request, jsonify, Blueprint
 from flask_cors import CORS
-from api.models import db, Pros, Hours, Patients, Bookings, Locations
+from api.models import db, Pros, Hours, Patients, Bookings, Locations, ProServices, Services, InactivityDays
 
 
 api = Blueprint('api', __name__)
@@ -24,7 +24,7 @@ def handle_hello():
 # Hours
 
 # Get all records in the 'hours' or Post one record
-@api.route("/hours/", methods=['GET', 'POST'])
+@api.route("/hours", methods=['GET', 'POST'])
 def hours():
     if request.method == 'GET':
         hours_list = Hours.query.all()
@@ -88,7 +88,7 @@ def specific_hour(tableid):
 # patient
     
 # Get all records and add a new record to the 'patients' table
-@api.route("/patients/", methods=['GET', 'POST'])
+@api.route("/patients", methods=['GET', 'POST'])
 def patients():
     if request.method == 'GET':
         patients_list = Patients.query.all()
@@ -143,7 +143,7 @@ def specific_patient(patientid):
 
 
 # Get all records and add a new record to the 'booking' table
-@api.route("/bookings/", methods=['GET', 'POST'])
+@api.route("/bookings", methods=['GET', 'POST'])
 def get_add_bookings():
     if request.method == 'GET':
         bookings_list = Bookings.query.all()
@@ -211,9 +211,9 @@ def specific_booking(bookingid):
 
 
 # Get records filtered by pro_id
-@api.route("/bookings/<int:proid>", methods=['GET'])
+@api.route("/pros/<int:proid>/bookings", methods=['GET'])
 def bookings_by_pro_id(proid):
-    bookings_by_pro = Bookings.query.filter_by(pro_service_id=proid).all()
+    bookings_by_pro = Bookings.query.join(ProServices).filter_by(pro_id=proid).all()
 
     if not bookings_by_pro:
         return jsonify({"message": "No records found for the specified pro_id"}), 404
@@ -229,7 +229,7 @@ def bookings_by_pro_id(proid):
 
 
 # Get all records and add a new record to the 'locations' table
-@app.route("/api/locations/", methods=['GET', 'POST'])
+@api.route("/locations", methods=['GET', 'POST'])
 def get_add_locations():
     if request.method == 'GET':
         locations_list = Locations.query.all()
@@ -244,7 +244,7 @@ def get_add_locations():
 
 
 # Get, Update, and Delete a specific record in the 'locations' table
-@app.route("/api/locations/<int:locationid>", methods=['GET', 'PUT', 'DELETE'])
+@api.route("/locations/<int:locationid>", methods=['GET', 'PUT', 'DELETE'])
 def specific_location(locationid):
     location = Locations.query.get(locationid)
 
@@ -270,7 +270,7 @@ def specific_location(locationid):
 
 
 # Get locations associated with a specific pro_id
-@app.route("/api/locations/<int:proid>", methods=['GET'])
+@api.route("/locations/<int:proid>", methods=['GET'])
 def locations_by_pro_id(proid):
     locations_by_pro = Locations.query.filter_by(pro_id=proid).all()
 
@@ -279,4 +279,8 @@ def locations_by_pro_id(proid):
 
     serialized_locations = [location.serialize() for location in locations_by_pro]
     return jsonify(serialized_locations), 200
+
+@api.route("/pros", methods=["GET", "POST"])
+def handle_pro():
+    pass
 
