@@ -49,8 +49,8 @@ def hours():
 
 
 # Get, Update, and Delete a specific record in the 'hours' table by 'pro_id'
-@api.route("/hours/<int:proid>", methods=['GET'])
-def specific_hour(proid):
+@api.route("/pros/<int:proid>/hours", methods=['GET'])
+def specific_pro_hour(proid):
     hour = Hours.query.filter_by(pro_id=proid).first()
 
     if not hour:
@@ -198,7 +198,7 @@ def specific_booking(bookingid):
 
 #  Delete a specific record in the 'booking' table
 @api.route("/bookings/<int:bookingid>", methods=['DELETE'])
-def specific_booking(bookingid):
+def specific_delete_booking(bookingid):
     booking = Bookings.query.get(bookingid)
 
     if not booking:
@@ -270,7 +270,7 @@ def specific_location(locationid):
 
 
 # Get locations associated with a specific pro_id
-@api.route("/locations/<int:proid>", methods=['GET'])
+@api.route("pros/<int:proid>/locations/", methods=['GET'])
 def locations_by_pro_id(proid):
     locations_by_pro = Locations.query.filter_by(pro_id=proid).all()
 

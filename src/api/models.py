@@ -125,6 +125,7 @@ class ProServices(db.Model):
                 "price": self.price}
 
 class Patients(db.Model):
+    __tablename__="patients"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     lastname = db.Column(db.String(50), nullable=False)
@@ -151,18 +152,18 @@ class Bookings(db.Model):
     pro_service_id = db.Column(db.ForeignKey("pro_services.id"), nullable=False)
     patient_id = db.Column(db.ForeignKey("patients.id"), nullable=False)
     pro_service = db.relationship("ProServices")
-    patient = db.relationship("Patient")
+    patient = db.relationship("Patients")
 
     def __repr__(self):
-        return f'<Booking {self.id}, {self.patient} {self.date}>'
+        return f'<Booking {self.id}, {self.date}>'
 
     def serialize(self):
         return {"id": self.id,
                 "date": self.date,
                 "starting_time": self.starting_time,
                 "status": self.status,
-                "patient": self.patient,
-                "service": self.pro_service}
+                "patient": self.patient_id,
+                "service": self.pro_service_id}
 
 
 
