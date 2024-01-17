@@ -172,8 +172,9 @@ def get_add_bookings():
 
         return jsonify({"message": "Booking added successfully"}), 201
 
-# Get, Update, and Delete a specific record in the 'booking' table
-@api.route("/bookings/<int:bookingid>", methods=['GET', 'PUT', 'DELETE'])
+
+# Get and Update a specific record in the 'booking' table
+@api.route("/bookings/<int:bookingid>", methods=['GET', 'PUT'])
 def specific_booking(bookingid):
     booking = Bookings.query.get(bookingid)
 
@@ -193,6 +194,16 @@ def specific_booking(bookingid):
         booking.patient_note = data.get('patient_note', booking.patient_note)
         db.session.commit()
         return jsonify({"message": "Record updated successfully"}), 200
+
+
+#  Delete a specific record in the 'booking' table
+@api.route("/bookings/<int:bookingid>", methods=['DELETE'])
+def specific_booking(bookingid):
+    booking = Bookings.query.get(bookingid)
+
+    if not booking:
+        return jsonify({"message": "Record not found"}), 404
+
     elif request.method == 'DELETE':
         db.session.delete(booking)
         db.session.commit()
