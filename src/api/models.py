@@ -2,10 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from datetime import datetime
 
-
-
 db = SQLAlchemy()
-
 
 class Pros(db.Model):
     __tablename__ = "pros"
@@ -149,6 +146,8 @@ class Booking(db.Model):
     date = db.Column(db.String, nullable=False)
     starting_time = db.Column(db.String, nullable=False)
     status = db.Column(db.String, nullable=False)
+    pro_notes = db.Column(db.String)
+    patient_notes = db.Column(db.String)
     pro_service_id = db.Column(ForeignKey("pro_services.id"), nullable=False)
     patient_id = db.Column(ForeignKey("patients.id"), nullable=False)
     pro_service = db.relationship("ProServices")
