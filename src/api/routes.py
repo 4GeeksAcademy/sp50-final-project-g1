@@ -3,7 +3,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 """
 from flask import Flask, request, jsonify, Blueprint
 from flask_cors import CORS
-from api.models import db, Pros, Hours, Patients, Bookings
+from api.models import db, Pros, Hours, Patients, Bookings, Locations
 
 
 api = Blueprint('api', __name__)
@@ -220,3 +220,63 @@ def bookings_by_pro_id(proid):
 
     serialized_bookings = [booking.serialize() for booking in bookings_by_pro]
     return jsonify(serialized_bookings), 200
+
+
+
+
+################################################################
+# Locations
+
+
+# Get all records and add a new record to the 'locations' table
+@app.route("/api/locations/", methods=['GET', 'POST'])
+def get_add_locations():
+    if request.method == 'GET':
+        locations_list = Locations.query.all()
+        serialized_locations = [location.serialize() for location in locations_list]
+        return jsonify(serialized_locations), 200
+    elif request.method == 'POST':
+        data = request.json
+        new_location = Locations(**data)
+        db.session.add(new_location)
+        db.session.commit()
+        return jsonify({"message": "Record added successfully"}), 201
+
+
+# Get, Update, and Delete a specific record in the 'locations' table
+@app.route("/api/locations/<int:locationid>", methods=['GET', 'PUT', 'DELETE'])
+def specific_location(locationid):
+    location = Locations.query.get(locationid)
+
+    if not location:
+        return jsonify({"message": "Record not found"}), 404
+
+    if request.method == 'GET':
+        return jsonify(location.serialize()), 200
+    elif request.method == 'PUT':
+        data = request.json
+        location.name = data.get('name', location.name)
+        location.address = data.get('address', location.address)
+        location.city = data.get('city', location.city)
+        location.country = data.get('country', location.country)
+        location.duration = data.get('duration', location.duration)
+        location.pro_id = data.get('pro_id', location.pro_id)
+        db.session.commit()
+        return jsonify({"message": "Record updated successfully"}), 200
+    elif request.method == 'DELETE':
+        db.session.delete(location)
+        db.session.commit()
+        return jsonify({"message": "Record deleted successfully"}), 200
+
+
+# Get locations associated with a specific pro_id
+@app.route("/api/locations/<int:proid>", methods=['GET'])
+def locations_by_pro_id(proid):
+    locations_by_pro = Locations.query.filter_by(pro_id=proid).all()
+
+    if not locations_by_pro:
+        return jsonify({"message": "No records found for the specified pro_id"}), 404
+
+    serialized_locations = [location.serialize() for location in locations_by_pro]
+    return jsonify(serialized_locations), 200
+
