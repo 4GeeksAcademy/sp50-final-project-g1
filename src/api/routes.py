@@ -163,8 +163,8 @@ def get_add_bookings():
             status=data['status'],
             pro_service_id=data['pro_service_id'],
             patient_id=data['patient_id'],
-            pro_note=data.get('pro_note'),   # using .get method begause we can set default value
-            patient_note=data.get('patient_note')  # using .get method begause we can set default value
+            pro_notes=data.get('pro_notes'),   # using .get method begause we can set default value
+            patient_notes=data.get('patient_notes')  # using .get method begause we can set default value
         )
 
         db.session.add(new_booking)
@@ -235,12 +235,30 @@ def get_add_locations():
         locations_list = Locations.query.all()
         serialized_locations = [location.serialize() for location in locations_list]
         return jsonify(serialized_locations), 200
+    
     elif request.method == 'POST':
         data = request.json
-        new_location = Locations(**data)
+
+        # Check if the required fields are present in the request
+        required_fields = ['city', 'address', 'country', 'pro_id', 'name']
+        if not all(field in data for field in required_fields):
+            return jsonify({"message": "Incomplete data. Please provide city, address, country, and pro_id."}), 400
+
+        new_location = Locations(
+            name=data['name'],
+            city=data['city'],
+            address=data.get('address'),
+            country=data.get('country'),
+            duration=data.get('duration'),
+            pro_id=data['pro_id']
+        )
+
         db.session.add(new_location)
         db.session.commit()
+
         return jsonify({"message": "Record added successfully"}), 201
+
+
 
 
 # Get, Update, and Delete a specific record in the 'locations' table
