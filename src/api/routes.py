@@ -18,8 +18,6 @@ def handle_hello():
 
 
 
-
-
 #############################################################
 # Hours
 
@@ -172,8 +170,8 @@ def get_add_bookings():
             status=data['status'],
             pro_service_id=data['pro_service_id'],
             patient_id=data['patient_id'],
-            pro_notes=data.get('pro_notes'),   # using .get method begause we can set default value
-            patient_notes=data.get('patient_notes')  # using .get method begause we can set default value
+            pro_notes=data.get('pro_notes', 'Nothing to decaler on this patient'),   # using .get method begause we can set default value
+            patient_notes=data.get('patient_notes', 'No patient note')  # using .get method begause we can set default value
         )
 
         db.session.add(new_booking)
@@ -199,8 +197,8 @@ def specific_booking(bookingid):
         booking.status = data.get('status', booking.status)
         booking.pro_service_id = data.get('pro_service_id', booking.pro_service_id)
         booking.patient_id = data.get('patient_id', booking.patient_id)
-        booking.pro_note = data.get('pro_note', booking.pro_note)
-        booking.patient_note = data.get('patient_note', booking.patient_note)
+        booking.pro_notes = data.get('pro_notes', booking.pro_notes)
+        booking.patient_notes = data.get('patient_notes', booking.patient_notes)
         db.session.commit()
         return jsonify({"message": "Record updated successfully"}), 200
 
@@ -269,7 +267,6 @@ def get_add_locations():
 
 
 
-
 # Get, Update, and Delete a specific record in the 'locations' table
 @api.route("/locations/<int:locationid>", methods=['GET', 'PUT', 'DELETE'])
 def specific_location(locationid):
@@ -306,6 +303,7 @@ def locations_by_pro_id(proid):
 
     serialized_locations = [location.serialize() for location in locations_by_pro]
     return jsonify(serialized_locations), 200
+
 
 @api.route("/pros", methods=["GET", "POST"])
 def handle_pro():
