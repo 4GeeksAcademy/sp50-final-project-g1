@@ -131,11 +131,20 @@ def specific_patient(patientid):
         patient.phone = data.get('phone', patient.phone)
         db.session.commit()
         return jsonify({"message": "Patient updated successfully"}), 200
-    elif request.method == 'DELETE':
+    
+    elif request.method == 'DELETE': #NB: delete all booking related to the patient_id
+        
+        ## Join patients and bookings table and filter all record by patient_id = patientid
+        bookings_by_patient = Bookings.query.join(Patients).filter_by(id=patientid).all()
+
+        # delete all bookings associated to the deleted patient
+        for booking in bookings_by_patient:
+            db.session.delete(booking)
+        
+        # delete single patient
         db.session.delete(patient)
         db.session.commit()
-        return jsonify({"message": "Patient deleted successfully"}), 200
-
+        return jsonify({"message": "Patient deleted successfully. All booking associated to this patient has been delated"}), 200
 
 
 ##############################################################
