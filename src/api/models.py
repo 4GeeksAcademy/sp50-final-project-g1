@@ -125,7 +125,7 @@ class ProServices(db.Model):
                 "price": self.price}
 
 class Patients(db.Model):
-    __tablename__="patients"
+    __tablename__ = "patients"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     lastname = db.Column(db.String(50), nullable=False)
@@ -143,6 +143,7 @@ class Patients(db.Model):
                 "phone": self.phone}
 
 class Bookings(db.Model):
+    __tablename__ = "bookings"
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.String, nullable=False)
     starting_time = db.Column(db.String, nullable=False)
