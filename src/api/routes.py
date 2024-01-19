@@ -35,13 +35,12 @@ def hours():
 
 # Get, Update, and Delete a specific record in the 'hours' table by 'pro_id'
 @api.route("/pros/<int:proid>/hours", methods=['GET'])
-def specific_hour(proid):
+def specific_pro_hour(proid):
     hour = Hours.query.filter_by(pro_id=proid).first()
     if not hour:
         return jsonify({"message": "Record not found"}), 404
     if request.method == 'GET':
         return jsonify(hour.serialize()), 200
-
 
 # Get, Update, and Delete a specific record in the 'hours' table
 @api.route("/hours/<int:tableid>", methods=['GET', 'PUT', 'DELETE'])
@@ -104,11 +103,17 @@ def specific_patient(patientid):
         patient.email = data.get('email', patient.email)
         patient.phone = data.get('phone', patient.phone)
         db.session.commit()
-        return jsonify({"message": "patient updated successfully"}), 200
-    if request.method == 'DELETE':
+        return jsonify({"message": "Patient updated successfully"}), 200
+    if request.method == 'DELETE': #NB: delete all booking related to the patient_id
+        ## Join patients and bookings table and filter all record by patient_id = patientid
+        bookings_by_patient = Bookings.query.join(Patients).filter_by(id=patientid).all()
+        # delete all bookings associated to the deleted patient
+        for booking in bookings_by_patient:
+            db.session.delete(booking)
+        # delete single patient
         db.session.delete(patient)
         db.session.commit()
-        return jsonify({"message": "patient deleted successfully"}), 200
+        return jsonify({"message": "Patient deleted successfully. All booking associated to this patient has been delated"}), 200
 
 
 
@@ -136,12 +141,11 @@ def get_add_bookings():
                                patient_id=data['patient_id'],
                                pro_notes=data.get('pro_note'),   # using .get method begause we can set default value
                                patient_notes=data.get('patient_note'))  # using .get method begause we can set default value
-
         db.session.add(new_booking)
         db.session.commit()
         return jsonify({"message": "Booking added successfully"}), 201
 
-
+      
 # Get and Update a specific record in the 'booking' table
 @api.route("/bookings/<int:bookingid>", methods=['GET', 'PUT'])
 def specific_booking(bookingid):
@@ -159,15 +163,15 @@ def specific_booking(bookingid):
         booking.status = data.get('status', booking.status)
         booking.pro_service_id = data.get('pro_service_id', booking.pro_service_id)
         booking.patient_id = data.get('patient_id', booking.patient_id)
-        booking.pro_notes = data.get('pro_notes', booking.pro_note)
-        booking.patient_notes = data.get('patient_notes', booking.patient_note)
+        booking.pro_notes = data.get('pro_notes', booking.pro_notes)
+        booking.patient_notes = data.get('patient_notes', booking.patient_notes)
         db.session.commit()
         return jsonify({"message": "Record updated successfully"}), 200
 
 
 #  Delete a specific record in the 'booking' table
 @api.route("/bookings/<int:bookingid>", methods=['DELETE'])
-def specific_booking(bookingid):
+def specific_delete_booking(bookingid):
     booking = Bookings.query.get(bookingid)
     if not booking:
         return jsonify({"message": "Record not found"}), 404
@@ -202,10 +206,24 @@ def get_add_locations():
         return jsonify(serialized_locations), 200
     if request.method == 'POST':
         data = request.json
-        new_location = Locations(**data)
+        # Check if the required fields are present in the request
+        required_fields = ['city', 'address', 'country', 'pro_id', 'name']
+        if not all(field in data for field in required_fields):
+            return jsonify({"message": "Incomplete data. Please provide city, address, country, and pro_id."}), 400
+        new_location = Locations(
+            name=data['name'],
+            city=data['city'],
+            address=data.get('address'),
+            country=data.get('country'),
+            duration=data.get('duration'),
+            pro_id=data['pro_id']
+        )
+
         db.session.add(new_location)
         db.session.commit()
+
         return jsonify({"message": "Record added successfully"}), 201
+
 
 
 # Get, Update, and Delete a specific record in the 'locations' table
@@ -233,7 +251,7 @@ def specific_location(locationid):
 
 
 # Get locations associated with a specific pro_id
-@api.route("/locations/<int:proid>", methods=['GET'])
+@api.route("pros/<int:proid>/locations/", methods=['GET'])
 def locations_by_pro_id(proid):
     locations_by_pro = Locations.query.filter_by(pro_id=proid).all()
     if not locations_by_pro:
