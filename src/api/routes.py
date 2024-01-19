@@ -126,13 +126,13 @@ def get_add_bookings():
     if request.method == 'POST':
         data = request.json
         # Check if the required fields are present in the request
-        required_fields = ['date', 'starting_time', 'status', 'service_id', 'patient_id']
+        required_fields = ['date', 'starting_time', 'status', 'pro_service_id', 'patient_id']
         if not all(field in data for field in required_fields):
             return jsonify({"message": "Incomplete data. Please provide date, starting_time, status, service_id, and pro_id."}), 400
         new_booking = Bookings(date=data['date'],
                                starting_time=data['starting_time'],
                                status=data['status'],
-                               service_id=data['service_id'],
+                               pro_service_id=data['service_id'],
                                patient_id=data['patient_id'],
                                pro_notes=data.get('pro_note'),   # using .get method begause we can set default value
                                patient_notes=data.get('patient_note'))  # using .get method begause we can set default value
@@ -157,7 +157,7 @@ def specific_booking(bookingid):
         booking.date = data.get('date', booking.date)
         booking.starting_time = data.get('starting_time', booking.starting_time)
         booking.status = data.get('status', booking.status)
-        booking.service_id = data.get('service_id', booking.service_id)
+        booking.pro_service_id = data.get('pro_service_id', booking.pro_service_id)
         booking.patient_id = data.get('patient_id', booking.patient_id)
         booking.pro_notes = data.get('pro_notes', booking.pro_note)
         booking.patient_notes = data.get('patient_notes', booking.patient_note)
