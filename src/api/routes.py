@@ -33,14 +33,16 @@ def hours():
         return jsonify({"message": "Record added successfully"}), 201
 
 
-# Get, Update, and Delete a specific record in the 'hours' table by 'pro_id'
+# Get all records in the 'hours' table by 'pro_id'
 @api.route("/pros/<int:proid>/hours", methods=['GET'])
 def specific_pro_hour(proid):
-    hour = Hours.query.filter_by(pro_id=proid).first()
-    if not hour:
+    hours_by_pro = Hours.query.filter_by(pro_id=proid).all()
+    if not hours_by_pro:
         return jsonify({"message": "Record not found"}), 404
     if request.method == 'GET':
-        return jsonify(hour.serialize()), 200
+        serialized_hours = [hour.serialize() for hour in hours_by_pro]
+        return jsonify(serialized_hours), 200
+
 
 # Get, Update, and Delete a specific record in the 'hours' table
 @api.route("/hours/<int:tableid>", methods=['GET', 'PUT', 'DELETE'])
@@ -79,7 +81,7 @@ def patients():
         # Check if the required fields are present in the request
         if 'name' not in data or 'lastname' not in data or 'email' not in data:
             return jsonify({"message": "Name, lastname, and email are required"}), 400
-        new_patient = patients(name=data['name'],
+        new_patient = Patients(name=data['name'],
                                lastname=data['lastname'],
                                email=data['email'],
                                phone=data.get('phone'))

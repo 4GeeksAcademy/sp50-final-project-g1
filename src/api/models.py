@@ -58,7 +58,9 @@ class Hours(db.Model):
     starting_hour = db.Column(db.String, nullable=False)
     ending_hour = db.Column(db.String, nullable=False)
     pro_id = db.Column(db.ForeignKey("pros.id"), nullable=False)
+    location_id = db.Column(db.ForeignKey("locations.id"), nullable=False)
     pro = db.relationship("Pros")
+    locations = db.relationship("Locations")
 
     def __repr__(self):
         return f'<Hours {self.id}, {self.pro_id}, {self.working_day}, {self.starting_hour}, {self.ending_hour}>'
