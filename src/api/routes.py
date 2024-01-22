@@ -27,6 +27,7 @@ def hours():
         new_hour = Hours(working_day=data.get('working_day'),
                          starting_hour=data.get('starting_hour'),
                          ending_hour=data.get('ending_hour'),
+                         location_id=data.get('location_id'),
                          pro_id=data.get('pro_id'))
         db.session.add(new_hour)
         db.session.commit()
