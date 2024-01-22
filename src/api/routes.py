@@ -43,6 +43,16 @@ def specific_pro_hour(proid):
     if request.method == 'GET':
         serialized_hours = [hour.serialize() for hour in hours_by_pro]
         return jsonify(serialized_hours), 200
+    
+# Get all records in the 'hours' table by 'location_id'
+@api.route("/locations/<int:locationid>/hours", methods=['GET'])
+def specific_pro_hour(locationid):
+    hours_by_pro = Hours.query.filter_by(location_id=locationid).all()
+    if not hours_by_pro:
+        return jsonify({"message": "Record not found"}), 404
+    if request.method == 'GET':
+        serialized_hours = [hour.serialize() for hour in hours_by_pro]
+        return jsonify(serialized_hours), 200
 
 
 # Get, Update, and Delete a specific record in the 'hours' table
