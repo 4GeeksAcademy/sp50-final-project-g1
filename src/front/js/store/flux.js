@@ -1,14 +1,29 @@
 const getState = ({getStore, getActions, setStore}) => {
 	return {
 		store: {
+			isAdmin: false,
 			isLoggedIn: false,
 			currentPro: {},
-			currentLocation: {},
-			servicesByPro: {},
-			services: {},
-			proServicesByPro: {},		
+			currentLocations: [],
+			servicesByPro: [],
+			services: [],
+			proServicesByPro: [],
+			hoursByPro: [],
+			hoursByLocation: [],
+			inactivityByPro: [],
+			bookingsByPro: [],		
 		},
 		actions: {
+			// Login
+			login: (token) => {
+				setStore({isLoggedIn: true})
+				localStorage.setItem("token", token)
+			},
+			logout: () => {
+				setStore({isLoggedIn: false})
+				localStorage.removeItem("token")
+			},
+
 			// Pro actions
 			newPro: async(object) => {
 				const url = process.env.BACKEND_URL + '/pros';
@@ -42,7 +57,6 @@ const getState = ({getStore, getActions, setStore}) => {
 					alert("Sorry, somenthing went wrong.")
 					console.log("Error :", response.status, response.statusText)
 				}
-
 			},
 			updatePro: async(object) => {
 				const url = process.env.BACKEND_URL + `/pros/${object.id}`;
@@ -208,7 +222,6 @@ const getState = ({getStore, getActions, setStore}) => {
 					alert("Sorry, somenthing went wrong.")
 					console.log("Error :", response.status, response.statusText)
 				}
-
 			},
 			updateProService: async(object) => {
 				const url = process.env.BACKEND_URL + `/proservices/${object.id}`;
@@ -262,7 +275,336 @@ const getState = ({getStore, getActions, setStore}) => {
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
-			
+			getLocationsByPro: async(pro_id) => {
+				const url = process.env.BACKEND_URL + `/pros/${pro_id}/locations`;
+				const options = {
+					method: "GET"           
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					const data = response.json()
+					setStore({currentLocations: data})
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+			updateLocation: async(object) => {
+				const url = process.env.BACKEND_URL + `/locations/${object.id}`;
+				const options = {
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(object)            
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					return true
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+			deleteLocation: async(location_id) => {
+				const url = process.env.BACKEND_URL + `/proservices/${location_id}`;
+				const options = {
+					method: "DELETE"          
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					return true
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+
+			// Hours actions
+			newHours: async(object) => {
+				const url = process.env.BACKEND_URL + '/hours';
+				const options = {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(object)            
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					return true
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+			getHoursByPro: async(pro_id) => {
+				const url = process.env.BACKEND_URL + `/pros/${pro_id}/hours`;
+				const options = {
+					method: "GET"           
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					const data = response.json()
+					setStore({hoursByPro: data})
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+			getHoursByLocation: async(location_id) => {
+				const url = process.env.BACKEND_URL + `/pros/${location_id}/hours`;
+				const options = {
+					method: "GET"           
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					const data = response.json()
+					setStore({hoursByLocation: data})
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+			updateHours: async(object) => {
+				const url = process.env.BACKEND_URL + `/hours/${object.id}`;
+				const options = {
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(object)            
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					return true
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+			deleteHours: async(hour_id) => {
+				const url = process.env.BACKEND_URL + `/hours/${hour_id}`;
+				const options = {
+					method: "DELETE"          
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					return true
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+
+			// Inactivity actions
+			newInactivity: async(object) => {
+				const url = process.env.BACKEND_URL + '/inactivity';
+				const options = {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(object)            
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					return true
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+			getInactivityByPro: async(pro_id) => {
+				const url = process.env.BACKEND_URL + `/pros/${pro_id}/inactivity`;
+				const options = {
+					method: "GET"           
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					const data = response.json()
+					setStore({inactivityByPro: data})
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+			updateInactivity: async(object) => {
+				const url = process.env.BACKEND_URL + `/inactivity/${object.id}`;
+				const options = {
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(object)            
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					return true
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+			deleteInactivity: async(inactivity_id) => {
+				const url = process.env.BACKEND_URL + `/inactivity/${inactivity_id}`;
+				const options = {
+					method: "DELETE"          
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					return true
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+
+			// Bookings actions
+			newBooking: async(object) => {
+				const url = process.env.BACKEND_URL + '/bookings';
+				const options = {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(object)            
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					return true
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+			getBookingsByPro: async(pro_id) => {
+				const url = process.env.BACKEND_URL + `/pros/${pro_id}/bookings`;
+				const options = {
+					method: "GET"           
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					const data = response.json()
+					setStore({bookingsByPro: data})
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+			updateBooking: async(object) => {
+				const url = process.env.BACKEND_URL + `/bookings/${object.id}`;
+				const options = {
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(object)            
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					return true
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+			deleteBooking: async(booking_id) => {
+				const url = process.env.BACKEND_URL + `/bookings/${booking_id}`;
+				const options = {
+					method: "DELETE"          
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					return true
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+
+			// Patients actions
+			newPatient: async(object) => {
+				const url = process.env.BACKEND_URL + '/patients';
+				const options = {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(object)            
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					return true
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+			getPatient: async(patient_id) => {
+				const url = process.env.BACKEND_URL + `/patients/${patient_id}`;
+				const options = {
+					method: "GET"           
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					const data = response.json()
+					return data
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+			updatePatient: async(object) => {
+				const url = process.env.BACKEND_URL + `/patients/${object.id}`;
+				const options = {
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(object)            
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					return true
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+			deletePatient: async(patient_id) => {
+				const url = process.env.BACKEND_URL + `/patients/${patient_id}`;
+				const options = {
+					method: "DELETE"          
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					return true
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
 		}
 	};
 };
