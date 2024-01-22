@@ -14,6 +14,8 @@ class Pros(db.Model):
     phone = db.Column(db.String(25), unique=True, nullable=False)
     bookingpage_url = db.Column(db.String, unique=True, nullable=False)
     suscription = db.Column(db.Integer)
+    config_status = db.Column(db.Integer, nullable=True)
+    title = db.Column(db.String)
     location = db.relationship("Locations")
     inactivity = db.relationship("InactivityDays")
     services = db.relationship("ProServices")

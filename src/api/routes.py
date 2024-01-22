@@ -280,7 +280,9 @@ def handle_pros():
                        phone=data['phone'],
                        password=data['password'],
                        bookingpage_url=data['bookingpage_url'],
-                       suscription=data.get('suscription'))
+                       config_status=data['config_status']
+                       suscription=data.get('suscription'),
+                       title=data.get('title'))
         db.session.add(new_pro)
         db.session.commit()
         return jsonify({"message": "Record added successfully"}), 201
@@ -302,6 +304,8 @@ def handle_pro(proid):
         pro.password = data.get('password', pro.password)
         pro.bookingpage_url = data.get('bookingpage_url', pro.bookingpage_url)
         pro.suscription = data.get('suscription', pro.suscription)
+        pro.config_status = data.get('config_status', pro.config_status)
+        pro.title = data.get('title', pro.title)
         db.session.commit()
         return jsonify({"message": "pro updated successfully"}), 200
     if request.method == 'DELETE':
