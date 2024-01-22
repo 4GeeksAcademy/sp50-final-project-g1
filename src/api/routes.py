@@ -280,7 +280,7 @@ def handle_pros():
                        phone=data['phone'],
                        password=data['password'],
                        bookingpage_url=data['bookingpage_url'],
-                       config_status=data['config_status']
+                       config_status=data['config_status'],
                        suscription=data.get('suscription'),
                        title=data.get('title'))
         db.session.add(new_pro)

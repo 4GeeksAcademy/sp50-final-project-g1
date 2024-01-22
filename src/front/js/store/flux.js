@@ -1,46 +1,177 @@
 const getState = ({getStore, getActions, setStore}) => {
 	return {
 		store: {
-			message: null,
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			]
+			isLoggedIn: false,
+			currentPro: {},
+			servicesByPro: {},
+			services: {},		
 		},
 		actions: {
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");  // Use getActions() to call a function within a fuction
-			},
-			getMessage: async () => {
-				try {
-					// Fetching data from the backend
-					const response = await fetch(process.env.BACKEND_URL + "/api/hello")
-					const data = await response.json()
-					setStore({message: data.message})
-					// Don't forget to return something, that is how the async resolves
-					return data;
-				} catch(error) {
-					console.log("Error loading message from backend", error)
+			// Pro actions
+			newPro: async(object) => {
+				const url = process.env.BACKEND_URL + '/pros';
+				const options = {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(object)            
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					return true
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
 				}
 			},
-			changeColor: (index, color) => {
-				// Get the store
-				const store = getStore();
-				// We have to loop the entire demo array to look for the respective index and change its color
-				const demo = store.demo.map((element, i) => {
-					if (i === index) element.background = color;
-					return element;
-				});
-				setStore({demo: demo});  // Reset the global store
-			}
+			getPro: async(pro_id) => {
+				const url = process.env.BACKEND_URL + `/pros/${pro_id}`;
+				const options = {
+					method: "GET"           
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					const data = response.json()
+					setStore({currentPro: data})
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+
+			},
+			updatePro: async(object) => {
+				const url = process.env.BACKEND_URL + `/pros/${object.id}`;
+				const options = {
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(object)            
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					return true
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+			deletePro: async(pro_id) => {
+				const url = process.env.BACKEND_URL + `/pros/${pro_id}`;
+				const options = {
+					method: "DELETE"          
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					return true
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+
+			// Services actions
+			newService: async(object) => {
+				const url = process.env.BACKEND_URL + '/services';
+				const options = {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(object)            
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					return true
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+			getServices: async() => {
+				const url = process.env.BACKEND_URL + `/services`;
+				const options = {
+					method: "GET"           
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					const data = response.json()
+					setStore({services: data})
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+			getService: async(service_id) => {
+				const url = process.env.BACKEND_URL + `/services/${service_id}`;
+				const options = {
+					method: "GET"           
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					const data = response.json()
+					return data
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+			getServicesByPro: async(pro_id) => {
+				const url = process.env.BACKEND_URL + `/pros/${pro_id}/services`;
+				const options = {
+					method: "GET"           
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					const data = response.json()
+					setStore({servicesByPro: data})
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+
+			},
+			updateService: async(object) => {
+				const url = process.env.BACKEND_URL + `/pros/${object.id}`;
+				const options = {
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(object)            
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					return true
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+			deleteService: async(service_id) => {
+				const url = process.env.BACKEND_URL + `/services/${service_id}`;
+				const options = {
+					method: "DELETE"          
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					return true
+				}
+				else{
+					alert("Sorry, somenthing went wrong.")
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
 		}
 	};
 };
