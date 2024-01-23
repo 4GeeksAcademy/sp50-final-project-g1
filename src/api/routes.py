@@ -150,7 +150,7 @@ def get_add_bookings():
         new_booking = Bookings(date=data['date'],
                                starting_time=data['starting_time'],
                                status=data['status'],
-                               pro_service_id=data['service_id'],
+                               pro_service_id=data['pro_service_id'],
                                patient_id=data['patient_id'],
                                pro_notes=data.get('pro_note'),   # using .get method begause we can set default value
                                patient_notes=data.get('patient_note'))  # using .get method begause we can set default value
