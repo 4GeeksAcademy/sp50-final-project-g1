@@ -26,6 +26,7 @@ export default function Signup() {
       phone: "",
       config_status: 0
     }
+
    actions.newPro(object)
 
    const url = process.env.BACKEND_URL + '/login'
@@ -42,10 +43,6 @@ export default function Signup() {
       const data = await response.json()
       actions.login(data.access_token)
       console.log("logged in")
-    }
-    else {
-      const data = await response.json() 
-      alert(data.msg)
     }
     /* navigate("/signup/personal-data") */
   }
