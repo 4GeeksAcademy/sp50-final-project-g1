@@ -13,7 +13,7 @@ export default function SignupLocation() {
 
   const handleNext = () => {
     console.log('clicking next')
-    // navigate("/signup/select-specialization")
+    navigate("/signup/specialization")
   }
 
 

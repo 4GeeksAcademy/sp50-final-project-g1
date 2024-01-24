@@ -9,6 +9,7 @@ import Login from "./pages/auth/login.js";
 import Signup from "./pages/auth/signup.js";
 import SignupPersonalData from "./pages/auth/SignupPersonalData.js";
 import SignupLocation from "./pages/auth/SignupLocation.js";
+import SignupSpecialization from "./pages/auth/SignupSpecialization.js";
 import File404 from "./pages/File404.js";
 
 // Import components
@@ -41,6 +42,7 @@ const Router = () => {
                       <Route path="/signup" element={<NavbarSignup><Signup /></NavbarSignup>} />
                       <Route path="/signup/personal-data" element={<NavbarSignup><SignupPersonalData /></NavbarSignup>} />
                       <Route path="/signup/location" element={<NavbarSignup><SignupLocation /></NavbarSignup>} />
+                      <Route path="/signup/specialization" element={<NavbarSignup><SignupSpecialization /></NavbarSignup>} />
 
                       {/* NOT FOUND */}
                       <Route path="*" element={<NavbarLayout><File404 /></NavbarLayout>} />
