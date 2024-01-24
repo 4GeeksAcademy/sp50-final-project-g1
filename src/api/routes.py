@@ -4,10 +4,35 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 from flask import Flask, request, jsonify, Blueprint
 from flask_cors import CORS
 from api.models import db, Pros, Hours, Patients, Bookings, Locations, ProServices, Services, InactivityDays
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
 
 
 api = Blueprint('api', __name__)
 CORS(api)  # Allow CORS requests to this API
+
+
+# LOGIN - authentication - token generation
+@api.route("/login", methods=['POST'])
+def login():
+    email = request.json.get("email")
+    password = request.json.get("password")
+
+    pro = Pros.query.filter_by(email=email, password=password).first()
+    
+    if pro:
+        access_token = create_access_token(identity=pro.id)
+        return jsonify(access_token=access_token)
+    
+    return jsonify({"msg": "Wrong email or password"}), 404
+
+# DASHBOARD - get user data to show in the dashboard
+@api.route("/dashboard", methods=["GET"])
+@jwt_required()
+def get_pro_dashboard():  
+    current_user = get_jwt_identity()
+    return jsonify(logged_in_as = current_user), 200
 
 #############################################################
 # Hours

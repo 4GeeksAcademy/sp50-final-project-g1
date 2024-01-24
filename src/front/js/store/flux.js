@@ -50,7 +50,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({currentPro: data})
 				}
 				else{
@@ -117,7 +117,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({services: data})
 				}
 				else{
@@ -132,7 +132,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					return data
 				}
 				else{
@@ -147,7 +147,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({servicesByPro: data})
 				}
 				else{
@@ -215,7 +215,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({proServicesByPro: data})
 				}
 				else{
@@ -282,7 +282,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({currentLocations: data})
 				}
 				else{
@@ -349,7 +349,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({hoursByPro: data})
 				}
 				else{
@@ -364,7 +364,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({hoursByLocation: data})
 				}
 				else{
@@ -431,7 +431,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({inactivityByPro: data})
 				}
 				else{
@@ -498,7 +498,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({bookingsByPro: data})
 				}
 				else{
@@ -565,7 +565,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					return data
 				}
 				else{
