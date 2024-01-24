@@ -36,11 +36,17 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					return true
+					return alert("Pro created!")
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
-					console.log("Error :", response.status, response.statusText)
+					const data = await response.json()
+					const error = data.error
+					if(error === 'duplicated_email'){
+						return alert("Email already exists")
+					}
+					if(error === 'duplicated_username'){
+						return alert("Username already exists")
+					}
 				}
 			},
 			getPro: async(pro_id) => {

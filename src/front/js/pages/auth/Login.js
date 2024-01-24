@@ -31,7 +31,7 @@ export default function Login() {
     }
     else {
       const data = await response.json() 
-      alert("Wrong email or password")
+      alert(data.msg)
     }
   }
 
