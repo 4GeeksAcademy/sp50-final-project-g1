@@ -27,6 +27,26 @@ export default function Signup() {
       config_status: 0
     }
    actions.newPro(object)
+
+   const url = process.env.BACKEND_URL + '/login'
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({email, password})
+    }
+    const response = await fetch(url, options);
+    console.log(response)
+    if (response.ok) {
+      const data = await response.json()
+      actions.login(data.access_token)
+      console.log("logged in")
+    }
+    else {
+      const data = await response.json() 
+      alert(data.msg)
+    }
     /* navigate("/signup/personal-data") */
   }
 
