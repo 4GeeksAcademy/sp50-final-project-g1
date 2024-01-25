@@ -11,7 +11,8 @@ const getState = ({getStore, getActions, setStore}) => {
 			hoursByPro: [],
 			hoursByLocation: [],
 			inactivityByPro: [],
-			bookingsByPro: [],		
+			bookingsByPro: [],
+			token: "",		
 		},
 		actions: {
 			// Login
@@ -22,6 +23,32 @@ const getState = ({getStore, getActions, setStore}) => {
 			logout: () => {
 				setStore({isLoggedIn: false})
 				localStorage.removeItem("token")
+			},
+
+			isLogged: () => {
+				if(localStorage.getItem("token")){
+					setStore({isLoggedIn: true})
+				}
+				else {
+					setStore({isLoggedIn: false})
+				}
+			},
+
+			authentication: async(token) => {
+				const url = process.env.BACKEND_URL + '/dashboard'
+				const options = {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${token}`
+					},
+				}
+				const response = await fetch(url, options)
+				if(response.ok) {
+					const data = await response.json()
+					return data
+				}
+				
 			},
 
 			// Pro actions
@@ -36,7 +63,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					return alert("Pro created!")
+					return true
 				}
 				else{
 					const data = await response.json()

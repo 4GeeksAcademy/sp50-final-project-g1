@@ -29,7 +29,9 @@ class Pros(db.Model):
                 "lastname": self.lastname,
                 "email": self.email,
                 "phone": self.phone,
-                "bookingpage_url": self.bookingpage_url}
+                "bookingpage_url": self.bookingpage_url,
+                "config_status": self.config_status,
+                "title": self.title}
 
 class Locations(db.Model):
     __tablename__ = "locations"

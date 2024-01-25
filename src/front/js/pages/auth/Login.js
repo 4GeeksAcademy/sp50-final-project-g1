@@ -1,14 +1,18 @@
-import React, { useContext, useState, useNavigate } from "react";
-import { Link } from "react-router-dom";
+import React, { useContext, useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../../store/appContext";
 
 
 export default function Login() {
 
+  const navigate = useNavigate()
+
   const {store, actions} = useContext(Context)
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [token, setToken] = useState(localStorage.getItem("token"))
+  const [pro, setPro] = useState({})
 
   const handleSubmit = async (e) => {
 
@@ -26,6 +30,7 @@ export default function Login() {
     console.log(response)
     if (response.ok) {
       const data = await response.json()
+      setToken(data.access_token)
       actions.login(data.access_token)
       console.log("logged in")
     }
@@ -34,6 +39,38 @@ export default function Login() {
       alert(data.msg)
     }
   }
+  
+  useEffect(() => {
+    if (store.isLoggedIn) {
+      const fetchData = async () => {
+        if(token){
+          const proId = await actions.authentication(token)
+          setPro(proId.logged_in_as)
+        }
+      }
+      fetchData()
+    }
+  }, [store.isLoggedIn])
+
+  useEffect(() => {
+    const currentId = pro
+    console.log(currentId)
+    const fetchData = async () => {
+      await actions.getPro(currentId)
+      console.log(store.currentPro)
+      const currentPro = store.currentPro
+      if (currentPro.config_status === 0){
+        navigate("/signup/personal-data")
+      }
+      if (currentPro.config_status === 1){
+        navigate("/signup/location")
+      }
+      if (currentPro.config_status === 2){
+        navigate("/signup/specialization")
+      }
+    }
+    fetchData()
+  },[pro])
 
 
   return (

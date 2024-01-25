@@ -28,7 +28,7 @@ export default function Navbar() {
         </div>
 
 
-        {store.isLogin ? (
+        {store.isLoggedIn ? (
           <div>
             <Link to="/dashboard"><button className="btn btn-sm btn-light me-3" >Dashboard</button></Link>
             <button className="btn btn-sm btn-primary" onClick={handleLogout}>Logout</button>
