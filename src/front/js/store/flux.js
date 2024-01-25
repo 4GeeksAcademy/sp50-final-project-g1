@@ -36,11 +36,17 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					return true
+					return alert("Pro created!")
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
-					console.log("Error :", response.status, response.statusText)
+					const data = await response.json()
+					const error = data.error
+					if(error === 'duplicated_email'){
+						return alert("Email already exists")
+					}
+					if(error === 'duplicated_username'){
+						return alert("Username already exists")
+					}
 				}
 			},
 			getPro: async(pro_id) => {
@@ -50,7 +56,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({currentPro: data})
 				}
 				else{
@@ -117,7 +123,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({services: data})
 				}
 				else{
@@ -132,7 +138,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					return data
 				}
 				else{
@@ -147,7 +153,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({servicesByPro: data})
 				}
 				else{
@@ -215,7 +221,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({proServicesByPro: data})
 				}
 				else{
@@ -282,7 +288,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({currentLocations: data})
 				}
 				else{
@@ -349,7 +355,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({hoursByPro: data})
 				}
 				else{
@@ -364,7 +370,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({hoursByLocation: data})
 				}
 				else{
@@ -431,7 +437,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({inactivityByPro: data})
 				}
 				else{
@@ -498,7 +504,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({bookingsByPro: data})
 				}
 				else{
@@ -565,7 +571,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					return data
 				}
 				else{

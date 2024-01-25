@@ -1,20 +1,51 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Context } from "../../store/appContext";
 
 
 export default function Signup() {
 
   const navigate = useNavigate()
 
+  const {store, actions} = useContext(Context)
+
   const [email, setEmail] = useState()
   const [username, setUsername] = useState()
   const [password, setPassword] = useState()
 
-  const handleSubmit = async () => {
-    console.log('clicking on submit')
-    navigate("/signup/personal-data")
-  }
+  const handleSubmit = async (e) => {
 
+    e.preventDefault()
+
+    let object = {
+      email,
+      "bookingpage_url": username,
+      password,
+      name: "",
+      lastname: "",
+      phone: "",
+      config_status: 0
+    }
+
+   actions.newPro(object)
+
+   const url = process.env.BACKEND_URL + '/login'
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({email, password})
+    }
+    const response = await fetch(url, options);
+    console.log(response)
+    if (response.ok) {
+      const data = await response.json()
+      actions.login(data.access_token)
+      console.log("logged in")
+    }
+    /* navigate("/signup/personal-data") */
+  }
 
   return (
     <> 
@@ -58,7 +89,7 @@ export default function Signup() {
                       </div>
                     </div>
                   </div>
-                <button className="w-100 btn btn-primary btn-lg mt-5" onClick={handleSubmit} style={{backgroundColor:"#14C4B9", border:"none"}} >Submit</button>
+                <button className="w-100 btn btn-primary btn-lg mt-5" onClick={(e) => handleSubmit(e)} style={{backgroundColor:"#14C4B9", border:"none"}} >Submit</button>
               </form>
             </div>
             <p>Already have an account? <Link to="/login" style={{color:"#14C4B9"}}>Login Here</Link></p>

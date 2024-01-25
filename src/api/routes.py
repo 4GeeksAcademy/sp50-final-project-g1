@@ -4,10 +4,36 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 from flask import Flask, request, jsonify, Blueprint
 from flask_cors import CORS
 from api.models import db, Pros, Hours, Patients, Bookings, Locations, ProServices, Services, InactivityDays
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
+from sqlalchemy.exc import IntegrityError
 
 
 api = Blueprint('api', __name__)
 CORS(api)  # Allow CORS requests to this API
+
+
+# LOGIN - authentication - token generation
+@api.route("/login", methods=['POST'])
+def login():
+    email = request.json.get("email")
+    password = request.json.get("password")
+
+    pro = Pros.query.filter_by(email=email, password=password).first()
+    
+    if pro:
+        access_token = create_access_token(identity=pro.id)
+        return jsonify(access_token=access_token)
+    
+    return jsonify({"msg": "Wrong email or password"}), 404
+
+# DASHBOARD - get user data to show in the dashboard
+@api.route("/dashboard", methods=["GET"])
+@jwt_required()
+def get_pro_dashboard():  
+    current_user = get_jwt_identity()
+    return jsonify(logged_in_as = current_user), 200
 
 #############################################################
 # Hours
@@ -89,17 +115,22 @@ def patients():
         return jsonify(serialized_patients), 200
     if request.method == 'POST':
         data = request.json
-        # Check if the required fields are present in the request
-        if 'name' not in data or 'lastname' not in data or 'email' not in data:
-            return jsonify({"message": "Name, lastname, and email are required"}), 400
-        new_patient = Patients(name=data['name'],
-                               lastname=data['lastname'],
-                               email=data['email'],
-                               phone=data.get('phone'))
-        db.session.add(new_patient)
-        db.session.commit()
-        return jsonify({"message": "Record added successfully"}), 201
-
+        try:   
+            # Check if the required fields are present in the request
+            if 'name' not in data or 'lastname' not in data or 'email' not in data:
+                return jsonify({"message": "Name, lastname, and email are required"}), 400
+            new_patient = Patients(name=data['name'],
+                                lastname=data['lastname'],
+                                email=data['email'],
+                                phone=data.get('phone'))
+            db.session.add(new_patient)
+            db.session.commit()
+            return jsonify({"message": "Record added successfully"}), 201
+        except IntegrityError as e:
+            if 'violates unique constraint "patients_email_key"' in str(e.orig):
+                return jsonify({'error': 'duplicated_email'}), 400
+        finally:
+            db.session.close()
 
 # Get, Update, and Delete a specific record in the 'patients' table
 @api.route("/patients/<int:patientid>", methods=['GET', 'PUT', 'DELETE'])
@@ -283,20 +314,30 @@ def handle_pros():
     if request.method == 'POST':
         data = request.json
         # Check if the required fields are present in the request
-        if 'name' not in data or 'lastname' not in data or 'email' not in data or 'phone' not in data or 'password' not in data or 'bookingpage_url' not in data:
-            return jsonify({"message": "Name, lastname, email, phone, password and bookingpage are required"}), 400
-        new_pro = Pros(name=data['name'],
-                       lastname=data['lastname'],
-                       email=data['email'],
-                       phone=data['phone'],
-                       password=data['password'],
-                       bookingpage_url=data['bookingpage_url'],
-                       config_status=data['config_status'],
-                       suscription=data.get('suscription'),
-                       title=data.get('title'))
-        db.session.add(new_pro)
-        db.session.commit()
-        return jsonify({"message": "Record added successfully"}), 201
+        try:
+            if 'name' not in data or 'lastname' not in data or 'email' not in data or 'phone' not in data or 'password' not in data or 'bookingpage_url' not in data:
+                return jsonify({"message": "Name, lastname, email, phone, password and bookingpage are required"}), 400
+            new_pro = Pros(name=data['name'],
+                        lastname=data['lastname'],
+                        email=data['email'],
+                        phone=data['phone'],
+                        password=data['password'],
+                        bookingpage_url=data['bookingpage_url'],
+                        config_status=data['config_status'],
+                        suscription=data.get('suscription'),
+                        title=data.get('title'))
+            db.session.add(new_pro)
+            db.session.commit()
+        except IntegrityError as e:
+            db.session.rollback()
+            if 'violates unique constraint "pros_email_key"' in str(e.orig):
+                return jsonify({'error': 'duplicated_email'}), 400
+            if 'violates unique constraint "pros_bookingpage_url_key"' in str(e.orig):
+                return jsonify({'error': 'duplicated_username'}), 400
+        finally:
+            db.session.close()
+        
+    return jsonify({"message": "Record added successfully"}), 201
 
 # Get, update or delete a specific Pro.
 @api.route("/pros/<int:proid>", methods=["GET", "PUT", "DELETE"])
