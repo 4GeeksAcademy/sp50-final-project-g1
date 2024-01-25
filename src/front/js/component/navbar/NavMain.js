@@ -16,6 +16,18 @@ export default function Navbar() {
     navigate("/login")
   }
 
+  const handleDashboard = () => {
+    if (store.currentPro.config_status === 0){
+      navigate("/signup/personal-data")
+    }
+    if (store.currentPro.config_status === 1){
+      navigate("/signup/location")
+    }
+    if (store.currentPro.config_status === 2){
+      navigate("/signup/specialization")
+    }
+  }
+
   return (
 
     <nav className="p-4 sticky-top shadow ">
@@ -30,7 +42,7 @@ export default function Navbar() {
 
         {store.isLoggedIn ? (
           <div>
-            <Link to="/dashboard"><button className="btn btn-sm btn-light me-3" >Dashboard</button></Link>
+            <button className="btn btn-sm btn-light me-3" onClick={handleDashboard} >{store.currentPro.config_status < 4 ? "Configuration" : "Dashboard"}</button>
             <button className="btn btn-sm btn-primary" onClick={handleLogout}>Logout</button>
           </div>
         ):(

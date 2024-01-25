@@ -19,6 +19,7 @@ const getState = ({getStore, getActions, setStore}) => {
 			login: (token) => {
 				setStore({isLoggedIn: true})
 				localStorage.setItem("token", token)
+				setStore({token: token})
 			},
 			logout: () => {
 				setStore({isLoggedIn: false})
@@ -28,6 +29,7 @@ const getState = ({getStore, getActions, setStore}) => {
 			isLogged: () => {
 				if(localStorage.getItem("token")){
 					setStore({isLoggedIn: true})
+					setStore({token: localStorage.getItem("token")})
 				}
 				else {
 					setStore({isLoggedIn: false})
@@ -84,7 +86,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				const response = await fetch(url, options)
 				if(response.ok){
 					const data = await response.json()
-					setStore({currentPro: data})
+					setStore({currentPro: data})	
 				}
 				else{
 					alert("Sorry, somenthing went wrong.")
@@ -102,7 +104,8 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					return true
+					const data = await response.json()
+					return data
 				}
 				else{
 					alert("Sorry, somenthing went wrong.")

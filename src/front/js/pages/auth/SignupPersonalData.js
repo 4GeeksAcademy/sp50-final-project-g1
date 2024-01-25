@@ -1,25 +1,57 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import { useNavigate, Link} from 'react-router-dom'
+import { Context } from "../../store/appContext";
 
 
 export default function SignupPersonalData() {
 
   const navigate = useNavigate()
 
+  const {store, actions} = useContext(Context)
+
   const [name, setName] = useState('')
   const [lastName, setLastName] = useState('')
   const [phone, setPhone] = useState('')
+  const [pro, setPro] = useState(store.currentPro)
 
+  const handleNext = async (e) => {
 
-  const handleNext = () => {
+    e.preventDefault()
+     
+    pro.name = name
+    pro.lastname = lastName
+    pro.phone = phone
+    pro.config_status = 1   
+
+    console.log(pro)
+
+    await actions.updatePro(pro)
+    console.log(store.currentPro)
+
     console.log('clicking next')
     navigate("/signup/location")
   }
+
+  useEffect(() => {
+    if(store.isLoggedIn){
+      const fetchData = async () => {
+        const response = await actions.authentication(store.token)
+        const proId = await response.logged_in_as
+        console.log(proId)
+        await actions.getPro(proId)
+        console.log(store.currentPro)
+        setPro(store.currentPro)
+      }
+      fetchData()
+    }
+    
+  }, [store.isLoggedIn])
 
 
 
   return (
     <> 
+    {!store.isLoggedIn ? navigate("/login") : 
     <section id="signupPersonalData" className="bg-light d-flex align-items-center" style={{ minHeight: '80vh'}}>
       <div className="container py-5">
 
@@ -60,14 +92,14 @@ export default function SignupPersonalData() {
             
             <div className="d-flex justify-content-between align-items-center border-top p-3">
               <Link to="/signup/" className="text-decoration-none"><p className="text-black">{"<"} Back</p></Link>
-              <button className="btn btn-primary btn-lg" style={{backgroundColor:"#14C4B9", border:"none"}} onClick={handleNext}>Next</button>
+              <button className="btn btn-primary btn-lg" style={{backgroundColor:"#14C4B9", border:"none"}} onClick={(e) => handleNext(e)}>Next</button>
             </div>
             
           </form>
         </div>
 
       </div>
-    </section>
+    </section>}
     
     </>
   )
