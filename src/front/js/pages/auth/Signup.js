@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../../store/appContext";
 
@@ -12,6 +12,10 @@ export default function Signup() {
   const [email, setEmail] = useState()
   const [username, setUsername] = useState()
   const [password, setPassword] = useState()
+  const [token, setToken] = useState(localStorage.getItem("token"))
+  const [pro, setPro] = useState({})
+
+
 
   const handleSubmit = async (e) => {
 
@@ -19,7 +23,7 @@ export default function Signup() {
 
     let object = {
       email,
-      "bookingpage_url": username,
+      bookingpage_url: username,
       password,
       name: "",
       lastname: "",
@@ -27,7 +31,7 @@ export default function Signup() {
       config_status: 0
     }
 
-   actions.newPro(object)
+   await actions.newPro(object)
 
    const url = process.env.BACKEND_URL + '/login'
     const options = {
@@ -41,11 +45,43 @@ export default function Signup() {
     console.log(response)
     if (response.ok) {
       const data = await response.json()
+      setToken(data.access_token)
       actions.login(data.access_token)
       console.log("logged in")
     }
-    /* navigate("/signup/personal-data") */
   }
+
+  useEffect(() => {
+    if (store.isLoggedIn) {
+      const fetchData = async () => {
+        if(token){
+          const proId = await actions.authentication(token)
+          setPro(proId.logged_in_as)
+        }
+      }
+      fetchData()
+    }
+  }, [store.isLoggedIn])
+
+  useEffect(() => {
+    const currentId = pro
+    console.log(currentId)
+    const fetchData = async () => {
+      await actions.getPro(currentId)
+      console.log(store.currentPro)
+      const currentPro = store.currentPro
+      if (currentPro.config_status === 0){
+        navigate("/signup/personal-data")
+      }
+      if (currentPro.config_status === 1){
+        navigate("/signup/location")
+      }
+      if (currentPro.config_status === 2){
+        navigate("/signup/specialization")
+      }
+    }
+    fetchData()
+  },[pro])
 
   return (
     <> 

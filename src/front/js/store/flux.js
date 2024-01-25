@@ -11,17 +11,46 @@ const getState = ({getStore, getActions, setStore}) => {
 			hoursByPro: [],
 			hoursByLocation: [],
 			inactivityByPro: [],
-			bookingsByPro: [],		
+			bookingsByPro: [],
+			token: "",		
 		},
 		actions: {
 			// Login
 			login: (token) => {
 				setStore({isLoggedIn: true})
 				localStorage.setItem("token", token)
+				setStore({token: token})
 			},
 			logout: () => {
 				setStore({isLoggedIn: false})
 				localStorage.removeItem("token")
+			},
+
+			isLogged: () => {
+				if(localStorage.getItem("token")){
+					setStore({isLoggedIn: true})
+					setStore({token: localStorage.getItem("token")})
+				}
+				else {
+					setStore({isLoggedIn: false})
+				}
+			},
+
+			authentication: async(token) => {
+				const url = process.env.BACKEND_URL + '/dashboard'
+				const options = {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${token}`
+					},
+				}
+				const response = await fetch(url, options)
+				if(response.ok) {
+					const data = await response.json()
+					return data
+				}
+				
 			},
 
 			// Pro actions
@@ -36,7 +65,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					return alert("Pro created!")
+					return true
 				}
 				else{
 					const data = await response.json()
@@ -57,7 +86,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				const response = await fetch(url, options)
 				if(response.ok){
 					const data = await response.json()
-					setStore({currentPro: data})
+					setStore({currentPro: data})	
 				}
 				else{
 					alert("Sorry, somenthing went wrong.")
@@ -75,7 +104,8 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					return true
+					const data = await response.json()
+					return data
 				}
 				else{
 					alert("Sorry, somenthing went wrong.")
