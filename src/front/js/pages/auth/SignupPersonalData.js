@@ -37,9 +37,7 @@ export default function SignupPersonalData() {
       const fetchData = async () => {
         const response = await actions.authentication(store.token)
         const proId = await response.logged_in_as
-        console.log(proId)
         await actions.getPro(proId)
-        console.log(store.currentPro)
         setPro(store.currentPro)
       }
       fetchData()

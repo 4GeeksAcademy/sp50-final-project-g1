@@ -10,9 +10,9 @@ export default function Home() {
     if(store.isLoggedIn){
       const fetchData = async () => {
         const response = await actions.authentication(store.token)
-        console.log(response)
-        const pro = await actions.getPro(response.logged_in_as)
-        console.log(store.currentPro)
+        const proId = await response.logged_in_as
+        await actions.getPro(proId)
+        setPro(store.currentPro)
       }
       fetchData()
     }
