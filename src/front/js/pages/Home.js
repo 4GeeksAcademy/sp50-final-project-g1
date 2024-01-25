@@ -12,7 +12,6 @@ export default function Home() {
         const response = await actions.authentication(store.token)
         const proId = await response.logged_in_as
         await actions.getPro(proId)
-        setPro(store.currentPro)
       }
       fetchData()
     }

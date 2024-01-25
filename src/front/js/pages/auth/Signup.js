@@ -23,7 +23,7 @@ export default function Signup() {
 
     let object = {
       email,
-      "bookingpage_url": username,
+      bookingpage_url: username,
       password,
       name: "",
       lastname: "",
