@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import { useNavigate, Link} from 'react-router-dom'
 
 
-export default function SignupSpecialization() {
+export default function SignupHours() {
 
   const navigate = useNavigate()
 
@@ -42,29 +42,20 @@ export default function SignupSpecialization() {
 
   const handleNext = (e) => {
     e.preventDefault()
-
-    for (const el of services) {
-        console.log({
-          specialization: specializations,
-          service:el,
-          price: prices[el],
-          duration: durations[el]
-        })
-    }
-    
+    console.log('specialization:', specializations,  ' services: ', services,' price: ', prices, ' duration: ', durations )
     navigate("/signup/hours")
   }
 
 
   const specializationList = [
-    {name: 'Physiotherapy',},
-    {name: 'Osteopaty',},
-    {name: 'Psychology',},
-    {name: 'Cardiology',},
-    {name: 'Dermatology',},
-    {name: 'Gynecology',},
-    {name: 'Orthopedics',},
-    {name: 'Radiology',},
+    {name: 'Physiotherapy', id: 134},
+    {name: 'Osteopaty', id: 456},
+    {name: 'Psychology', id: 789},
+    {name: 'Cardiology', id: 912},
+    {name: 'Dermatology', id: 234},
+    {name: 'Gynecology', id: 345},
+    {name: 'Orthopedics', id: 567},
+    {name: 'Radiology', id: 678},
   ];
 
   const serviceList = [
@@ -105,7 +96,7 @@ export default function SignupSpecialization() {
                     Select your specialization
                   </option>
                   {specializationList.map((specialization) => (
-                    <option key={specialization.name} value={specialization.name}>
+                    <option key={specialization.id} value={specialization.id}>
                       {specialization.name}
                     </option>
                   ))}
@@ -166,7 +157,7 @@ export default function SignupSpecialization() {
             ) : null}
 
             <div className="d-flex justify-content-between align-items-center border-top p-3">
-              <Link to="/signup/location" className="text-decoration-none"><p className="text-black">{"<"} Back</p></Link>
+              <Link to="/signup/specialization" className="text-decoration-none"><p className="text-black">{"<"} Back</p></Link>
               <input className="btn btn-primary btn-lg" type="submit" value="Next" style={{backgroundColor:"#14C4B9", border:"none" }}></input>
             </div>
             
