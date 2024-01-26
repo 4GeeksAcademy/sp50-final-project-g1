@@ -25,6 +25,7 @@ const injectContext = (PassedComponent) => {
 
 		useEffect(() => {
 			state.actions.isLogged()
+			state.actions.getServices()
 		}, []);
 
 		// The initial value for the context is not null anymore, but the current state of this component,

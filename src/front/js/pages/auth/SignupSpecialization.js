@@ -1,8 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import { useNavigate, Link} from 'react-router-dom'
+import { Context } from "../../store/appContext";
 
 
 export default function SignupSpecialization() {
+
+  const {store, actions} = useContext(Context)
 
   const navigate = useNavigate()
 
@@ -10,11 +13,34 @@ export default function SignupSpecialization() {
   const [specializations, setSpecializations] = useState('');
   const [prices, setPrices] = useState({});
   const [durations, setDurations] = useState({});
+  const [fullServiceList, setFullServiceList] = useState(store.services)
+  const [specializationList, setSpecializationList] = useState([])
+  const [currentServices, setCurrentServices] = useState([])
+  const [selectedServices, setSelectedServices] = useState([])
+
+
+  useEffect(() => {
+    let uniqueSpecializations = new Set()
+    fullServiceList.forEach(service => {
+      uniqueSpecializations.add(service.specialization)
+    })
+    setSpecializationList(Array.from(uniqueSpecializations))
+  }, [])  
+
+  useEffect(() => {
+    let filteredServices = []
+    fullServiceList.forEach(service => {
+      if(service.specialization === specializations) {
+        filteredServices.push(service)
+      }
+    })
+    setCurrentServices(filteredServices)
+  },[specializations])
 
 
   const handleCheckboxChange = (service) => {
-    if (services.includes(service)) {
-      setServices(services.filter(item => item !== service));
+    if (selectedServices.includes(service)) {
+    setSelectedServices(selectedServices.filter(item => item !== service));
 
       // Remove prices
       const { [service]: removedPrice, ...restPrices } = prices;
@@ -24,7 +50,7 @@ export default function SignupSpecialization() {
       const { [service]: removedDuration, ...restDurations } = durations;
       setDurations(restDurations);
     } else {
-      setServices([...services, service]);
+      setSelectedServices([...selectedServices, service]);
     }
   };
   
@@ -43,56 +69,21 @@ export default function SignupSpecialization() {
   const handleNext = (e) => {
     e.preventDefault()
 
-    for (const el of services) {
-        console.log({
-          specialization: specializations,
-          service:el,
+    let finalServices = []
+
+    for (const el of selectedServices) {
+        finalServices.push({
+          service_id:el,
           price: prices[el],
           duration: durations[el]
         })
     }
+
+    console.log(finalServices)
     
-    navigate("/signup/hours")
+    /* navigate("/signup/hours") */
   }
 
-
-  const specializationList = [
-    {name: 'Allergy and Immunology'},
-    {name: 'Cardiology'},
-    {name: 'Dermatology'},
-    {name: 'Emergency Medicine'},
-    {name: 'END (Ear, Nose, Throat)'},
-    {name: 'Endocrinology'},
-    {name: 'Gynecology'},
-    {name: 'Neurology'},
-    {name: 'Nephrology'},
-    {name: 'Nurse'},
-    {name: 'Oncology'},
-    {name: 'Ophthalmology'},
-    {name: 'Orthopedics'},
-    {name: 'Osteopaty'},
-    {name: 'Pediatrics'},
-    {name: 'Physiotherapy'},
-    {name: 'Psychology'},
-    {name: 'Pulmonology'},
-    {name: 'Radiology'},
-    {name: 'Rheumatology'},
-    {name: 'Urology'},
-    {name: 'Other'}
-];
-
-
-  const serviceList = [
-    {name: 'General Visit', id: 678},
-    {name: 'Assessment Visit', id: 578},
-    {name: 'Phone Consultation', id: 478},
-    {name: 'Rehabilitation Session', id: 378},
-    {name: 'Therapeutic Exercise Program', id: 278},
-    {name: 'Joint Mobilization', id: 178},
-    {name: 'Soft Tissue Massage', id: 778},
-    {name: 'Other', id: 999},
-  ];
-    
 
   return (
     <> 
@@ -121,8 +112,8 @@ export default function SignupSpecialization() {
                     Select your specialization
                   </option>
                   {specializationList.map((specialization) => (
-                    <option key={specialization.name} value={specialization.name}>
-                      {specialization.name}
+                    <option key={specialization} value={specialization}>
+                      {specialization}
                     </option>
                   ))}
                 </select>
@@ -139,18 +130,18 @@ export default function SignupSpecialization() {
                 <div className="p-4 mb-5 rounded" style={{ backgroundColor: "#E0F3F3" }}>
                   <div className="mb-3">
         
-                    {serviceList.map((service) => (
+                    {currentServices.map((service) => (
                       <div key={service.id} className="form-check d-flex align-items-center mb-3 border-bottom border-white p-3">
                         <input
                           type="checkbox"
                           className="form-check-input me-2"
                           id={`serviceCheckbox${service.id}`}
                           value={service.id}
-                          checked={services.includes(service.id)}
+                          checked={selectedServices.includes(service.id)}
                           onChange={() => handleCheckboxChange(service.id)}
                         />
                         <label className="form-check-label" htmlFor={`serviceCheckbox${service.id}`}>
-                          {service.name}
+                          {service.service_name}
                         </label>
                         <input
                           type="number"
@@ -158,7 +149,7 @@ export default function SignupSpecialization() {
                           placeholder="Price"
                           value={prices[service.id] || ''}
                           onChange={(e) => handlePriceChange(service.id, e.target.value)}
-                          disabled={!services.includes(service.id)} // Disabilita se il trattamento non è selezionato
+                          disabled={!selectedServices.includes(service.id)} // Disabilita se il trattamento non è selezionato
                         />
                         <input
                           type="number"
@@ -166,7 +157,7 @@ export default function SignupSpecialization() {
                           placeholder="Duration"
                           value={durations[service.id] || ''}
                           onChange={(e) => handleDurationChange(service.id, e.target.value)}
-                          disabled={!services.includes(service.id)} // Disabilita se il trattamento non è selezionato
+                          disabled={!selectedServices.includes(service.id)} // Disabilita se il trattamento non è selezionato
                         />
                       </div>
                     ))}

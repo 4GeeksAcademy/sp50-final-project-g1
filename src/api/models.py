@@ -40,7 +40,6 @@ class Locations(db.Model):
     address = db.Column(db.String, nullable=False)
     city = db.Column(db.String, nullable=False)
     country = db.Column(db.String, nullable=False)
-    duration = db.Column(db.Integer, nullable=False)
     pro_id = db.Column(db.ForeignKey("pros.id"), unique=True, nullable=False)
     pro = db.relationship("Pros")
 
@@ -59,8 +58,10 @@ class Hours(db.Model):
     __tablename__ = "hours"
     id = db.Column(db.Integer, primary_key=True)
     working_day = db.Column(db.Integer, nullable=False) 
-    starting_hour = db.Column(db.String, nullable=False)
-    ending_hour = db.Column(db.String, nullable=False)
+    starting_hour_morning = db.Column(db.String, nullable=False)
+    ending_hour_morning = db.Column(db.String, nullable=False)
+    starting_hour_after = db.Column(db.String)
+    ending_hour_after = db.Column(db.String)
     pro_id = db.Column(db.ForeignKey("pros.id"), nullable=False)
     location_id = db.Column(db.ForeignKey("locations.id"), nullable=False)
     pro = db.relationship("Pros")
@@ -72,8 +73,10 @@ class Hours(db.Model):
     def serialize(self):
         return {"id": self.id,
                 "working_day": self.working_day,
-                "starting_hour": self.starting_hour,
-                "ending_hour": self.ending_hour,
+                "starting_hour_morning": self.starting_hour_morning,
+                "ending_hour_morning": self.ending_hour_morning,
+                "starting_hour_after": self.starting_hour_after,
+                "ending_hour_after": self.ending_hour_after,
                 "pro_id": self.pro_id,}
 
 class InactivityDays(db.Model):
@@ -118,6 +121,7 @@ class ProServices(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     price = db.Column(db.Integer)
     pro_id = db.Column(db.ForeignKey("pros.id"), nullable=False)
+    duration = db.Column(db.Integer, nullable=False)
     service_id = db.Column(db.ForeignKey("services.id"), nullable=False)
     services = db.relationship("Services")
     pros = db.relationship("Pros")
