@@ -11,7 +11,8 @@ export default function SignupPersonalData() {
   const [phone, setPhone] = useState('')
 
 
-  const handleNext = () => {
+  const handleNext = (e) => {
+    e.preventDefault()
     console.log('clicking next')
     navigate("/signup/location")
   }
@@ -27,7 +28,7 @@ export default function SignupPersonalData() {
         <div className="col-md-7 col-lg-8 m-auto bg-white p-5" style={{border:"solid #D1D1D1 6px", borderRadius:"18px"}}>
           <h5>Personal Data</h5>
           <hr />
-          <form className="needs-validation" noValidate="" >
+          <form className="needs-validation" noValidate="" onSubmit={(e) => handleNext(e)}>
 
             <div className="p-4 mb-5 rounded" style={{backgroundColor:"#E0F3F3"}}>
               <div className="row g-3">
@@ -60,7 +61,7 @@ export default function SignupPersonalData() {
             
             <div className="d-flex justify-content-between align-items-center border-top p-3">
               <Link to="/signup/" className="text-decoration-none"><p className="text-black">{"<"} Back</p></Link>
-              <button className="btn btn-primary btn-lg" style={{backgroundColor:"#14C4B9", border:"none"}} onClick={handleNext}>Next</button>
+              <input type="submit" value="Next" className="btn btn-primary btn-lg" style={{backgroundColor:"#14C4B9", border:"none"}} ></input>
             </div>
             
           </form>
