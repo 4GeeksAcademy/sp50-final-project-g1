@@ -57,15 +57,30 @@ export default function SignupSpecialization() {
 
 
   const specializationList = [
-    {name: 'Physiotherapy',},
-    {name: 'Osteopaty',},
-    {name: 'Psychology',},
-    {name: 'Cardiology',},
-    {name: 'Dermatology',},
-    {name: 'Gynecology',},
-    {name: 'Orthopedics',},
-    {name: 'Radiology',},
-  ];
+    {name: 'Allergy and Immunology'},
+    {name: 'Cardiology'},
+    {name: 'Dermatology'},
+    {name: 'Emergency Medicine'},
+    {name: 'END (Ear, Nose, Throat)'},
+    {name: 'Endocrinology'},
+    {name: 'Gynecology'},
+    {name: 'Neurology'},
+    {name: 'Nephrology'},
+    {name: 'Nurse'},
+    {name: 'Oncology'},
+    {name: 'Ophthalmology'},
+    {name: 'Orthopedics'},
+    {name: 'Osteopaty'},
+    {name: 'Pediatrics'},
+    {name: 'Physiotherapy'},
+    {name: 'Psychology'},
+    {name: 'Pulmonology'},
+    {name: 'Radiology'},
+    {name: 'Rheumatology'},
+    {name: 'Urology'},
+    {name: 'Other'}
+];
+
 
   const serviceList = [
     {name: 'General Visit', id: 678},
@@ -75,6 +90,7 @@ export default function SignupSpecialization() {
     {name: 'Therapeutic Exercise Program', id: 278},
     {name: 'Joint Mobilization', id: 178},
     {name: 'Soft Tissue Massage', id: 778},
+    {name: 'Other', id: 999},
   ];
     
 

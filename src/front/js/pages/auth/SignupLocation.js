@@ -8,7 +8,6 @@ export default function SignupLocation() {
 
   const [studioName, setStudioName] = useState('')
   const [lastName, setLastName] = useState('')
-  const [phone, setPhone] = useState('')
 
 
   const handleNext = () => {
@@ -62,7 +61,7 @@ export default function SignupLocation() {
                   </div>
                 </div>
               </div>
-
+{/* 
               <h6 className="text-black-50">Visit Duration</h6>
               <p className="small text-black-50 fw-light">Define how long it takes a visit slot in your studio</p>
               <div className="p-4 mb-5 rounded" style={{backgroundColor:"#E0F3F3"}}>
@@ -73,7 +72,7 @@ export default function SignupLocation() {
                     Valid last name is required.
                   </div>
                 </div>
-              </div>
+              </div> */}
 
             
             <div className="d-flex justify-content-between align-items-center border-top p-3">

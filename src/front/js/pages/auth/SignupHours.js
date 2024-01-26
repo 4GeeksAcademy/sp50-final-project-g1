@@ -1,73 +1,79 @@
 import React, {useEffect, useState} from "react";
-import { useNavigate, Link} from 'react-router-dom'
+import { Link} from 'react-router-dom'
 
 
 export default function SignupHours() {
 
-  const navigate = useNavigate()
 
-  const [services, setServices] = useState([]);
-  const [specializations, setSpecializations] = useState('');
-  const [prices, setPrices] = useState({});
-  const [durations, setDurations] = useState({});
+  const [days, setDays] = useState([]);
+  const [morningStart, setMorningStart] = useState({});
+  const [morningEnd, setMorningEnd] = useState({});
+  const [afternoonStart, setAfternoonStart] = useState({});
+  const [afternoonEnd, setAfternoonEnd] = useState({});
 
 
-  const handleCheckboxChange = (service) => {
-    if (services.includes(service)) {
-      setServices(services.filter(item => item !== service));
-
-      // Remove prices
-      const { [service]: removedPrice, ...restPrices } = prices;
-      setPrices(restPrices);
-
-      // Remove durations
-      const { [service]: removedDuration, ...restDurations } = durations;
-      setDurations(restDurations);
+  const handleCheckboxChange = (day) => {
+    if (days.includes(day)) {
+      setDays(days.filter(item => item !== day));
+  
+      // Remove morningStart
+      const {[day]: removedMorningStart, ...restMorningStart} = morningStart;
+      setMorningStart(restMorningStart);
+  
+      // Remove morningEnd
+      const {[day]: removedMorningEnd, ...restMorningEnd} = morningEnd;
+      setMorningEnd(restMorningEnd);
+  
+      // Remove afternoonStart
+      const {[day]: removedAfternoonStart, ...restAfternoonStart} = afternoonStart;
+      setAfternoonStart(restAfternoonStart);
+  
+      // Remove afternoonEnd
+      const {[day]: removedAfternoonEnd, ...restAfternoonEnd} = afternoonEnd;
+      setAfternoonEnd(restAfternoonEnd);
     } else {
-      setServices([...services, service]);
+      setDays([...days, day]);
     }
   };
   
+  
 
-  const handlePriceChange = (service, price) => {
-    // Aggiorna il prezzo associato al trattamento
-    setPrices({ ...prices, [service]: price });
+  const handleMorningStartChange = (day, time) => {
+    setMorningStart({ ...morningStart, [day]: time });
   };
 
-  const handleDurationChange = (service, duration) => {
-    // Aggiorna il prezzo associato al trattamento
-    setDurations({ ...durations, [service]: duration });
+  const handleMorningEndChange = (day, duration) => {
+    setMorningEnd({ ...morningEnd, [day]: duration });
+  };
+
+  const handleAfternoonStartChange = (day, time) => {
+    setAfternoonStart({ ...morningStart, [day]: time });
+  };
+
+  const handleAfternoonEndChange = (day, duration) => {
+    setAfternoonEnd({ ...morningEnd, [day]: duration });
   };
 
 
   const handleNext = (e) => {
     e.preventDefault()
-    console.log('specialization:', specializations,  ' services: ', services,' price: ', prices, ' duration: ', durations )
-    navigate("/signup/hours")
+    console.log('day of weeks: ', days,)
+    console.log('morningStart Time: ', morningStart)
+    console.log('morningEnd Time: ', morningEnd)
+    console.log('afternnonStart Time: ', afternoonStart)
+    console.log('afternnonEnd Time: ', afternoonEnd)
   }
 
+  const dayList = [
+    {name: 'Mon', id: 1},
+    {name: 'Tue', id: 2},
+    {name: 'Wed', id: 3},
+    {name: 'Thu', id: 4},
+    {name: 'Fri', id: 5},
+    {name: 'Sat', id: 6},
+    {name: 'Sun', id: 7}
+];
 
-  const specializationList = [
-    {name: 'Physiotherapy', id: 134},
-    {name: 'Osteopaty', id: 456},
-    {name: 'Psychology', id: 789},
-    {name: 'Cardiology', id: 912},
-    {name: 'Dermatology', id: 234},
-    {name: 'Gynecology', id: 345},
-    {name: 'Orthopedics', id: 567},
-    {name: 'Radiology', id: 678},
-  ];
-
-  const serviceList = [
-    {name: 'General Visit', id: 678},
-    {name: 'Assessment Visit', id: 578},
-    {name: 'Phone Consultation', id: 478},
-    {name: 'Rehabilitation Session', id: 378},
-    {name: 'Therapeutic Exercise Program', id: 278},
-    {name: 'Joint Mobilization', id: 178},
-    {name: 'Soft Tissue Massage', id: 778},
-  ];
-    
 
   return (
     <> 
@@ -76,89 +82,97 @@ export default function SignupHours() {
 
 
         <div className="col-md-7 col-lg-8 m-auto bg-white p-5" style={{border:"solid #D1D1D1 6px", borderRadius:"18px"}}>
-          <h5>SpecializationList and services</h5>
+          <h5>Working Days and Hours</h5>
           <hr />
           <form className="needs-validation" noValidate="" onSubmit={(e) => handleNext(e)}>
 
-            <div className="p-4 mb-5 rounded" style={{ backgroundColor: "#E0F3F3" }}>
-              <div className="mb-3">
-                <label htmlFor="specialization" className="form-label">
-                  Specialization
-                </label>
-                <select
-                  className="form-select"
-                  id="specialization"
-                  required=""
-                  value={specializations}
-                  onChange={(e) => setSpecializations(e.target.value)}
-                >
-                  <option value="" disabled>
-                    Select your specialization
-                  </option>
-                  {specializationList.map((specialization) => (
-                    <option key={specialization.id} value={specialization.id}>
-                      {specialization.name}
-                    </option>
-                  ))}
-                </select>
-                <div className="invalid-feedback">Please select a specialization.</div>
-              </div>
-            </div>
 
-
-            {specializations ? (
-              <div id="services">
-                <h6 className="text-black-50">Select Sevices</h6>
-                <p className="small text-black-50 fw-light">Select up to 5 services for this specialization. <span className="fw-bold" style={{color:"#14C4B9"}}>Upgrade to premium</span> for unlimited services</p>
+              <div id="hours">
+                <p className="small text-black-50 fw-light">Select your working days. Define your hours shift within every day of work</p>
               
                 <div className="p-4 mb-5 rounded" style={{ backgroundColor: "#E0F3F3" }}>
                   <div className="mb-3">
         
-                    {serviceList.map((service) => (
-                      <div key={service.id} className="form-check d-flex align-items-center mb-3 border-bottom border-white p-3">
-                        <input
-                          type="checkbox"
-                          className="form-check-input me-2"
-                          id={`serviceCheckbox${service.id}`}
-                          value={service.id}
-                          checked={services.includes(service.id)}
-                          onChange={() => handleCheckboxChange(service.id)}
-                        />
-                        <label className="form-check-label" htmlFor={`serviceCheckbox${service.id}`}>
-                          {service.name}
-                        </label>
-                        <input
-                          type="number"
-                          className="form-control w-25 ms-auto me-3"
-                          placeholder="Price"
-                          value={prices[service.id] || ''}
-                          onChange={(e) => handlePriceChange(service.id, e.target.value)}
-                          disabled={!services.includes(service.id)} // Disabilita se il trattamento non è selezionato
-                        />
-                        <input
-                          type="number"
-                          className="form-control w-25"
-                          placeholder="Duration"
-                          value={durations[service.id] || ''}
-                          onChange={(e) => handleDurationChange(service.id, e.target.value)}
-                          disabled={!services.includes(service.id)} // Disabilita se il trattamento non è selezionato
-                        />
+
+                    <div className="d-flex text-center small text-black-50">
+                      <span className="col-2"></span>
+                      <span className="col-5 ">Morning hours</span>
+                      <span className="col-5 ">Afternoon hours</span>
+                    </div>
+                    {dayList.map((day) => (
+                      <div key={day.id} className="form-check d-flex align-items-center mb-3 border-bottom border-white p-3">
+
+                        <div className="col-2">
+                          <input
+                            type="checkbox"
+                            className="form-check-input me-2"
+                            id={`dayCheckbox${day.id}`}
+                            value={day.id}
+                            checked={days.includes(day.id)}
+                            onChange={() => handleCheckboxChange(day.id)}
+                          />
+                          <label className="form-check-label me-5" htmlFor={`dayCheckbox${day.id}`}>
+                            {day.name}
+                          </label>
+                        </div>
+                        
+                        <div id="first-shift" className="border-morningStart border-white d-flex px-3 col-5">
+                          <input
+                            type="number"
+                            className="form-control me-3 p-2 border"
+                            placeholder="Start"
+                            value={morningStart[day.id] || ''}
+                            onChange={(e) => handleMorningStartChange(day.id, e.target.value)}
+                            disabled={!days.includes(day.id)}
+
+                          />
+                          <input
+                            type="number"
+                            className="form-control"
+                            placeholder="End"
+                            value={morningEnd[day.id] || ''}
+                            onChange={(e) => handleMorningEndChange(day.id, e.target.value)}
+                            disabled={!days.includes(day.id)}
+                          />
+                        </div>
+
+                        <div di="second-shift" className="border-morningStart border-white d-flex px-3 col-5">
+                          <input
+                            type="number"
+                            className="form-control me-3 p-2 border"
+                            placeholder="Start"
+                            value={afternoonStart[day.id] || ''}
+                            onChange={(e) => handleAfternoonStartChange(day.id, e.target.value)}
+                            disabled={!days.includes(day.id)}
+
+                          />
+                          <input
+                            type="number"
+                            className="form-control"
+                            placeholder="End"
+                            value={afternoonEnd[day.id] || ''}
+                            onChange={(e) => handleAfternoonEndChange(day.id, e.target.value)}
+                            disabled={!days.includes(day.id)}
+                          />
+                        </div>
+    
+
                       </div>
                     ))}
 
                     <div className="invalid-feedback">
-                      Please select at least one service.
+                      Please select at least one day.
                     </div>
 
                   </div>
                 </div>
               
               </div>
-            ) : null}
+
 
             <div className="d-flex justify-content-between align-items-center border-top p-3">
               <Link to="/signup/specialization" className="text-decoration-none"><p className="text-black">{"<"} Back</p></Link>
-              <input className="btn btn-primary btn-lg" type="submit" value="Next" style={{backgroundColor:"#14C4B9", border:"none" }}></input>
+              <input className="btn btn-primary btn-lg" type="submit" value="Submit" style={{backgroundColor:"#14C4B9", border:"none" }}></input>
             </div>
             
           </form>
