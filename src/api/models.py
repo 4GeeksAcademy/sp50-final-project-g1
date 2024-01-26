@@ -11,7 +11,7 @@ class Pros(db.Model):
     name = db.Column(db.String(50), nullable=False)
     lastname = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    phone = db.Column(db.String(25), unique=True, nullable=False)
+    phone = db.Column(db.String(25), nullable=False)
     bookingpage_url = db.Column(db.String, unique=True, nullable=False)
     suscription = db.Column(db.Integer)
     config_status = db.Column(db.Integer, nullable=False)
@@ -29,7 +29,9 @@ class Pros(db.Model):
                 "lastname": self.lastname,
                 "email": self.email,
                 "phone": self.phone,
-                "bookingpage_url": self.bookingpage_url}
+                "bookingpage_url": self.bookingpage_url,
+                "config_status": self.config_status,
+                "title": self.title}
 
 class Locations(db.Model):
     __tablename__ = "locations"
@@ -134,7 +136,7 @@ class Patients(db.Model):
     name = db.Column(db.String(50), nullable=False)
     lastname = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    phone = db.Column(db.String(25), unique=True)
+    phone = db.Column(db.String(25))
 
     def __repr__(self):
         return f'<Patient {self.name}, {self.lastname} {self.email}>'

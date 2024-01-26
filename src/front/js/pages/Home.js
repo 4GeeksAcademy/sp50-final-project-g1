@@ -1,10 +1,22 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
 import bgImage from '../../img/bghero.png';
 
 
 export default function Home() {
 	const { store, actions } = useContext(Context);
+
+  useEffect(() => {
+    if(store.isLoggedIn){
+      const fetchData = async () => {
+        const response = await actions.authentication(store.token)
+        const proId = await response.logged_in_as
+        await actions.getPro(proId)
+      }
+      fetchData()
+    }
+    
+  }, [store.isLoggedIn])
 
 	return (
     <section id='hero' className="p-5">

@@ -1,20 +1,87 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Context } from "../../store/appContext";
 
 
 export default function Signup() {
 
   const navigate = useNavigate()
 
+  const {store, actions} = useContext(Context)
+
   const [email, setEmail] = useState()
   const [username, setUsername] = useState()
   const [password, setPassword] = useState()
+  const [token, setToken] = useState(localStorage.getItem("token"))
+  const [pro, setPro] = useState({})
 
-  const handleSubmit = async () => {
-    console.log('clicking on submit')
-    navigate("/signup/personal-data")
+
+
+  const handleSubmit = async (e) => {
+
+    e.preventDefault()
+
+    let object = {
+      email,
+      bookingpage_url: username,
+      password,
+      name: "",
+      lastname: "",
+      phone: "",
+      config_status: 0
+    }
+
+   await actions.newPro(object)
+
+   const url = process.env.BACKEND_URL + '/login'
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({email, password})
+    }
+    const response = await fetch(url, options);
+    console.log(response)
+    if (response.ok) {
+      const data = await response.json()
+      setToken(data.access_token)
+      actions.login(data.access_token)
+      console.log("logged in")
+    }
   }
 
+  useEffect(() => {
+    if (store.isLoggedIn) {
+      const fetchData = async () => {
+        if(token){
+          const proId = await actions.authentication(token)
+          setPro(proId.logged_in_as)
+        }
+      }
+      fetchData()
+    }
+  }, [store.isLoggedIn])
+
+  useEffect(() => {
+    const currentId = pro
+    console.log(currentId)
+    const fetchData = async () => {
+      await actions.getPro(currentId)
+      console.log(store.currentPro)
+      const currentPro = store.currentPro
+      if (currentPro.config_status === 0){
+        navigate("/signup/personal-data")
+      }
+      if (currentPro.config_status === 1){
+        navigate("/signup/location")
+      }
+      if (currentPro.config_status === 2){
+        navigate("/signup/specialization")
+      }
+    }
+    fetchData()
+  },[pro])
 
   return (
     <> 
@@ -58,7 +125,7 @@ export default function Signup() {
                       </div>
                     </div>
                   </div>
-                <button className="w-100 btn btn-primary btn-lg mt-5" onClick={handleSubmit} style={{backgroundColor:"#14C4B9", border:"none"}} >Submit</button>
+                <button className="w-100 btn btn-primary btn-lg mt-5" onClick={(e) => handleSubmit(e)} style={{backgroundColor:"#14C4B9", border:"none"}} >Submit</button>
               </form>
             </div>
             <p>Already have an account? <Link to="/login" style={{color:"#14C4B9"}}>Login Here</Link></p>

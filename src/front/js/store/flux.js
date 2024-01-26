@@ -11,17 +11,46 @@ const getState = ({getStore, getActions, setStore}) => {
 			hoursByPro: [],
 			hoursByLocation: [],
 			inactivityByPro: [],
-			bookingsByPro: [],		
+			bookingsByPro: [],
+			token: "",		
 		},
 		actions: {
 			// Login
 			login: (token) => {
 				setStore({isLoggedIn: true})
 				localStorage.setItem("token", token)
+				setStore({token: token})
 			},
 			logout: () => {
 				setStore({isLoggedIn: false})
 				localStorage.removeItem("token")
+			},
+
+			isLogged: () => {
+				if(localStorage.getItem("token")){
+					setStore({isLoggedIn: true})
+					setStore({token: localStorage.getItem("token")})
+				}
+				else {
+					setStore({isLoggedIn: false})
+				}
+			},
+
+			authentication: async(token) => {
+				const url = process.env.BACKEND_URL + '/dashboard'
+				const options = {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${token}`
+					},
+				}
+				const response = await fetch(url, options)
+				if(response.ok) {
+					const data = await response.json()
+					return data
+				}
+				
 			},
 
 			// Pro actions
@@ -39,8 +68,14 @@ const getState = ({getStore, getActions, setStore}) => {
 					return true
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
-					console.log("Error :", response.status, response.statusText)
+					const data = await response.json()
+					const error = data.error
+					if(error === 'duplicated_email'){
+						return alert("Email already exists")
+					}
+					if(error === 'duplicated_username'){
+						return alert("Username already exists")
+					}
 				}
 			},
 			getPro: async(pro_id) => {
@@ -50,8 +85,8 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
-					setStore({currentPro: data})
+					const data = await response.json()
+					setStore({currentPro: data})	
 				}
 				else{
 					alert("Sorry, somenthing went wrong.")
@@ -69,7 +104,8 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					return true
+					const data = await response.json()
+					return data
 				}
 				else{
 					alert("Sorry, somenthing went wrong.")
@@ -117,7 +153,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({services: data})
 				}
 				else{
@@ -132,7 +168,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					return data
 				}
 				else{
@@ -147,7 +183,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({servicesByPro: data})
 				}
 				else{
@@ -215,7 +251,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({proServicesByPro: data})
 				}
 				else{
@@ -282,7 +318,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({currentLocations: data})
 				}
 				else{
@@ -349,7 +385,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({hoursByPro: data})
 				}
 				else{
@@ -364,7 +400,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({hoursByLocation: data})
 				}
 				else{
@@ -431,7 +467,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({inactivityByPro: data})
 				}
 				else{
@@ -498,7 +534,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					setStore({bookingsByPro: data})
 				}
 				else{
@@ -565,7 +601,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					const data = response.json()
+					const data = await response.json()
 					return data
 				}
 				else{
