@@ -13,7 +13,7 @@ export default function SignupLocation() {
   const [country, setCountry] = useState('')
   const [city, setCity] = useState('')
   const [address, setAddress] = useState("")
-  const [duration, setDuration] = useState("")
+  /* const [duration, setDuration] = useState("") */
   const [pro, setPro] = useState(store.currentPro)
 
 
@@ -27,7 +27,6 @@ export default function SignupLocation() {
       city,
       address,
       "pro_id": pro.id,
-      duration
     }
 
     pro.config_status = 2
@@ -138,3 +137,6 @@ export default function SignupLocation() {
     </>
   )
 }
+
+
+

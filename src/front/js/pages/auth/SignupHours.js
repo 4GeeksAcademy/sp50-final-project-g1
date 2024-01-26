@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import { Link} from 'react-router-dom'
+import React, { useEffect, useState } from "react";
+import { Link } from 'react-router-dom'
 
 
 export default function SignupHours() {
@@ -15,28 +15,28 @@ export default function SignupHours() {
   const handleCheckboxChange = (day) => {
     if (days.includes(day)) {
       setDays(days.filter(item => item !== day));
-  
+
       // Remove morningStart
-      const {[day]: removedMorningStart, ...restMorningStart} = morningStart;
+      const { [day]: removedMorningStart, ...restMorningStart } = morningStart;
       setMorningStart(restMorningStart);
-  
+
       // Remove morningEnd
-      const {[day]: removedMorningEnd, ...restMorningEnd} = morningEnd;
+      const { [day]: removedMorningEnd, ...restMorningEnd } = morningEnd;
       setMorningEnd(restMorningEnd);
-  
+
       // Remove afternoonStart
-      const {[day]: removedAfternoonStart, ...restAfternoonStart} = afternoonStart;
+      const { [day]: removedAfternoonStart, ...restAfternoonStart } = afternoonStart;
       setAfternoonStart(restAfternoonStart);
-  
+
       // Remove afternoonEnd
-      const {[day]: removedAfternoonEnd, ...restAfternoonEnd} = afternoonEnd;
+      const { [day]: removedAfternoonEnd, ...restAfternoonEnd } = afternoonEnd;
       setAfternoonEnd(restAfternoonEnd);
     } else {
       setDays([...days, day]);
     }
   };
-  
-  
+
+
 
   const handleMorningStartChange = (day, time) => {
     setMorningStart({ ...morningStart, [day]: time });
@@ -57,42 +57,50 @@ export default function SignupHours() {
 
   const handleNext = (e) => {
     e.preventDefault()
-    console.log('day of weeks: ', days,)
-    console.log('morningStart Time: ', morningStart)
-    console.log('morningEnd Time: ', morningEnd)
-    console.log('afternnonStart Time: ', afternoonStart)
-    console.log('afternnonEnd Time: ', afternoonEnd)
+
+    let finalHours = []
+
+    for (const el of days) {
+      finalHours.push({
+        working_day: el,
+        starting_hour_morning: morningStart[el],
+        ending_hour_morning: morningEnd[el],
+        starting_hour_after: afternoonStart[el],
+        ending_hour_after: afternoonEnd[el],
+      })
+    }
+    console.log(finalHours)
   }
 
   const dayList = [
-    {name: 'Mon', id: 1},
-    {name: 'Tue', id: 2},
-    {name: 'Wed', id: 3},
-    {name: 'Thu', id: 4},
-    {name: 'Fri', id: 5},
-    {name: 'Sat', id: 6},
-    {name: 'Sun', id: 7}
-];
+    { name: 'Mon', id: 1 },
+    { name: 'Tue', id: 2 },
+    { name: 'Wed', id: 3 },
+    { name: 'Thu', id: 4 },
+    { name: 'Fri', id: 5 },
+    { name: 'Sat', id: 6 },
+    { name: 'Sun', id: 7 }
+  ];
 
 
   return (
-    <> 
-    <section id="signupPersonalData" className="bg-light d-flex align-items-center" style={{ minHeight: '80vh'}}>
-      <div className="container py-5">
+    <>
+      <section id="signupPersonalData" className="bg-light d-flex align-items-center" style={{ minHeight: '80vh' }}>
+        <div className="container py-5">
 
 
-        <div className="col-md-7 col-lg-8 m-auto bg-white p-5" style={{border:"solid #D1D1D1 6px", borderRadius:"18px"}}>
-          <h5>Working Days and Hours</h5>
-          <hr />
-          <form className="needs-validation" noValidate="" onSubmit={(e) => handleNext(e)}>
+          <div className="col-md-7 col-lg-8 m-auto bg-white p-5" style={{ border: "solid #D1D1D1 6px", borderRadius: "18px" }}>
+            <h5>Working Days and Hours</h5>
+            <hr />
+            <form className="needs-validation" noValidate="" onSubmit={(e) => handleNext(e)}>
 
 
               <div id="hours">
                 <p className="small text-black-50 fw-light">Select your working days. Define your hours shift within every day of work</p>
-              
+
                 <div className="p-4 mb-5 rounded" style={{ backgroundColor: "#E0F3F3" }}>
                   <div className="mb-3">
-        
+
 
                     <div className="d-flex text-center small text-black-50">
                       <span className="col-2"></span>
@@ -115,7 +123,7 @@ export default function SignupHours() {
                             {day.name}
                           </label>
                         </div>
-                        
+
                         <div id="first-shift" className="border-morningStart border-white d-flex px-3 col-5">
                           <input
                             type="number"
@@ -155,7 +163,7 @@ export default function SignupHours() {
                             disabled={!days.includes(day.id)}
                           />
                         </div>
-    
+
 
                       </div>
                     ))}
@@ -166,21 +174,21 @@ export default function SignupHours() {
 
                   </div>
                 </div>
-              
+
               </div>
 
 
-            <div className="d-flex justify-content-between align-items-center border-top p-3">
-              <Link to="/signup/specialization" className="text-decoration-none"><p className="text-black">{"<"} Back</p></Link>
-              <input className="btn btn-primary btn-lg" type="submit" value="Submit" style={{backgroundColor:"#14C4B9", border:"none" }}></input>
-            </div>
-            
-          </form>
-        </div>
+              <div className="d-flex justify-content-between align-items-center border-top p-3">
+                <Link to="/signup/specialization" className="text-decoration-none"><p className="text-black">{"<"} Back</p></Link>
+                <input className="btn btn-primary btn-lg" type="submit" value="Submit" style={{ backgroundColor: "#14C4B9", border: "none" }}></input>
+              </div>
 
-      </div>
-    </section>
-    
+            </form>
+          </div>
+
+        </div>
+      </section>
+
     </>
   )
 }

@@ -28,6 +28,8 @@ export default function SignupPersonalData() {
     await actions.updatePro(pro)
     console.log(store.currentPro)
 
+    navigate('/signup/location')
+
   }
 
 

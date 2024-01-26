@@ -48,11 +48,13 @@ def hours():
     if request.method == 'POST':
         data = request.json
         # Check if the required fields are present in the request
-        if 'working_day' not in data or 'starting_hour' not in data or 'ending_hour' not in data or 'pro_id' not in data:
+        if 'working_day' not in data or 'starting_hour_morning' not in data or 'ending_hour' not in data or 'pro_id' not in data:
             return jsonify({"message": "all data are required"}), 400
         new_hour = Hours(working_day=data.get('working_day'),
-                         starting_hour=data.get('starting_hour'),
-                         ending_hour=data.get('ending_hour'),
+                         starting_hour_morning=data.get('starting_hour_morning'),
+                         ending_hour_morning=data.get('ending_hour_morning'),
+                         starting_hour_after=data.get('starting_hour_after'),
+                         ending_hour_after=data.get('ending_hour_after'),
                          location_id=data.get('location_id'),
                          pro_id=data.get('pro_id'))
         db.session.add(new_hour)
@@ -92,8 +94,10 @@ def specific_hour(tableid):
     if request.method == 'PUT':
         data = request.json
         hour.working_day = data.get('working_day', hour.working_day)
-        hour.starting_hour = data.get('starting_hour', hour.starting_hour)
-        hour.ending_hour = data.get('ending_hour', hour.ending_hour)
+        hour.starting_hour_morning = data.get('starting_hour_morning', hour.starting_hour_morning)
+        hour.ending_hour_morning = data.get('ending_hour_morning', hour.ending_hour_morning)
+        hour.starting_hour_after = data.get('starting_hour_after', hour.starting_hour_after)
+        hour.ending_hour_after = data.get('ending_hour_after', hour.ending_hour_after)
         hour.pro_id = data.get('pro_id', hour.pro_id)
         db.session.commit()
         return jsonify({"message": "Record updated successfully"}), 200
@@ -259,7 +263,6 @@ def get_add_locations():
             city=data['city'],
             address=data.get('address'),
             country=data.get('country'),
-            duration=data.get('duration'),
             pro_id=data['pro_id']
         )
 
@@ -284,7 +287,6 @@ def specific_location(locationid):
         location.address = data.get('address', location.address)
         location.city = data.get('city', location.city)
         location.country = data.get('country', location.country)
-        location.duration = data.get('duration', location.duration)
         location.pro_id = data.get('pro_id', location.pro_id)
         db.session.commit()
         return jsonify({"message": "Record updated successfully"}), 200
@@ -380,6 +382,7 @@ def handle_proservices():
             return jsonify({"message": "pro_id and service_id are required"}), 400
         new_proservice = ProServices(pro_id=data['pro_id'],
                                      service_id=data['service_id'],
+                                     duration=data['duration'],
                                      price=data.get('price'))
         db.session.add(new_proservice)
         db.session.commit()
@@ -398,6 +401,7 @@ def handle_proservice(proserviceid):
         pro_service.price = data.get('price', pro_service.price)
         pro_service.pro_id = data.get('pro_id', pro_service.pro_id)
         pro_service.service_id = data.get('service_id', pro_service.service_id)
+        pro_service.duration = data.get('duration', pro_service.duration)
         db.session.commit()
         return jsonify({"message": "service updated successfully"}), 200
     if request.method == 'DELETE':
