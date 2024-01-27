@@ -79,6 +79,9 @@ export default function Signup() {
       if (currentPro.config_status === 2){
         navigate("/signup/specialization")
       }
+      if (currentPro.config_status === 3){
+        navigate("/signup/hours")
+      }
     }
     fetchData()
   },[pro])

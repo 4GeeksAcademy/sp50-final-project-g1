@@ -48,7 +48,7 @@ def hours():
     if request.method == 'POST':
         data = request.json
         # Check if the required fields are present in the request
-        if 'working_day' not in data or 'starting_hour_morning' not in data or 'ending_hour' not in data or 'pro_id' not in data:
+        if 'working_day' not in data or 'starting_hour_morning' not in data or 'ending_hour_morning' not in data or 'pro_id' not in data:
             return jsonify({"message": "all data are required"}), 400
         new_hour = Hours(working_day=data.get('working_day'),
                          starting_hour_morning=data.get('starting_hour_morning'),
