@@ -14,7 +14,6 @@ export default function SignupLocation() {
   const [city, setCity] = useState('')
   const [address, setAddress] = useState("")
   /* const [duration, setDuration] = useState("") */
-  const [pro, setPro] = useState(store.currentPro)
 
 
   const handleNext = async (e) => {
@@ -26,15 +25,15 @@ export default function SignupLocation() {
       country,
       city,
       address,
-      "pro_id": pro.id,
+      "pro_id": store.currentPro.id,
     }
 
-    pro.config_status = 2
+    store.currentPro.config_status = 2
 
     await actions.newLocation(location)
-    await actions.updatePro(pro)
+    await actions.updatePro(store.currentPro)
 
-    await actions.getLocationsByPro(pro.id)
+    await actions.getLocationsByPro(store.currentPro.id)
     console.log(store.currentLocations)
 
     console.log('clicking next')
@@ -48,7 +47,6 @@ export default function SignupLocation() {
         const response = await actions.authentication(store.token)
         const proId = await response.logged_in_as
         await actions.getPro(proId)
-        setPro(store.currentPro)
         console.log(store.currentPro)
       }
       fetchData()
