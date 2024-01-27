@@ -1,5 +1,5 @@
 import click
-from api.models import db, Pros, Locations, Services, ProServices, Hours, Patients, Bookings
+from api.models import db, Pros, Locations, Services, ProServices, Hours, Patients, Bookings, InactivityDays
 
 """
 In this file, you can add as many commands as you want using the @app.cli.command decorator
@@ -13,11 +13,11 @@ def setup_commands(app):
     Note: 5 is the number of users to add
     """
 
-    ## ALWAYS 5! -> flask insert-test-users 5
+    ## ALWAYS 5! -> flask insert-test-users
     @app.cli.command("insert-test-database")  # Name of our command
     ## @click.argument("count")  # Argument of out command
-    def insert_test_usersa():
-        count = 5 
+    def insert_test_data():
+        count = 5 ## DON'T CHANGE THIS
         print("Creating test users")
         for x in range(1, int(count) + 1):
             pro = Pros()
@@ -108,24 +108,28 @@ def setup_commands(app):
             db.session.commit()
             print("booking: ", booking.date, " created.")
         print("All test bookings created")
-        print("Database completed!!!")
+        print("-------------> Database completed!!! <-------------")
 
 
-    """ @app.cli.command("insert-test-bookings")
+    ## BE CAREFUL!!! THIS WILL DELETE ALL DATA IN THE DATABASE
+    @app.cli.command("red-button")
     def insert_bookings():
-        proservicelist = [1, 10, 2, 9, 3, 8, 4, 7, 5, 6]
-        timeslist = [10, 11, 12, 13, 16, 17, 18, 19, 12, 14]
-        count = 5
-        for x in range(1, (int(count) * 2) + 1):
-            booking = Bookings()
-            booking.id = x
-            booking.date= "2023-02-1" + str(x - 1)
-            booking.starting_time = timeslist[x - 1]
-            booking.status = "confirmed"
-            booking.pro_service_id = proservicelist[x - 1]
-            booking.patient_id = (x + 1) // 2
-            db.session.add(booking)
-            db.session.commit()
-            print("booking: ", booking.date, " created.")
-        print("All test bookings created") """
+        db.session.query(Bookings).delete()
+        print("Bookings deleted")
+        db.session.query(Hours).delete()
+        print("Hours deleted")
+        db.session.query(InactivityDays).delete()
+        print("Inactivities deleted")
+        db.session.query(Locations).delete()
+        print("Locations deleted")
+        db.session.query(ProServices).delete()
+        print("ProServices deleted")
+        db.session.query(Services).delete()
+        print("Services deleted")
+        db.session.query(Patients).delete()
+        print("Patients deleted")
+        db.session.query(Pros).delete()
+        print("Pros deleted")
+        db.session.commit()
+        print("-------------> Database deleted!!! <-------------")
 
