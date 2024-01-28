@@ -27,11 +27,11 @@ export default function Navbar() {
     if (store.currentPro.config_status === 2) {
       navigate("/signup/specialization")
     }
-    if (store.currentPro.config_status === 3){
+    if (store.currentPro.config_status === 3) {
       navigate("/signup/hours")
     }
     if (store.currentPro.config_status >= 4) {
-      navigate("/dashboard")
+      navigate("/dashboard/calendar")
     }
   }
 
