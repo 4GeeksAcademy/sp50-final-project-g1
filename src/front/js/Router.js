@@ -5,7 +5,8 @@ import injectContext from "./store/appContext.js";
 
 // Import pages
 import Home from "./pages/Home.js";
-import Login from "./pages/auth/Login.js";
+
+import Login from "./pages/auth/login.js";
 import Signup from "./pages/auth/Signup.js";
 import SignupPersonalData from "./pages/auth/SignupPersonalData.js";
 import SignupLocation from "./pages/auth/SignupLocation.js";
@@ -50,7 +51,7 @@ const Router = () => {
             <Route path="/signup/hours" element={<NavbarSignup><SignupHours /></NavbarSignup>} />
 
             {/* DASHBOARD */}
-            <Route path="/dashboard/" element={<DashboardSignup><DashAccountData /></DashboardSignup>} />
+            <Route path="/dashboard/account-data" element={<DashboardSignup><DashAccountData /></DashboardSignup>} />
             <Route path="/dashboard/calendar" element={<DashboardSignup><DashCalendar /></DashboardSignup>} />
 
             {/* NOT FOUND */}
