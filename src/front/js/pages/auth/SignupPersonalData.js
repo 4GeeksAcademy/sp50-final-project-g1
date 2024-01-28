@@ -12,20 +12,19 @@ export default function SignupPersonalData() {
   const [name, setName] = useState('')
   const [lastName, setLastName] = useState('')
   const [phone, setPhone] = useState('')
-  const [pro, setPro] = useState(store.currentPro)
 
   const handleNext = async (e) => {
 
     e.preventDefault()
 
-    pro.name = name
-    pro.lastname = lastName
-    pro.phone = phone
-    pro.config_status = 1
+    store.currentPro.name = name
+    store.currentPro.lastname = lastName
+    store.currentPro.phone = phone
+    store.currentPro.config_status = 1
 
-    console.log(pro)
+    console.log(store.currentPro)
 
-    await actions.updatePro(pro)
+    await actions.updatePro(store.currentPro)
     console.log(store.currentPro)
 
     navigate('/signup/location')
@@ -39,7 +38,6 @@ export default function SignupPersonalData() {
         const response = await actions.authentication(store.token)
         const proId = await response.logged_in_as
         await actions.getPro(proId)
-        setPro(store.currentPro)
       }
       fetchData()
     }

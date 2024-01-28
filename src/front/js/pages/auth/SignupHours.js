@@ -1,15 +1,33 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from 'react-router-dom'
+import { Context } from "../../store/appContext";
 
 
 export default function SignupHours() {
 
+  const {store, actions} = useContext(Context)
 
   const [days, setDays] = useState([]);
   const [morningStart, setMorningStart] = useState({});
   const [morningEnd, setMorningEnd] = useState({});
   const [afternoonStart, setAfternoonStart] = useState({});
   const [afternoonEnd, setAfternoonEnd] = useState({});
+
+
+  useEffect(() => {
+    if (store.isLoggedIn) {
+      const fetchData = async () => {
+        const response = await actions.authentication(store.token)
+        const proId = await response.logged_in_as
+        await actions.getPro(proId)
+        console.log(store.currentPro)
+        await actions.getLocationsByPro(proId)
+        console.log(store.currentLocations)
+      }
+      fetchData()
+    }
+
+  }, [store.isLoggedIn])
 
 
   const handleCheckboxChange = (day) => {
@@ -55,7 +73,7 @@ export default function SignupHours() {
   };
 
 
-  const handleNext = (e) => {
+  const handleNext = async (e) => {
     e.preventDefault()
 
     let finalHours = []
@@ -67,9 +85,23 @@ export default function SignupHours() {
         ending_hour_morning: morningEnd[el],
         starting_hour_after: afternoonStart[el],
         ending_hour_after: afternoonEnd[el],
+        pro_id: store.currentPro.id,
+        location_id: store.currentLocations[0].id
       })
     }
     console.log(finalHours)
+
+    for (const item of finalHours) {
+      await actions.newHours(item)
+    }
+
+    store.hoursByPro = finalHours
+    console.log(store.hoursByPro)
+
+    store.currentPro.config_status = 4
+    await actions.updatePro(store.currentPro)
+    
+    /* navigate("/signup/hours") */
   }
 
   const dayList = [

@@ -37,6 +37,18 @@ export default function SignupSpecialization() {
     setCurrentServices(filteredServices)
   },[specializations])
 
+  useEffect(() => {
+    if (store.isLoggedIn) {
+      const fetchData = async () => {
+        const response = await actions.authentication(store.token)
+        const proId = await response.logged_in_as
+        await actions.getPro(proId)
+      }
+      fetchData()
+    }
+
+  }, [store.isLoggedIn])
+
 
   const handleCheckboxChange = (service) => {
     if (selectedServices.includes(service)) {
@@ -66,7 +78,7 @@ export default function SignupSpecialization() {
   };
 
 
-  const handleNext = (e) => {
+  const handleNext = async (e) => {
     e.preventDefault()
 
     let finalServices = []
@@ -74,14 +86,25 @@ export default function SignupSpecialization() {
     for (const el of selectedServices) {
         finalServices.push({
           service_id:el,
-          price: prices[el],
-          duration: durations[el]
+          pro_id: store.currentPro.id,
+          price: parseInt(prices[el]),
+          duration: parseInt(durations[el])
         })
     }
 
     console.log(finalServices)
+
+    for (const item of finalServices) {
+        await actions.newProService(item)
+    }
+
+    store.proServicesByPro = finalServices
+    console.log(store.proServicesByPro)
+
+    store.currentPro.config_status = 3
+    await actions.updatePro(store.currentPro)
     
-    /* navigate("/signup/hours") */
+    navigate("/signup/hours")
   }
 
 
