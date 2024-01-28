@@ -8,7 +8,7 @@ import { Context } from "../../store/appContext.js";
 
 export default function Navbar() {
 
-  const {store, actions} = useContext(Context)
+  const { store, actions } = useContext(Context)
   const navigate = useNavigate()
 
   const handleLogout = () => {
@@ -17,14 +17,21 @@ export default function Navbar() {
   }
 
   const handleDashboard = () => {
-    if (store.currentPro.config_status === 0){
+    console.log('status: ', store)
+    if (store.currentPro.config_status === 0) {
       navigate("/signup/personal-data")
     }
-    if (store.currentPro.config_status === 1){
+    if (store.currentPro.config_status === 1) {
       navigate("/signup/location")
     }
-    if (store.currentPro.config_status === 2){
+    if (store.currentPro.config_status === 2) {
       navigate("/signup/specialization")
+    }
+    if (store.currentPro.config_status === 3) {
+      navigate("/signup/specialization")
+    }
+    if (store.currentPro.config_status >= 4) {
+      navigate("/dashboard")
     }
   }
 
@@ -42,17 +49,21 @@ export default function Navbar() {
 
         {store.isLoggedIn ? (
           <div>
-            <button className="btn btn-sm btn-light me-3" onClick={handleDashboard} >{store.currentPro.config_status < 4 ? "Configuration" : "Dashboard"}</button>
+            {store.currentPro.config_status < 4 ? (
+              <button className="btn btn-sm btn-light me-3" onClick={handleDashboard} >Configuration</button>
+            ) : (
+              <button className="btn btn-sm btn-light me-3" onClick={handleDashboard} >Dash</button>
+            )}
             <button className="btn btn-sm btn-primary" onClick={handleLogout}>Logout</button>
           </div>
-        ):(
+        ) : (
           <div className="text-black">
-              <Link to="/login" style={{ textDecoration:'none'}}>
-                <button className="mb-0 me-4 btn btn-sm btn-light border">Login</button>
-              </Link>
-              <Link to="/signup" style={{ textDecoration:'none'}}>
-                <button className="mb-0 me-4 btn btn-sm btn-primary border-0" style={{backgroundColor:"#14C4B9", border:"none"}}>Signup</button>
-              </Link>
+            <Link to="/login" style={{ textDecoration: 'none' }}>
+              <button className="mb-0 me-4 btn btn-sm btn-light border">Login</button>
+            </Link>
+            <Link to="/signup" style={{ textDecoration: 'none' }}>
+              <button className="mb-0 me-4 btn btn-sm btn-primary border-0" style={{ backgroundColor: "#14C4B9", border: "none" }}>Signup</button>
+            </Link>
           </div>
         )}
 
