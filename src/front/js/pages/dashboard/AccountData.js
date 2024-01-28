@@ -21,7 +21,6 @@ export default function AccountData() {
         const response = await actions.authentication(store.token);
 
         if (!response) {
-          // Si response es undefined o logged_in_as es undefined, no continúes
           console.error('Error: Respuesta de autenticación no válida');
           return;
         }
