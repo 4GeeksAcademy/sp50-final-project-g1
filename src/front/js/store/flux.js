@@ -89,7 +89,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					setStore({currentPro: data})	
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -108,7 +108,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					return data
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -122,7 +122,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					return true
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -142,7 +142,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					return true
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -157,7 +157,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					setStore({services: data})
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -172,7 +172,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					return data
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -187,7 +187,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					setStore({servicesByPro: data})
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 
@@ -206,7 +206,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					return true
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -220,7 +220,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					return true
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -240,7 +240,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					return true
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -255,7 +255,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					setStore({proServicesByPro: data})
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -273,7 +273,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					return true
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -287,7 +287,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					return true
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -307,7 +307,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					return true
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -322,7 +322,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					setStore({currentLocations: data})
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -340,7 +340,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					return true
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -354,7 +354,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					return true
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -374,7 +374,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					return true
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -389,7 +389,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					setStore({hoursByPro: data})
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -404,7 +404,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					setStore({hoursByLocation: data})
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -422,7 +422,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					return true
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -436,7 +436,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					return true
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -456,7 +456,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					return true
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -471,7 +471,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					setStore({inactivityByPro: data})
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -489,7 +489,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					return true
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -503,7 +503,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					return true
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -523,7 +523,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					return true
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -538,7 +538,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					setStore({bookingsByPro: data})
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -556,7 +556,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					return true
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -570,7 +570,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					return true
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -590,7 +590,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					return true
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -605,7 +605,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					return data
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -623,7 +623,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					return true
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
@@ -637,7 +637,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					return true
 				}
 				else{
-					alert("Sorry, somenthing went wrong.")
+					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
