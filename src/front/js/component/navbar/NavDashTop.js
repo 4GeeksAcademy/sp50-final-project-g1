@@ -17,7 +17,7 @@ export default function NavDashTop() {
     <>
       <div id='dash-menu' className="bg-black bg-opacity-50 p-4 d-flex align-items-center">
         <button className="btn btn-small btn-light border ms-auto text-black-50">Support</button>
-        <button className="btn btn-small btn-info ms-3 text-black-50" onClick={handleLogout}>Logout</button>
+        <button className="btn btn-small ms-3 text-white" onClick={handleLogout} style={{ backgroundColor: "#14C4B9" }}>Logout</button>
       </div>
       <div id='dash-navigator' className="bg-white text-black text-opacity-25" >
         <p className="container py-2">{url}</p>
