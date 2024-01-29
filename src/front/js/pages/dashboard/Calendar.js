@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
-import dayGridPlugin from '@fullcalendar/daygrid' // plugin
 
 export default function Calendar() {
   // Definisci lo stato per la gestione dei clic sulle date
@@ -42,7 +41,8 @@ export default function Calendar() {
                 center: 'title',
                 right: 'timeGridWeek,timeGridDay' // user can switch between the two
               }}
-              weekends={false}
+              duration={{ days: 4 }}
+              weekends={true}
               eventClick={handleEventClick}
               eventColor='#14C4B9'
               allDaySlot={false}
@@ -53,6 +53,11 @@ export default function Calendar() {
                 { title: 'General Treatment', start: '2024-02-01T13:30:00', end: '2024-02-01T14:30:00' },
                 { title: 'General Treatment', start: '2024-02-01T14:30:00', end: '2024-02-01T15:30:00' },
                 { title: 'General Treatment', start: '2024-02-01T15:30:00', end: '2024-02-01T16:30:00' },
+                { title: 'General Treatment', start: '2024-01-31T10:30:00', end: '2024-01-31T11:30:00' },
+                { title: 'General Treatment', start: '2024-01-31T11:30:00', end: '2024-01-31T12:30:00' },
+                { title: 'General Treatment', start: '2024-01-31T13:30:00', end: '2024-01-31T14:30:00' },
+                { title: 'General Treatment', start: '2024-01-31T14:30:00', end: '2024-01-31T15:30:00' },
+                { title: 'General Treatment', start: '2024-01-31T18:00:00', end: '2024-01-31T19:00:00' },
               ]}
             />
           </div>

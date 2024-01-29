@@ -1,12 +1,14 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
+import logoGray from '../../../img/logo_gray.png';
 
 export default function NavDashSide() {
   return (
     <div id='dash-sidebar-menu' className="bg-white p-4" style={{ width: "14rem" }}>
       <div className="mb-5 border-bottom text-center">
         <Link to="/dashboard/calendar" className="text-black-50 text-decoration-none fs-3">
-          <span className="">Doc<strong>Date</strong></span>
+          <img src={logoGray} width="150" className="me-3 rounded"></img>
+          {/* <span className="">Doc<strong>Date</strong></span> */}
         </Link>
       </div>
       <div id="dash-navigation" className="pt-5">
