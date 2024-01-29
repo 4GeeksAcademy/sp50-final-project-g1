@@ -47,8 +47,12 @@ export default function Calendar() {
               eventColor='#14C4B9'
               allDaySlot={false}
               events={[
-                { title: 'General Treatment', start: '2024-02-01T10:30:00', end: '2024-02-01T11:45:00' },
-                { title: 'General Treatment', start: '2024-02-01T11:30:00', end: '2024-02-01T12:30:00' },
+                {
+                  title: 'General Treatment', start: '2024-02-01T10:30:00', end: '2024-02-01T11:30:00', extendedProps: {
+                    department: 'BioChemistry'
+                  },
+                },
+                { title: 'General Treatment', start: '2024-02-01T11:30:00', end: '2024-02-01T12:50:00' },
                 { title: 'General Treatment', start: '2024-02-01T12:30:00', end: '2024-02-01T13:30:00' },
                 { title: 'General Treatment', start: '2024-02-01T13:30:00', end: '2024-02-01T14:30:00' },
                 { title: 'General Treatment', start: '2024-02-01T14:30:00', end: '2024-02-01T15:30:00' },
@@ -73,6 +77,7 @@ export default function Calendar() {
             </div>
             <div className="rounded bg-dark bg-opacity-10 p-3 text-black-50 fw-light">
               <p>EVENT NAME: <strong className="fw-bold">{selectedEvent.title}</strong></p>
+              <p>EVENT ciao: <strong className="fw-bold">{selectedEvent.ciao}</strong></p>
               <p>DATE: <strong className="fw-bold">{selectedEvent.startStr}</strong></p>
               <p>DURATION: <strong className="fw-bold">60 minutes</strong></p>
               <p>SPECIALIZATION: <strong className="fw-bold">Phisioterpy</strong></p>

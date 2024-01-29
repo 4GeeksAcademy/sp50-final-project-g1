@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Context } from "../../store/appContext";
 
 
 export default function SignupHours() {
 
-  const {store, actions} = useContext(Context)
+  const navigate = useNavigate()
+  const { store, actions } = useContext(Context)
 
   const [days, setDays] = useState([]);
   const [morningStart, setMorningStart] = useState({});
@@ -65,11 +66,11 @@ export default function SignupHours() {
   };
 
   const handleAfternoonStartChange = (day, time) => {
-    setAfternoonStart({ ...morningStart, [day]: time });
+    setAfternoonStart({ ...afternoonStart, [day]: time });
   };
 
   const handleAfternoonEndChange = (day, duration) => {
-    setAfternoonEnd({ ...morningEnd, [day]: duration });
+    setAfternoonEnd({ ...afternoonEnd, [day]: duration });
   };
 
 
@@ -100,8 +101,8 @@ export default function SignupHours() {
 
     store.currentPro.config_status = 4
     await actions.updatePro(store.currentPro)
-    
-    /* navigate("/signup/hours") */
+
+    navigate("/dashboard/calendar")
   }
 
   const dayList = [
@@ -158,7 +159,7 @@ export default function SignupHours() {
 
                         <div id="first-shift" className="border-morningStart border-white d-flex px-3 col-5">
                           <input
-                            type="number"
+                            type="time"
                             className="form-control me-3 p-2 border"
                             placeholder="Start"
                             value={morningStart[day.id] || ''}
@@ -167,7 +168,7 @@ export default function SignupHours() {
 
                           />
                           <input
-                            type="number"
+                            type="time"
                             className="form-control"
                             placeholder="End"
                             value={morningEnd[day.id] || ''}
@@ -178,7 +179,7 @@ export default function SignupHours() {
 
                         <div di="second-shift" className="border-morningStart border-white d-flex px-3 col-5">
                           <input
-                            type="number"
+                            type="time"
                             className="form-control me-3 p-2 border"
                             placeholder="Start"
                             value={afternoonStart[day.id] || ''}
@@ -187,7 +188,7 @@ export default function SignupHours() {
 
                           />
                           <input
-                            type="number"
+                            type="time"
                             className="form-control"
                             placeholder="End"
                             value={afternoonEnd[day.id] || ''}
