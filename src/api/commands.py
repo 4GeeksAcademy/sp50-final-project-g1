@@ -75,10 +75,10 @@ def setup_commands(app):
             hour.pro_id = (x + 1) // 2
             hour.location_id = (x + 1) // 2
             hour.working_day = (x + 1) // 2
-            hour.starting_hour_morning = 10
-            hour.starting_hour_after = 16
-            hour.ending_hour_morning = 14
-            hour.ending_hour_after = 20
+            hour.starting_hour_morning = "10:00"
+            hour.starting_hour_after = "16:00"
+            hour.ending_hour_morning = "14:00"
+            hour.ending_hour_after = "20:00"
             db.session.add(hour)
             db.session.commit()
             print("hour: ", hour.working_day, hour.pro_id, " created.")
@@ -99,8 +99,8 @@ def setup_commands(app):
         for x in range(1, (int(count) * 2) + 1):
             booking = Bookings()
             booking.id = x
-            booking.date= "2023-02-1" + str(x - 1)
-            booking.starting_time = timeslist[x - 1]
+            booking.date= "2024-02-1" + str(x - 1)
+            booking.starting_time = str(timeslist[x - 1]) + ":00"
             booking.status = "confirmed"
             booking.pro_service_id = proservicelist[x - 1]
             booking.patient_id = (x + 1) // 2

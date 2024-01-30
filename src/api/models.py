@@ -132,7 +132,8 @@ class ProServices(db.Model):
     def serialize(self):
         return {"pro_id": self.pro_id,
                 "service_id": self.service_id,
-                "price": self.price}
+                "price": self.price,
+                "duration": self.duration}
 
 class Patients(db.Model):
     __tablename__ = "patients"
@@ -174,7 +175,7 @@ class Bookings(db.Model):
                 "starting_time": self.starting_time,
                 "status": self.status,
                 "patient": self.patient_id,
-                "service": self.pro_service_id}
+                "pro_service": self.pro_service_id}
 
 
 

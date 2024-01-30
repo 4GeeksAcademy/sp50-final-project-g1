@@ -12,7 +12,8 @@ const getState = ({getStore, getActions, setStore}) => {
 			hoursByLocation: [],
 			inactivityByPro: [],
 			bookingsByPro: [],
-			token: "",		
+			token: "",
+			fullBookingsByPro: []	
 		},
 		actions: {
 			// Login
@@ -24,6 +25,18 @@ const getState = ({getStore, getActions, setStore}) => {
 			logout: () => {
 				setStore({isLoggedIn: false})
 				localStorage.removeItem("token")
+				setStore({currentPro: {}})
+				setStore({currentLocations: []})
+				setStore({services: []})
+				setStore({proServicesByPro: []})
+				setStore({hoursByPro: []})
+				setStore({inactivityByPro: []})
+				setStore({servicesByPro: []})
+				setStore({hoursByLocation: []})
+				setStore({bookingsByPro: []})
+				setStore({fullBookingsByPro: []})
+				setStore({token: ""})
+				setStore({isAdmin: false})
 			},
 
 			isLogged: () => {
@@ -190,7 +203,21 @@ const getState = ({getStore, getActions, setStore}) => {
 					/* alert("Sorry, somenthing went wrong.") */
 					console.log("Error :", response.status, response.statusText)
 				}
-
+			},
+			getServiceByBooking: async(proservice_id) => {
+				const url = process.env.BACKEND_URL + `/bookings/${proservice_id}/services`;
+				const options = {
+					method: "GET"           
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					const data = await response.json()
+					return data
+				}
+				else{
+					/* alert("Sorry, somenthing went wrong.") */
+					console.log("Error :", response.status, response.statusText)
+				}
 			},
 			updateService: async(object) => {
 				const url = process.env.BACKEND_URL + `/pros/${object.id}`;
@@ -238,6 +265,21 @@ const getState = ({getStore, getActions, setStore}) => {
 				const response = await fetch(url, options)
 				if(response.ok){
 					return true
+				}
+				else{
+					/* alert("Sorry, somenthing went wrong.") */
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
+			getProService: async(proservice_id) => {
+				const url = process.env.BACKEND_URL + `/proservices/${proservice_id}`;
+				const options = {
+					method: "GET"           
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					const data = await response.json()
+					return data
 				}
 				else{
 					/* alert("Sorry, somenthing went wrong.") */
