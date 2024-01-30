@@ -467,6 +467,16 @@ def handle_services_by_pro(proid):
     serialized_services = [service.serialize() for service in services_by_pro]
     return jsonify(serialized_services), 200
 
+# Get Service by proservice_id in booking
+@api.route("/bookings/<int:proserviceid>/services", methods=["GET"])
+def handle_service_by_booking(proserviceid):
+    service_by_booking = Services.query.join(ProServices).join(Bookings).filter_by(pro_service_id=proserviceid).first()
+    if not service_by_booking:
+        return jsonify({"message": "No records found for the specified pro_id"}), 404
+    """ serialized_services = [service.serialize() for service in pro_service_by_booking] """
+    print("--------------------", service_by_booking)
+    return jsonify(service_by_booking.serialize()), 200
+
 # Get all InactivityDays and Post new InactivityDay.
 @api.route("/inactivity", methods=["GET", "POST"])
 def handle_inactivitydays():

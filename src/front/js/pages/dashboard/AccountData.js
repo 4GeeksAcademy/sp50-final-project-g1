@@ -33,31 +33,14 @@ export default function AccountData() {
         setUserName(store.currentPro.bookingpage_url)
         setPhone(store.currentPro.phone)
 
-        await actions.getLocationsByPro(proId);
-        console.log("-----PRO-LOCATIONS-----", store.currentLocations);
-
-        await actions.getBookingsByPro(proId);
-        console.log("-----PRO-BOOKINGS-----", store.bookingsByPro);
-
-        await actions.getServicesByPro(proId);
-        console.log("-----SERVICES-BY-PRO-----", store.servicesByPro);
-
-        await actions.getProServicesByPro(proId);
-        console.log("-----PRO-SERVICES-----", store.proServicesByPro);
-
-        await actions.getHoursByPro(proId);
-        console.log("-----PRO-HOURS-----", store.hoursByPro);
-
-        await actions.getHoursByLocation(store.currentLocations[0].id);
-        console.log("-----LOCATION-HOURS-----", store.hoursByLocation);
-
-        await actions.getInactivityByPro(proId);
-        console.log("-----PRO-INACTIVITY-----", store.inactivityByPro);
       } catch (error) {
         console.error('Error al obtener datos del profesional:', error);
       }
     };
-    fetchData();
+    if(!Object.keys(store.currentPro).length){
+      fetchData();
+    }
+    
   }, [store.isLoggedIn, store.token]);
 
 

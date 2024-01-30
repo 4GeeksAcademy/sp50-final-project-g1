@@ -82,6 +82,9 @@ export default function Signup() {
       if (currentPro.config_status === 3){
         navigate("/signup/hours")
       }
+      if (currentPro.config_status >= 4){
+        navigate("/dashboard/calendar")
+      }
     }
     fetchData()
   },[pro])

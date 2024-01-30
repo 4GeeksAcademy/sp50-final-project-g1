@@ -1,12 +1,112 @@
-import React, { useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
+import { Context } from "../../store/appContext";
 
 export default function Calendar() {
+
+  const {store, actions} = useContext(Context)
   // Definisci lo stato per la gestione dei clic sulle date
   const [selectedEvent, setSelectedEvent] = useState({});
   const [showOffcanvas, setShowOffcanvas] = useState(false);
   const [showAddBooking, setShowAddBooking] = useState(false);
+  const [detailsLoaded, setDetailsLoaded] = useState(false)
+  const [endingDatesLoaded, setEndingDatesLoaded] = useState(false)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await actions.authentication(store.token);
+
+        if (!response) {
+          console.error('Error: Respuesta de autenticación no válida');
+          return;
+        }
+
+        const proId = response.logged_in_as;
+        await actions.getPro(proId);
+        console.log("-----PRO-----", store.currentPro);
+
+        await actions.getLocationsByPro(proId);
+        console.log("-----PRO-LOCATIONS-----", store.currentLocations);
+
+        await actions.getBookingsByPro(proId);
+        console.log("-----PRO-BOOKINGS-----", store.bookingsByPro);
+
+        await actions.getServicesByPro(proId);
+        console.log("-----SERVICES-BY-PRO-----", store.servicesByPro);
+
+        await actions.getProServicesByPro(proId);
+        console.log("-----PRO-SERVICES-----", store.proServicesByPro);
+
+        await actions.getHoursByPro(proId);
+        console.log("-----PRO-HOURS-----", store.hoursByPro);
+
+        await actions.getHoursByLocation(store.currentLocations[0].id);
+        console.log("-----LOCATION-HOURS-----", store.hoursByLocation);
+
+        await actions.getInactivityByPro(proId);
+        console.log("-----PRO-INACTIVITY-----", store.inactivityByPro);
+
+        const bookingPromises = Object.values(store.bookingsByPro).map(async (booking) => {
+          const serviceByBookingPromise = actions.getServiceByBooking(booking.pro_service)
+          const patientByBookingPromise = actions.getPatient(booking.patient)
+          const proServiceByBookingPromise = actions.getProService(booking.pro_service)
+          const [serviceByBooking, patientByBooking, proServiceByBooking] = await Promise.all([
+            serviceByBookingPromise,
+            patientByBookingPromise,
+            proServiceByBookingPromise
+          ]);
+        booking.service = serviceByBooking;
+        booking.patient = patientByBooking;
+        booking.pro_service = proServiceByBooking;
+
+        return booking;
+      });
+
+      let bookingsWithServiceList = await Promise.all(bookingPromises);
+      store.fullBookingsByPro = bookingsWithServiceList;
+      console.log("-----STORE_FULL_BOOKINGS-----", store.fullBookingsByPro);
+      setDetailsLoaded(true)
+
+
+      } catch (error) {
+        console.error('Error al obtener datos del profesional:', error);
+      }
+    };
+    if (store.fullBookingsByPro.length === 0) {
+      fetchData(); 
+    }
+    
+  }, [store.isLoggedIn, store.token]);
+
+  // Give calculated ending time to bookings
+  useEffect(() => {
+    function getEndingDate(booking, date, starting_time, minutes) {
+      const fullDate = new Date(`${date}T${starting_time}`);
+      fullDate.setMinutes(fullDate.getMinutes() + parseInt(minutes, 10));
+      const hours = fullDate.getHours().toString().padStart(2, '0');
+      const nerMinutes = fullDate.getMinutes().toString().padStart(2, '0');
+      const seconds = fullDate.getSeconds().toString().padStart(2, '0');
+      const finalTime = `${hours}:${nerMinutes}:${seconds}`;
+      
+      booking.ending_time = finalTime;
+      return booking;
+    }
+    if (store.fullBookingsByPro.length > 0) {
+      store.fullBookingsByPro = store.fullBookingsByPro.map((booking) => {
+        return getEndingDate(
+          booking,
+          booking.date,
+          booking.starting_time,
+          booking.pro_service.duration
+        );
+      });
+      setEndingDatesLoaded(true)
+    }
+    console.log("fullBookingsByPro with ending date:", store.fullBookingsByPro);
+  }, [detailsLoaded]);
+
 
 
   // Definisci la funzione per gestire i clic sulle date
@@ -46,23 +146,22 @@ export default function Calendar() {
               eventClick={handleEventClick}
               eventColor='#14C4B9'
               allDaySlot={false}
-              events={[
-                {
-                  title: 'General Treatment', start: '2024-02-01T10:30:00', end: '2024-02-01T11:30:00', extendedProps: {
-                    department: 'BioChemistry'
-                  },
-                },
-                { title: 'General Treatment', start: '2024-02-01T11:30:00', end: '2024-02-01T12:50:00' },
-                { title: 'General Treatment', start: '2024-02-01T12:30:00', end: '2024-02-01T13:30:00' },
-                { title: 'General Treatment', start: '2024-02-01T13:30:00', end: '2024-02-01T14:30:00' },
-                { title: 'General Treatment', start: '2024-02-01T14:30:00', end: '2024-02-01T15:30:00' },
-                { title: 'General Treatment', start: '2024-02-01T15:30:00', end: '2024-02-01T16:30:00' },
-                { title: 'General Treatment', start: '2024-01-31T10:30:00', end: '2024-01-31T11:30:00' },
-                { title: 'General Treatment', start: '2024-01-31T11:30:00', end: '2024-01-31T12:30:00' },
-                { title: 'General Treatment', start: '2024-01-31T13:30:00', end: '2024-01-31T14:30:00' },
-                { title: 'General Treatment', start: '2024-01-31T14:30:00', end: '2024-01-31T15:30:00' },
-                { title: 'General Treatment', start: '2024-01-31T18:00:00', end: '2024-01-31T19:00:00' },
-              ]}
+              events={
+                endingDatesLoaded
+                  ? store.fullBookingsByPro.map((booking) => ({
+                      title: booking.service.service_name,
+                      start: `${booking.date}T${booking.starting_time}:00`,
+                      end: `${booking.date}T${booking.ending_time}`,
+                      extendedProps: {
+                        specialization: booking.service.specialization,
+                        service: booking.service.service_name, 
+                        patient: booking.patient.name,
+                        status: booking.status,
+                        duration: booking.pro_service.duration
+                      },
+                    }))
+                  : []
+              }
             />
           </div>
         </div>
@@ -77,13 +176,12 @@ export default function Calendar() {
             </div>
             <div className="rounded bg-dark bg-opacity-10 p-3 text-black-50 fw-light">
               <p>EVENT NAME: <strong className="fw-bold">{selectedEvent.title}</strong></p>
-              <p>EVENT ciao: <strong className="fw-bold">{selectedEvent.ciao}</strong></p>
               <p>DATE: <strong className="fw-bold">{selectedEvent.startStr}</strong></p>
-              <p>DURATION: <strong className="fw-bold">60 minutes</strong></p>
-              <p>SPECIALIZATION: <strong className="fw-bold">Phisioterpy</strong></p>
-              <p>SERVICE: <strong className="fw-bold">General tratment</strong></p>
-              <p>PATIENT: <strong className="fw-bold">Yoel Cabaleiro</strong></p>
-              <p>STATUS: <strong className="fw-bold">Confirmed</strong></p>
+              <p>DURATION: <strong className="fw-bold">{selectedEvent.extendedProps.duration} minutes</strong></p>
+              <p>SPECIALIZATION: <strong className="fw-bold">{selectedEvent.extendedProps.specialization}</strong></p>
+              <p>SERVICE: <strong className="fw-bold">{selectedEvent.extendedProps.service}</strong></p>
+              <p>PATIENT: <strong className="fw-bold">{selectedEvent.extendedProps.patient}</strong></p>
+              <p>STATUS: <strong className="fw-bold">{selectedEvent.extendedProps.status}</strong></p>
               <p>PATIENT NOTES: <strong className="fw-bold"></strong></p>
               <p>MY NOTES: <strong className="fw-bold"></strong></p>
             </div>
