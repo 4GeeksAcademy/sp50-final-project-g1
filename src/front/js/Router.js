@@ -6,7 +6,7 @@ import injectContext from "./store/appContext.js";
 // Import pages
 import Home from "./pages/Home.js";
 
-import Login from "./pages/auth/login.js";
+import Login from "./pages/auth/Login.js";
 import Signup from "./pages/auth/Signup.js";
 import SignupPersonalData from "./pages/auth/SignupPersonalData.js";
 import SignupLocation from "./pages/auth/SignupLocation.js";
@@ -14,6 +14,7 @@ import SignupSpecialization from "./pages/auth/SignupSpecialization.js";
 import SignupHours from "./pages/auth/SignupHours.js";
 import DashAccountData from "./pages/dashboard/AccountData.js";
 import DashCalendar from "./pages/dashboard/Calendar.js";
+import DashWorkingDay from "./pages/dashboard/WorkingDay.js";
 import File404 from "./pages/File404.js";
 
 // Import components
@@ -53,6 +54,7 @@ const Router = () => {
             {/* DASHBOARD */}
             <Route path="/dashboard/account-data" element={<DashboardSignup><DashAccountData /></DashboardSignup>} />
             <Route path="/dashboard/calendar" element={<DashboardSignup><DashCalendar /></DashboardSignup>} />
+            <Route path="/dashboard/working-day" element={<DashboardSignup><DashWorkingDay /></DashboardSignup>} />
 
             {/* NOT FOUND */}
             <Route path="*" element={<NavbarLayout><File404 /></NavbarLayout>} />
