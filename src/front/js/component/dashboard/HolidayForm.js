@@ -11,9 +11,11 @@ export default function HolidayForm() {
   const [currentInactivityDays, setCurrentInactivityDays] = useState([])
   const [editStatus, setEditStatus] = useState(false)
   const [showAddHoliday, setShowAddHoliday] = useState(false)
-  const [holidayType, setHolidayType] = useState(true)
-
-
+  const [holidayType, setHolidayType] = useState(false)
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
+  const [startTime, setStartTime] = useState('')
+  const [endTime, setEndTime] = useState('')
 
 
   // Functions: holiay update
@@ -36,7 +38,30 @@ export default function HolidayForm() {
   }
   const handleHolidayType = () => {
     setHolidayType(!holidayType)
+    setStartDate('')
+    setEndDate('')
+    setStartTime('')
+    setEndTime('')
   }
+
+  const handleHolidaySubmit = (e) => {
+    e.preventDefault()
+    console.log('click on submit one day holiday')
+
+    const newHoliday = { startDate, endDate, startTime, endTime }
+    console.log(newHoliday)
+
+  }
+
+  const handleLongHolidaySubmit = (e) => {
+    e.preventDefault()
+    console.log('click on submit long holiday')
+
+    const newHoliday = { startDate, endDate, startTime, endTime }
+    console.log(newHoliday)
+
+  }
+
 
   // Effect on page load
   useEffect(() => {
@@ -59,8 +84,6 @@ export default function HolidayForm() {
   return (
 
     <>
-
-
       <div className="text-black-50 mx-auto w-75" style={{ marginBottom: "6rem" }}>
         <div className="d-flex">
           <h4 className=" text-decoration-underline">HOLIDAY</h4>
@@ -143,26 +166,61 @@ export default function HolidayForm() {
           <div className="rounded bg-dark bg-opacity-10 p-3 text-black-50 fw-light">
 
             {!holidayType ? (
-              <form>
-                {/* SINGLE DAY HOLIDAY */}
+              <form onSubmit={handleHolidaySubmit}>
+                {/* LONG PERIOD HOLIDAY  */}
                 <h5 className="mb-4 text-decoration-underline">Holiday Period</h5>
-                <lable className="small mb-2">Start Date</lable>
-                <input type='date' className="d-block mb-3 p-2 w-100 rounded border-0"></input>
-                <lable className="small mb-2">End Date</lable>
-                <input type='date' className="d-block mb-4 p-2 w-100 rounded border-0"></input>
-                <input type='submit' value="Add Holiday" className="btn btn-sm border-0 text-white" style={{ backgroundColor: "#14C4B9" }} />
+                <span className="small mb-2 text-black-50">Start Date</span>
+                <input
+                  type='date'
+                  className="d-block mb-3 p-2 w-100 rounded border-0"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)} // Aggiorna la data di inizio
+                />
+                <span className="small mb-2 text-black-50">End Date</span>
+                <input
+                  type='date'
+                  className="d-block mb-4 p-2 w-100 rounded border-0"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)} // Aggiorna la data di fine
+                />
+                <input
+                  type='submit'
+                  value="Add Holiday"
+                  className="btn btn-sm border-0 text-white"
+                  style={{ backgroundColor: "#14C4B9" }}
+                />
               </form>
             ) : (
-              <form>
-                {/* LONG PERIOD HOLIDAY */}
+              <form onSubmit={handleHolidaySubmit}>
+                {/* SINGLE DAY HOLIDAY */}
                 <h5 className="mb-4 text-decoration-underline">Single day break</h5>
-                <lable className="small mb-2">Date</lable>
-                <input type='date' className="d-block mb-3 p-2 w-100 rounded border-0"></input>
-                <lable className="small mb-2">Star Hours</lable>
-                <input type='time' className="d-block mb-3 p-2 w-100 rounded border-0"></input>
-                <lable className="small mb-2">End Hours</lable>
-                <input type='time' className="d-block mb-4 p-2 w-100 rounded border-0"></input>
-                <input type='submit' value="Add Holiday" className="btn btn-sm border-0 text-white" style={{ backgroundColor: "#14C4B9" }} />
+                <span className="small mb-2 text-black-50">Date</span>
+                <input
+                  type='date'
+                  className="d-block mb-3 p-2 w-100 rounded border-0"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)} // Aggiorna la data
+                />
+                <span className="small mb-2 text-black-50">Start Hours</span>
+                <input
+                  type='time'
+                  className="d-block mb-3 p-2 w-100 rounded border-0"
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)} // Aggiorna l'orario di inizio
+                />
+                <span className="small mb-2 text-black-50">End Hours</span>
+                <input
+                  type='time'
+                  className="d-block mb-4 p-2 w-100 rounded border-0"
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)} // Aggiorna l'orario di fine
+                />
+                <input
+                  type='submit'
+                  value="Add Holiday"
+                  className="btn btn-sm border-0 text-white"
+                  style={{ backgroundColor: "#14C4B9" }}
+                />
               </form>
             )}
 
@@ -170,8 +228,6 @@ export default function HolidayForm() {
 
         </div>
       ) : (null)}
-
     </>
-
   )
 }
