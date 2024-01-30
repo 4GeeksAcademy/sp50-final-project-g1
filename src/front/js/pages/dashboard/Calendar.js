@@ -104,7 +104,7 @@ export default function Calendar() {
       });
       setEndingDatesLoaded(true)
     }
-    console.log("Updated fullBookingsByPro:", store.fullBookingsByPro);
+    console.log("fullBookingsByPro with ending date:", store.fullBookingsByPro);
   }, [detailsLoaded]);
 
 
