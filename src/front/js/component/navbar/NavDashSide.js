@@ -15,9 +15,9 @@ export default function NavDashSide() {
         <ul className="list-unstyled fs-5">
           <li className="mb-5"><Link to="/dashboard/calendar" className="text-black-50 text-decoration-none">CALENDAR</Link></li>
           <li className="mb-5"><Link to="/dashboard/account-data" className="text-black-50 text-decoration-none">ACCOUNT DATA</Link></li>
+          <li className="mb-5"><Link to="/dashboard/working-day" className="text-black-50 text-decoration-none">WORKING DAY</Link></li>
           <li className="mb-5"><Link to="/dashboard/account-data" className="text-black-50 text-decoration-none">PATIENTS</Link></li>
           <li className="mb-5"><Link to="/dashboard/account-data" className="text-black-50 text-decoration-none">MY STUDIO</Link></li>
-          <li className="mb-5"><Link to="/dashboard/account-data" className="text-black-50 text-decoration-none">WORKING DAY</Link></li>
           <li className="mb-5"><Link to="/dashboard/account-data" className="text-black-50 text-decoration-none">SERVICES</Link></li>
         </ul>
       </div>
