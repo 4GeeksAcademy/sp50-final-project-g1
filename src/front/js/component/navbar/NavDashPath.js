@@ -11,7 +11,7 @@ export default function NavDashPath() {
 
   return (
     <div id='dash-navigator' className="bg-white text-black text-opacity-25" >
-      <p className="container py-2">{url}</p>
+      <p className=" p-3">{url}</p>
     </div>
   )
 }
