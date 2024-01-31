@@ -1,26 +1,51 @@
-import React from 'react'
-import { Link } from 'react-router-dom';
-import logoGray from '../../../img/logo_gray.png';
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+
 
 export default function NavDashSide() {
+  const location = useLocation();
+  const [currentUrl, setCurrentUrl] = useState(location.pathname);
+
+  const handleMenuClick = (url) => {
+    setCurrentUrl(url);
+  };
+
   return (
-    <div id='dash-sidebar-menu' className="bg-white p-4" style={{ width: "14rem" }}>
-      <div className="mb-5 border-bottom text-center">
-        <Link to="/dashboard/calendar" className="text-black-50 text-decoration-none fs-3">
-          <img src={logoGray} width="150" className="me-3 rounded"></img>
-          {/* <span className="">Doc<strong>Date</strong></span> */}
-        </Link>
-      </div>
-      <div id="dash-navigation" className="pt-5">
-        <ul className="list-unstyled fs-5">
-          <li className="mb-5"><Link to="/dashboard/calendar" className="text-black-50 text-decoration-none">CALENDAR</Link></li>
-          <li className="mb-5"><Link to="/dashboard/account-data" className="text-black-50 text-decoration-none">ACCOUNT DATA</Link></li>
-          <li className="mb-5"><Link to="/dashboard/working-day" className="text-black-50 text-decoration-none">WORKING DAY</Link></li>
-          <li className="mb-5"><Link to="/dashboard/account-data" className="text-black-50 text-decoration-none">PATIENTS</Link></li>
-          <li className="mb-5"><Link to="/dashboard/account-data" className="text-black-50 text-decoration-none">MY STUDIO</Link></li>
-          <li className="mb-5"><Link to="/dashboard/account-data" className="text-black-50 text-decoration-none">SERVICES</Link></li>
-        </ul>
-      </div>
+
+    <div id="dash-navigation" className=" bg-white px-4 py-5" style={{ width: "14rem" }}>
+      <ul className="list-unstyled fs-5">
+        <li className="mb-5">
+          <Link to="/dashboard/calendar" className="text-decoration-none" onClick={() => handleMenuClick("/dashboard/calendar")}>
+            <span className={currentUrl === "/dashboard/calendar" ? "fw-bold" : "text-black-50"} style={{ color: currentUrl === "/dashboard/calendar" ? "#14C4B9" : "inherit" }}>CALENDAR</span>
+          </Link>
+        </li>
+        <li className="mb-5">
+          <Link to="/dashboard/account-data" className="text-decoration-none" onClick={() => handleMenuClick("/dashboard/account-data")}>
+            {currentUrl === "/dashboard/account-data" ? (<span className="fw-bold" style={{ color: "#14C4B9" }}>ACCOUNT DATA</span>) : (<span className="text-black-50">ACCOUNT DATA</span>)}
+          </Link>
+        </li>
+
+        <li className="mb-5">
+          <Link to="/dashboard/working-day" className="text-decoration-none" onClick={() => handleMenuClick("/dashboard/working-day")}>
+            {currentUrl === "/dashboard/working-day" ? (<span className="fw-bold" style={{ color: "#14C4B9" }}>WORKING DAY</span>) : (<span className="text-black-50">WORKING DAY</span>)}
+          </Link>
+        </li>
+        <li className="mb-5">
+          <Link to="/dashboard/calendar" className="text-decoration-none" onClick={() => handleMenuClick("/dashboard/calendar")}>
+            {currentUrl === "/dashboard/patients" ? (<span className="fw-bold" style={{ color: "#14C4B9" }}>PATIENTS</span>) : (<span className="text-black-50">PATIENTS</span>)}
+          </Link>
+        </li>
+        <li className="mb-5">
+          <Link to="/dashboard/calendar" className="text-decoration-none" onClick={() => handleMenuClick("/dashboard/calendar")}>
+            {currentUrl === "/dashboard/studio" ? (<span className="fw-bold" style={{ color: "#14C4B9" }}>MY STUDIO</span>) : (<span className="text-black-50">MY STUDIO</span>)}
+          </Link>
+        </li>
+        <li className="mb-5">
+          <Link to="/dashboard/calendar" className="text-decoration-none" onClick={() => handleMenuClick("/dashboard/calendar")}>
+            {currentUrl === "/dashboard/services" ? (<span className="fw-bold" style={{ color: "#14C4B9" }}>SERVICES</span>) : (<span className="text-black-50">SERVICES</span>)}
+          </Link>
+        </li>
+      </ul>
     </div>
   )
 }

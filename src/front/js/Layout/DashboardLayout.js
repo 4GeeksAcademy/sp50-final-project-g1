@@ -2,19 +2,23 @@ import React from 'react'
 import Footer from '../component/footer/Footer'
 import NavDashSide from '../component/navbar/NavDashSide';
 import NavDashTop from '../component/navbar/NavDashTop';
+import NavDashPath from '../component/navbar/NavDashPath';
 
 
 export default function DashboardLayout({ children }) {
   return (
-    <div className=" d-flex">
-      <NavDashSide />
 
-      <div id="main-content" className="bg-light w-100">
-        <NavDashTop />
-        {children}
-        <Footer />
+    <>
+      <NavDashTop />
+
+      <div className=" d-flex">
+        <NavDashSide />
+        <div className="bg-light w-100">
+          <NavDashPath />
+          {children}
+          <Footer />
+        </div>
       </div>
-
-    </div>
+    </>
   );
 };
