@@ -1,10 +1,12 @@
 import React, { useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Context } from "../../store/appContext.js";
+
+// Components
+import logoGray from '../../../img/logo_gray.png';
 
 export default function NavDashTop() {
 
-  const url = window.location.pathname
   const { store, actions } = useContext(Context)
   const navigate = useNavigate()
 
@@ -14,14 +16,17 @@ export default function NavDashTop() {
   }
 
   return (
-    <>
-      <div id='dash-menu' className="bg-black bg-opacity-50 p-4 d-flex align-items-center">
-        <button className="btn btn-small btn-light border ms-auto text-black-50">Support</button>
-        <button className="btn btn-small ms-3 text-white" onClick={handleLogout} style={{ backgroundColor: "#14C4B9" }}>Logout</button>
+    <div id='dash-menu' className="bg-black bg-opacity-50 p-4 d-flex align-items-center">
+      <div className="">
+        <Link to="/dashboard/calendar" className="text-black-50 text-decoration-none fs-3">
+          <img src={logoGray} width="120" className="me-3 rounded"></img>
+        </Link>
       </div>
-      <div id='dash-navigator' className="bg-white text-black text-opacity-25" >
-        <p className="container py-2">{url}</p>
+
+      <div className="ms-auto">
+        <button className="btn btn-sm btn-light border-0 ms-auto text-black-50">Support</button>
+        <button className="btn btn-sm ms-3 text-white border-0" onClick={handleLogout} style={{ backgroundColor: "#14C4B9" }}>Logout</button>
       </div>
-    </>
+    </div>
   )
 }

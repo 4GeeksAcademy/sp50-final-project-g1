@@ -5,7 +5,7 @@ import { Context } from "../../store/appContext";
 
 export default function Calendar() {
 
-  const {store, actions} = useContext(Context)
+  const { store, actions } = useContext(Context)
   // Definisci lo stato per la gestione dei clic sulle date
   const [selectedEvent, setSelectedEvent] = useState({});
   const [showOffcanvas, setShowOffcanvas] = useState(false);
@@ -48,16 +48,19 @@ export default function Calendar() {
         await actions.getInactivityByPro(proId);
         console.log("-----PRO-INACTIVITY-----", store.inactivityByPro);
 
+
       setDetailsLoaded(true)
 
       } catch (error) {
         console.error('Error al obtener datos del profesional:', error);
       }
     };
+
     if (store.bookingsByPro.length === 0) {
       fetchData(); 
+
     }
-    
+
   }, [store.isLoggedIn, store.token]);
 
   // Give calculated ending time to bookings
@@ -69,7 +72,7 @@ export default function Calendar() {
       const nerMinutes = fullDate.getMinutes().toString().padStart(2, '0');
       const seconds = fullDate.getSeconds().toString().padStart(2, '0');
       const finalTime = `${hours}:${nerMinutes}:${seconds}`;
-      
+
       booking.ending_time = finalTime;
       return booking;
     }
@@ -107,11 +110,12 @@ export default function Calendar() {
   return (
     <div className="min-vh-100">
       <div id='account-data' className="align-items-center bg-light py-5 container">
-        <div className="text-black-50 w-75 mx-auto mb-5">
-          <div className="d-flex mb-4">
-            <h4 className="text-decoration-underline">MY CALENDAR</h4>
+        <div className="text-black-50 mx-auto w-75" style={{ marginBottom: "6rem" }}>
+          <div className="d-flex">
+            <h4 className=" text-decoration-underline">MY CALENDAR</h4>
             <button className="btn btn-sm ms-auto text-white" style={{ backgroundColor: "#14C4B9" }} onClick={handleAddBookingForm}>Add New Booking</button>
           </div>
+          <hr />
           <div className="p-5 rounded bg-white border text-black-50">
             <FullCalendar
               plugins={[timeGridPlugin]}
@@ -128,6 +132,7 @@ export default function Calendar() {
               allDaySlot={false}
               events={
                 endingDatesLoaded
+
                   ? store.bookingsByPro.map((booking) => ({
                       title: booking.service_name,
                       start: `${booking.date}T${booking.starting_time}:00`,
@@ -145,6 +150,7 @@ export default function Calendar() {
                         proNotes: booking.pro_notes
                       },
                     }))
+
                   : []
               }
             />
