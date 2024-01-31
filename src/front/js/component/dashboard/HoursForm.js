@@ -10,17 +10,49 @@ export default function HoursForm() {
   const { store, actions } = useContext(Context)
 
   const [days, setDays] = useState([]);
-  const [morningStart, setMorningStart] = useState({ 1: '10:30', 2: '10:30' });
-  const [morningEnd, setMorningEnd] = useState({ 1: '10:30', 2: '10:30' });
-  const [afternoonStart, setAfternoonStart] = useState({ 1: '10:30', 2: '10:30' });
-  const [afternoonEnd, setAfternoonEnd] = useState({ 1: '10:30', 2: '10:30' });
+  const [morningStart, setMorningStart] = useState({});
+  const [morningEnd, setMorningEnd] = useState({});
+  const [afternoonStart, setAfternoonStart] = useState({});
+  const [afternoonEnd, setAfternoonEnd] = useState({});
   const [editWorkingStatus, setEditWorkingStatus] = useState(false);
+
+  // Effect on page
+  useEffect(() => {
+    if (!store.isLoggedIn) {
+       // navigate('/login');
+    } else {
+      const fetchData = async () => {
+        const response = await actions.authentication(store.token);
+        const proId = response.logged_in_as;
+        await actions.getPro(proId);
+        await actions.getHoursByPro(proId);
+        await actions.getLocationsByPro(proId);
+        setDays(store.hoursByPro.map(shift => shift.working_day));
+        let morningHoursStart = {}
+        let morningHoursEnd = {}
+        let afterHoursStart = {}
+        let afterHoursEnd = {}
+        store.hoursByPro.map((item) => {
+          morningHoursStart[item.working_day] = item.starting_hour_morning
+          morningHoursEnd[item.working_day] = item.ending_hour_morning
+          afterHoursStart[item.working_day] = item.starting_hour_after
+          afterHoursEnd[item.working_day] = item.ending_hour_after
+        })
+        setMorningStart(morningHoursStart)
+        setMorningEnd(morningHoursEnd)
+        setAfternoonStart(afterHoursStart)
+        setAfternoonEnd(afterHoursEnd)
+      };
+      fetchData();
+    }
+  }, [store.isLoggedIn, store.token]);
+
 
   const handleEditWorking = () => {
     setEditWorkingStatus(!editWorkingStatus);
   }
 
-  const handleSaveWorking = () => {
+  const handleSaveWorking = async () => {
     setEditWorkingStatus(!editWorkingStatus);
 
     let finalHours = []
@@ -37,6 +69,14 @@ export default function HoursForm() {
       })
     }
     console.log('hours', finalHours)
+
+    await actions.deleteHoursByPro(store.currentPro.id)
+
+    for (const hour of finalHours) {
+      await actions.newHours(hour)
+    }
+    console.log("Hours updated")
+    alert("Schedule updated!")
 
   }
 
@@ -74,22 +114,7 @@ export default function HoursForm() {
     { name: 'Sun', id: 7 }
   ];
 
-  // Effect on page
-  useEffect(() => {
-    if (!store.isLoggedIn) {
-      // navigate('/login');
-    } else {
-      const fetchData = async () => {
-        const response = await actions.authentication(store.token);
-        const proId = response.logged_in_as;
-        await actions.getPro(proId);
-        await actions.getHoursByPro(proId);
-        await actions.getLocationsByPro(proId);
-        setDays(store.hoursByPro.map(shift => shift.working_day));
-      };
-      fetchData();
-    }
-  }, [store.isLoggedIn, store.token]);
+
 
   return (
 

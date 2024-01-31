@@ -435,6 +435,21 @@ const getState = ({getStore, getActions, setStore}) => {
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
+			deleteHoursByPro: async(pro_id) => {
+				const url = process.env.BACKEND_URL + `/pros/${pro_id}/hours`;
+				const options = {
+					method: "DELETE"           
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					setStore({hoursByPro: []})
+					setStore({hoursByLocation: []})
+				}
+				else{
+					/* alert("Sorry, somenthing went wrong.") */
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
 			getHoursByLocation: async(location_id) => {
 				const url = process.env.BACKEND_URL + `/pros/${location_id}/hours`;
 				const options = {
@@ -513,7 +528,7 @@ const getState = ({getStore, getActions, setStore}) => {
 					setStore({inactivityByPro: data})
 				}
 				else{
-					/* alert("Sorry, somenthing went wrong.") */
+					setStore({inactivityByPro: []})
 					console.log("Error :", response.status, response.statusText)
 				}
 			},

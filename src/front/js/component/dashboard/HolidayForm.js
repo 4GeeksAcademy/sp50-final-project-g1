@@ -17,52 +17,6 @@ export default function HolidayForm() {
   const [startTime, setStartTime] = useState('')
   const [endTime, setEndTime] = useState('')
 
-
-  // Functions: holiay update
-  const handleEditHoliday = () => {
-    setEditStatus(!editStatus)
-  }
-  const handleSaveHoliday = (e) => {
-    e.preventDefault()
-    setEditStatus(!editStatus)
-    console.log('holiday updated: ', currentInactivityDays)
-  }
-  const handleDelete = (holidayDeleted) => {
-    const updatedInactivityDays = currentInactivityDays.filter(holiday => holiday.id !== holidayDeleted.id);
-    setCurrentInactivityDays(updatedInactivityDays);
-  }
-
-  // Functions: add new holiday
-  const handleAddHoliday = () => {
-    setShowAddHoliday(!showAddHoliday)
-  }
-  const handleHolidayType = () => {
-    setHolidayType(!holidayType)
-    setStartDate('')
-    setEndDate('')
-    setStartTime('')
-    setEndTime('')
-  }
-
-  const handleHolidaySubmit = (e) => {
-    e.preventDefault()
-    console.log('click on submit one day holiday')
-
-    const newHoliday = { startDate, endDate, startTime, endTime }
-    console.log(newHoliday)
-
-  }
-
-  const handleLongHolidaySubmit = (e) => {
-    e.preventDefault()
-    console.log('click on submit long holiday')
-
-    const newHoliday = { startDate, endDate, startTime, endTime }
-    console.log(newHoliday)
-
-  }
-
-
   // Effect on page load
   useEffect(() => {
     if (!store.isLoggedIn) {
@@ -81,12 +35,60 @@ export default function HolidayForm() {
   }, [store.isLoggedIn, store.token]);
 
 
+  // Functions: holiay update
+  const handleEditHoliday = () => {
+    setEditStatus(!editStatus)
+  }
+  const handleSaveHoliday = (e) => {
+    e.preventDefault()
+    setEditStatus(!editStatus)
+    console.log('holiday updated: ', currentInactivityDays)
+  }
+  const handleDelete = async (holidayDeleted) => {
+    const updatedInactivityDays = currentInactivityDays.filter(holiday => holiday.id !== holidayDeleted.id);
+    setCurrentInactivityDays(updatedInactivityDays);
+    await actions.deleteInactivity(holidayDeleted.id)
+    console.log("holiday deleted")
+    await actions.getInactivityByPro(store.currentPro.id)
+
+    console.log("inactivityByPro updated")
+
+  }
+
+  // Functions: add new holiday
+  const handleAddHoliday = () => {
+    setShowAddHoliday(!showAddHoliday)
+  }
+  const handleHolidayType = () => {
+    setHolidayType(!holidayType)
+    setStartDate('')
+    setEndDate('')
+    setStartTime('')
+    setEndTime('')
+  }
+
+  const handleHolidaySubmit = async(e) => {
+    e.preventDefault()
+    console.log('click on submit one day holiday')
+
+    const newHoliday = { starting_date: startDate, ending_date: endDate, starting_hour: startTime, ending_hour: endTime, pro_id: store.currentPro.id }
+    console.log(newHoliday)
+
+    await actions.newInactivity(newHoliday)
+    setCurrentInactivityDays([...currentInactivityDays, newHoliday])
+    await actions.getInactivityByPro(store.currentPro.id)
+
+    console.log("inactivity added")
+
+  }
+
+
   return (
 
     <>
       <div className="text-black-50 mx-auto w-75" style={{ marginBottom: "6rem" }}>
         <div className="d-flex">
-          <h4 className=" text-decoration-underline">HOLIDAY</h4>
+          <h4 className=" text-decoration-underline">HOLIDAYS</h4>
           <button className="ms-auto btn-sm text-white border-0" style={{ backgroundColor: "#14C4B9", border: "none" }} onClick={handleAddHoliday}>Add New</button>
         </div>
         <hr />
