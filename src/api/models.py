@@ -127,7 +127,7 @@ class ProServices(db.Model):
     pros = db.relationship("Pros")
 
     def __repr__(self):
-        return f'<Pro services {self.price}, {self.pro_id}, {self.service_id}>'
+        return f'<Pro services {self.price}, {self.pro_id}, {self.service_id}, {self.pros.email}>'
 
     def serialize(self):
         return {"pro_id": self.pro_id,
@@ -174,8 +174,15 @@ class Bookings(db.Model):
                 "date": self.date,
                 "starting_time": self.starting_time,
                 "status": self.status,
-                "patient": self.patient_id,
-                "pro_service": self.pro_service_id}
+                "patient_id": self.patient_id,
+                "pro_service_id": self.pro_service_id,
+                "specialization": self.pro_service.services.specialization,
+                "service_name": self.pro_service.services.service_name,
+                "patient_name": self.patient.name,
+                "patient_lastname": self.patient.lastname,
+                "duration": self.pro_service.duration,
+                "patient_notes": self.patient_notes,
+                "pro_notes": self.pro_notes}
 
 
 
