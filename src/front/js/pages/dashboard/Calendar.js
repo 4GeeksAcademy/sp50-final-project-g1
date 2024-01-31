@@ -48,33 +48,13 @@ export default function Calendar() {
         await actions.getInactivityByPro(proId);
         console.log("-----PRO-INACTIVITY-----", store.inactivityByPro);
 
-        const bookingPromises = Object.values(store.bookingsByPro).map(async (booking) => {
-          const serviceByBookingPromise = actions.getServiceByBooking(booking.pro_service)
-          const patientByBookingPromise = actions.getPatient(booking.patient)
-          const proServiceByBookingPromise = actions.getProService(booking.pro_service)
-          const [serviceByBooking, patientByBooking, proServiceByBooking] = await Promise.all([
-            serviceByBookingPromise,
-            patientByBookingPromise,
-            proServiceByBookingPromise
-          ]);
-        booking.service = serviceByBooking;
-        booking.patient = patientByBooking;
-        booking.pro_service = proServiceByBooking;
-
-        return booking;
-      });
-
-      let bookingsWithServiceList = await Promise.all(bookingPromises);
-      store.fullBookingsByPro = bookingsWithServiceList;
-      console.log("-----STORE_FULL_BOOKINGS-----", store.fullBookingsByPro);
       setDetailsLoaded(true)
-
 
       } catch (error) {
         console.error('Error al obtener datos del profesional:', error);
       }
     };
-    if (store.fullBookingsByPro.length === 0) {
+    if (store.bookingsByPro.length === 0) {
       fetchData(); 
     }
     
@@ -93,18 +73,18 @@ export default function Calendar() {
       booking.ending_time = finalTime;
       return booking;
     }
-    if (store.fullBookingsByPro.length > 0) {
-      store.fullBookingsByPro = store.fullBookingsByPro.map((booking) => {
+    if (store.bookingsByPro.length > 0) {
+      store.bookingsByPro = store.bookingsByPro.map((booking) => {
         return getEndingDate(
           booking,
           booking.date,
           booking.starting_time,
-          booking.pro_service.duration
+          booking.duration
         );
       });
       setEndingDatesLoaded(true)
     }
-    console.log("fullBookingsByPro with ending date:", store.fullBookingsByPro);
+    console.log("bookingsByPro with ending date:", store.bookingsByPro);
   }, [detailsLoaded]);
 
 
@@ -148,16 +128,21 @@ export default function Calendar() {
               allDaySlot={false}
               events={
                 endingDatesLoaded
-                  ? store.fullBookingsByPro.map((booking) => ({
-                      title: booking.service.service_name,
+                  ? store.bookingsByPro.map((booking) => ({
+                      title: booking.service_name,
                       start: `${booking.date}T${booking.starting_time}:00`,
                       end: `${booking.date}T${booking.ending_time}`,
                       extendedProps: {
-                        specialization: booking.service.specialization,
-                        service: booking.service.service_name, 
-                        patient: booking.patient.name,
+                        date: booking.date,
+                        startTime: booking.starting_time,
+                        specialization: booking.specialization,
+                        service: booking.service_name, 
+                        patientName: booking.patient_name,
+                        patientLastName: booking.patient_lastname,
                         status: booking.status,
-                        duration: booking.pro_service.duration
+                        duration: booking.duration,
+                        patientNotes: booking.patient_notes,
+                        proNotes: booking.pro_notes
                       },
                     }))
                   : []
@@ -176,14 +161,14 @@ export default function Calendar() {
             </div>
             <div className="rounded bg-dark bg-opacity-10 p-3 text-black-50 fw-light">
               <p>EVENT NAME: <strong className="fw-bold">{selectedEvent.title}</strong></p>
-              <p>DATE: <strong className="fw-bold">{selectedEvent.startStr}</strong></p>
+              <p>DATE: <strong className="fw-bold">{selectedEvent.extendedProps.date} // {selectedEvent.extendedProps.startTime}</strong></p>
               <p>DURATION: <strong className="fw-bold">{selectedEvent.extendedProps.duration} minutes</strong></p>
               <p>SPECIALIZATION: <strong className="fw-bold">{selectedEvent.extendedProps.specialization}</strong></p>
               <p>SERVICE: <strong className="fw-bold">{selectedEvent.extendedProps.service}</strong></p>
-              <p>PATIENT: <strong className="fw-bold">{selectedEvent.extendedProps.patient}</strong></p>
+              <p>PATIENT: <strong className="fw-bold">{selectedEvent.extendedProps.patientName} {selectedEvent.extendedProps.patientLastName}</strong></p>
               <p>STATUS: <strong className="fw-bold">{selectedEvent.extendedProps.status}</strong></p>
-              <p>PATIENT NOTES: <strong className="fw-bold"></strong></p>
-              <p>MY NOTES: <strong className="fw-bold"></strong></p>
+              <p>PATIENT NOTES: <strong className="fw-bold">{selectedEvent.extendedProps.patientNotes}</strong></p>
+              <p>MY NOTES: <strong className="fw-bold">{selectedEvent.extendedProps.proNotes}</strong></p>
             </div>
 
           </div>
