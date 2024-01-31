@@ -125,32 +125,46 @@ export default function Calendar() {
                 center: 'title',
                 right: 'timeGridWeek,timeGridDay' // user can switch between the two
               }}
-              duration={{ days: 4 }}
               weekends={true}
               eventClick={handleEventClick}
-              eventColor='#14C4B9'
               allDaySlot={false}
               events={
                 endingDatesLoaded
-
-                  ? store.bookingsByPro.map((booking) => ({
-                      title: booking.service_name,
-                      start: `${booking.date}T${booking.starting_time}:00`,
-                      end: `${booking.date}T${booking.ending_time}`,
-                      extendedProps: {
-                        date: booking.date,
-                        startTime: booking.starting_time,
-                        specialization: booking.specialization,
-                        service: booking.service_name, 
-                        patientName: booking.patient_name,
-                        patientLastName: booking.patient_lastname,
-                        status: booking.status,
-                        duration: booking.duration,
-                        patientNotes: booking.patient_notes,
-                        proNotes: booking.pro_notes
-                      },
-                    }))
-
+                  ? [
+                      // Mapeo de bookings
+                      ...store.bookingsByPro.map((booking) => ({
+                        title: booking.service_name,
+                        start: `${booking.date}T${booking.starting_time}:00`,
+                        end: `${booking.date}T${booking.ending_time}`,
+                        extendedProps: {
+                          date: booking.date,
+                          startTime: booking.starting_time,
+                          specialization: booking.specialization,
+                          service: booking.service_name, 
+                          patientName: booking.patient_name,
+                          patientLastName: booking.patient_lastname,
+                          status: booking.status,
+                          duration: booking.duration,
+                          patientNotes: booking.patient_notes,
+                          proNotes: booking.pro_notes
+                        },
+                        // Propiedades específicas para bookings
+                        color: '#14C4B9', 
+                        className: 'booking-event', 
+                      })),
+                      // Mapeo de holidays
+                      ...store.inactivityByPro.map((inactivity) => ({
+                        title: 'Holiday',
+                        start: !inactivity.starting_hour ? 
+                          `${inactivity.starting_date}T00:00:00` : `${inactivity.starting_date}T${inactivity.starting_hour}`,
+                        end: !inactivity.ending_date && !inactivity.ending_hour ? 
+                          `${inactivity.starting_date}T23:59:59` : inactivity.ending_date && !inactivity.ending_hour ? 
+                            `${inactivity.ending_date}T23:59:59` : `${inactivity.ending_date}T${inactivity.ending_hour}`,
+                        // Propiedades específicas para holidays
+                        color: '#FF0000', 
+                        className: 'holiday-event', 
+                      })),
+                    ]
                   : []
               }
             />
