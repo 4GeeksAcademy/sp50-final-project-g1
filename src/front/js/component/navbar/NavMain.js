@@ -42,7 +42,7 @@ export default function Navbar() {
 
         <div className="me-auto h7 fw-lighter" >
           <Link to="/" >
-            <img src={logo} width="120" className="me-3 rounded"></img>
+            <img src={logo} width="160" className="me-3 rounded"></img>
           </Link>
         </div>
 

@@ -1,11 +1,12 @@
 import React from "react";
 import ScrollToTop from "./component/scrollToTop.js";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
 import injectContext from "./store/appContext.js";
 
 // Import pages
-import Home from "./pages/Home.js";
+import File404 from "./pages/File404.js";
 
+import Home from "./pages/Home.js";
 import Login from "./pages/auth/Login.js";
 import Signup from "./pages/auth/Signup.js";
 import SignupPersonalData from "./pages/auth/SignupPersonalData.js";
@@ -15,7 +16,7 @@ import SignupHours from "./pages/auth/SignupHours.js";
 import DashAccountData from "./pages/dashboard/AccountData.js";
 import DashCalendar from "./pages/dashboard/Calendar.js";
 import DashWorkingDay from "./pages/dashboard/WorkingDay.js";
-import File404 from "./pages/File404.js";
+import BookingPage from "./pages/booking/BookingPage.js";
 
 // Import components
 import BackendURL from "./component/BackendURL.js";
@@ -24,7 +25,9 @@ import BackendURL from "./component/BackendURL.js";
 // import DashboardLayout from "../layout/DashboardLayout";
 import NavbarLayout from "./Layout/MainLayout.js";
 import NavbarSignup from "./Layout/SignupLayout";
+import NavbarBooking from "./Layout/BookingLayout";
 import DashboardSignup from "./Layout/DashboardLayout";
+
 
 
 // Create your first component
@@ -50,6 +53,10 @@ const Router = () => {
             <Route path="/signup/location" element={<NavbarSignup><SignupLocation /></NavbarSignup>} />
             <Route path="/signup/specialization" element={<NavbarSignup><SignupSpecialization /></NavbarSignup>} />
             <Route path="/signup/hours" element={<NavbarSignup><SignupHours /></NavbarSignup>} />
+
+            {/* BOOKING PAGE */}
+            <Route path=":userName" element={<NavbarBooking><BookingPage /></NavbarBooking>} />
+
 
             {/* DASHBOARD */}
             <Route path="/dashboard/account-data" element={<DashboardSignup><DashAccountData /></DashboardSignup>} />
