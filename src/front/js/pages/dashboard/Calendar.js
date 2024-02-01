@@ -75,18 +75,18 @@ export default function Calendar() {
             "phone": booking.patient_phone
           };
 
-          patientsMap.set(patient.id, patient);
+          patientsMap.set(patient.id, patient)
         });
 
-        const finalPatients = Array.from(patientsMap.values());
-        store.patientsByPro = finalPatients;
+        const finalPatients = Array.from(patientsMap.values())
+        store.patientsByPro = finalPatients
 
-        console.log("-----PATIENTS_BY_PRO------", store.patientsByPro);
+        console.log("-----PATIENTS_BY_PRO------", store.patientsByPro)
 
         setDetailsLoaded(true)
 
       } catch (error) {
-        console.error('Error al obtener datos del profesional:', error);
+        console.error('Error al obtener datos del profesional:', error)
       }
     };
 
@@ -95,19 +95,19 @@ export default function Calendar() {
 
     }
 
-  }, [store.isLoggedIn, store.token]);
+  }, [store.isLoggedIn, store.token, store.bookingsByPro])
 
   // Give calculated ending time to bookings
   useEffect(() => {
     function getEndingDate(booking, date, starting_time, minutes) {
-      const fullDate = new Date(`${date}T${starting_time}`);
-      fullDate.setMinutes(fullDate.getMinutes() + parseInt(minutes, 10));
-      const hours = fullDate.getHours().toString().padStart(2, '0');
-      const nerMinutes = fullDate.getMinutes().toString().padStart(2, '0');
-      const seconds = fullDate.getSeconds().toString().padStart(2, '0');
-      const finalTime = `${hours}:${nerMinutes}:${seconds}`;
+      const fullDate = new Date(`${date}T${starting_time}`)
+      fullDate.setMinutes(fullDate.getMinutes() + parseInt(minutes, 10))
+      const hours = fullDate.getHours().toString().padStart(2, '0')
+      const nerMinutes = fullDate.getMinutes().toString().padStart(2, '0')
+      const seconds = fullDate.getSeconds().toString().padStart(2, '0')
+      const finalTime = `${hours}:${nerMinutes}:${seconds}`
 
-      booking.ending_time = finalTime;
+      booking.ending_time = finalTime
       return booking;
     }
     if (store.bookingsByPro.length > 0) {
@@ -121,8 +121,8 @@ export default function Calendar() {
       });
       setEndingDatesLoaded(true)
     }
-    console.log("bookingsByPro with ending date:", store.bookingsByPro);
-  }, [detailsLoaded, store.bookingsByPro]);
+    console.log("bookingsByPro with ending date:", store.bookingsByPro)
+  }, [detailsLoaded, store.bookingsByPro])
 
 
 
@@ -206,20 +206,50 @@ export default function Calendar() {
     e.preventDefault()
 
     if (!newPatient) {
-      let newBooking = {}
-      newBooking["patient_id"] = selectedPatient.id
-      newBooking["pro_service_id"] = selectedProService
-      newBooking["date"] = bookingDate
-      newBooking["starting_time"] = bookingTime
-      newBooking["pro_notes"] = proNotes
-      newBooking["status"] = "pending"
+      let newBooking = {
+        "patient_id": selectedPatient.id,
+        "pro_service_id": selectedProService,
+        "date": bookingDate,
+        "starting_time": bookingTime,
+        "pro_notes": proNotes,
+        "status": "pending"
+      }
+      
       console.log(newBooking)
 
       await actions.newBooking(newBooking)
       alert("Booking saved!")
-      await actions.getBookingsByPro(store.currentPro.id);
-      console.log("-----PRO-BOOKINGS-----", store.bookingsByPro);
+      await actions.getBookingsByPro(store.currentPro.id)
+      console.log("-----PRO-BOOKINGS-----", store.bookingsByPro)
+    }
+    else {
+      let newPatient = {
+        "name": newPatientName,
+        "lastname": newPatientLastname,
+        "email": newPatientEmail,
+        "phone": newPatientPhone,
+      }
+      
+      console.log(newPatient)
 
+      const finalPatient = await actions.newPatient(newPatient)
+      store.patientsByPro = [...store.patientsByPro, finalPatient.patient]
+      console.log("----Store_with_final----", store.patientsByPro)
+      console.log(finalPatient.patient)
+
+      let newBooking = {
+        "patient_id": finalPatient.patient.id,
+        "pro_service_id": selectedProService,
+        "date": bookingDate,
+        "starting_time": bookingTime,
+        "pro_notes": proNotes,
+        "status": "pending"
+      }
+
+      await actions.newBooking(newBooking)
+      alert("Booking saved!")
+      await actions.getBookingsByPro(store.currentPro.id)
+      console.log("-----PRO-BOOKINGS-----", store.bookingsByPro)
     }
 
   }
