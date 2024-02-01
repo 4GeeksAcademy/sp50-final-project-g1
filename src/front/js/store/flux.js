@@ -12,8 +12,8 @@ const getState = ({getStore, getActions, setStore}) => {
 			hoursByLocation: [],
 			inactivityByPro: [],
 			bookingsByPro: [],
+			patientsByPro: [],
 			token: "",
-			fullBookingsByPro: []	
 		},
 		actions: {
 			// Login
@@ -34,7 +34,6 @@ const getState = ({getStore, getActions, setStore}) => {
 				setStore({servicesByPro: []})
 				setStore({hoursByLocation: []})
 				setStore({bookingsByPro: []})
-				setStore({fullBookingsByPro: []})
 				setStore({token: ""})
 				setStore({isAdmin: false})
 			},
@@ -644,7 +643,8 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					return true
+					const data = response.json()
+					return data
 				}
 				else{
 					/* alert("Sorry, somenthing went wrong.") */

@@ -140,7 +140,7 @@ def patients():
                                 phone=data.get('phone'))
             db.session.add(new_patient)
             db.session.commit()
-            return jsonify({"message": "Record added successfully"}), 201
+            return jsonify({"message": "Record added successfully", "patient": new_patient.serialize()}), 201
         except IntegrityError as e:
             if 'violates unique constraint "patients_email_key"' in str(e.orig):
                 return jsonify({'error': 'duplicated_email'}), 400
@@ -198,7 +198,7 @@ def get_add_bookings():
                                status=data['status'],
                                pro_service_id=data['pro_service_id'],
                                patient_id=data['patient_id'],
-                               pro_notes=data.get('pro_note'),   # using .get method begause we can set default value
+                               pro_notes=data.get('pro_notes'),   # using .get method begause we can set default value
                                patient_notes=data.get('patient_note'))  # using .get method begause we can set default value
         db.session.add(new_booking)
         db.session.commit()
