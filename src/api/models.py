@@ -133,7 +133,8 @@ class ProServices(db.Model):
         return {"pro_id": self.pro_id,
                 "service_id": self.service_id,
                 "price": self.price,
-                "duration": self.duration}
+                "duration": self.duration,
+                "service_name": self.services.service_name}
 
 class Patients(db.Model):
     __tablename__ = "patients"
@@ -180,6 +181,8 @@ class Bookings(db.Model):
                 "service_name": self.pro_service.services.service_name,
                 "patient_name": self.patient.name,
                 "patient_lastname": self.patient.lastname,
+                "patient_email": self.patient.email,
+                "patient_phone": self.patient.phone,
                 "duration": self.pro_service.duration,
                 "patient_notes": self.patient_notes,
                 "pro_notes": self.pro_notes}

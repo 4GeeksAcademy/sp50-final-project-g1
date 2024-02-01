@@ -12,6 +12,7 @@ export default function Calendar() {
   const [showAddBooking, setShowAddBooking] = useState(false);
   const [detailsLoaded, setDetailsLoaded] = useState(false)
   const [endingDatesLoaded, setEndingDatesLoaded] = useState(false)
+  const [newPatient, setNewPatient] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,8 +49,20 @@ export default function Calendar() {
         await actions.getInactivityByPro(proId);
         console.log("-----PRO-INACTIVITY-----", store.inactivityByPro);
 
+        let patients = []
+        store.bookingsByPro.map((booking) => {
+          patients.push({
+            "id": booking.patient_id, 
+            "name": booking.patient_name, 
+            "lastname": booking.patient_lastname, 
+            "email": booking.patient_email, 
+            "phone": booking.patient_phone
+          })
+        })
+        store.patientsByPro = patients
+        console.log("-----PATIENTS_BY_PRO------", store.patientsByPro)
 
-      setDetailsLoaded(true)
+        setDetailsLoaded(true)
 
       } catch (error) {
         console.error('Error al obtener datos del profesional:', error);
@@ -105,6 +118,10 @@ export default function Calendar() {
 
   const handleAddBookingForm = () => {
     setShowAddBooking(!showAddBooking)
+  }
+
+  const handleNewPatient = () => {
+    setNewPatient(!newPatient)
   }
 
   return (
@@ -209,15 +226,18 @@ export default function Calendar() {
               <form>
                 <div>
                   <h5 className="mb-4 text-decoration-underline">Booking Details</h5>
-                  <input type='text' placeholder="Date" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
-                  <input type='text' placeholder="Starting Time" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
+                  <label className="form-label">Date & Time</label>
+                  <input type='date' placeholder="Date" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
+                  <input type='time' placeholder="Starting Time" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
                   <div className="mb-3">
                     <label htmlFor="service" className="form-label">Service</label>
-                    <select id="service" className="form-select w-100">
-                      <option value="">Select a service</option>
-                      <option value="service1">Service 1</option>
-                      <option value="service2">Service 2</option>
-                      <option value="service3">Service 3</option>
+                    <select id="service" className="form-select w-100" defaultValue="" required /* onChange={} */>
+                      <option value="" disabled>Select a service</option>
+                      {store.proServicesByPro.map((proService)=>{
+                        return (
+                          <option value={proService.id}>{proService.service_name}</option>
+                        )
+                      })}
                     </select>
                   </div>
                   <div className="mb-3">
@@ -225,9 +245,23 @@ export default function Calendar() {
                     <textarea id="notes" placeholder="My Notes" className="form-control w-100"></textarea>
                   </div>
                 </div>
+                
 
                 <div>
-                  <h5 className="mb-4 text-decoration-underline">Patient details</h5>
+                  <h5 className="mb-2 text-decoration-underline">Patient details</h5>
+                  <div className="">
+                    <input
+                      type="checkbox"
+                      className="form-check-input me-2 mb-3"
+                      id="newPatient"
+                      value={newPatient}
+                      checked={newPatient}
+                      onChange={handleNewPatient}
+                    />
+                    <label className="form-check-label me-5" htmlFor='holidayType'>
+                      <span>New patient</span>
+                    </label>
+                  </div>
                   <input type='text' placeholder="Name" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
                   <input type='text' placeholder="Last Name" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
                   <input type='text' placeholder="Email" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
