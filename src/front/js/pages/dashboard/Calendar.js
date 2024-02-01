@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import { Context } from "../../store/appContext";
+import "../../../styles/addBooking.css"
 
 export default function Calendar() {
 
@@ -13,6 +14,20 @@ export default function Calendar() {
   const [detailsLoaded, setDetailsLoaded] = useState(false)
   const [endingDatesLoaded, setEndingDatesLoaded] = useState(false)
   const [newPatient, setNewPatient] = useState(false)
+  const [inputValue, setInputValue] = useState('')
+  const [filteredPatients, setFilteredPatients] = useState([])
+  const [selectedPatient, setSelectedPatient] = useState(null)
+  const [patientEmail, setPatientEmail] = useState("")
+  const [patientPhone, setPatientPhone] = useState("")
+  const [newPatientName, setNewPatientName] = useState("")
+  const [newPatientLastname, setNewPatientLastname] = useState("")
+  const [newPatientEmail, setNewPatientEmail] = useState("")
+  const [newPatientPhone, setNewPatientPhone] = useState("")
+  const [selectedProService, setSelectedProService] = useState("")
+  const [bookingDate, setBookingDate] = useState("")
+  const [bookingTime, setBookingTime] = useState("")
+  const [proNotes, setProNotes] = useState("")
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,18 +64,24 @@ export default function Calendar() {
         await actions.getInactivityByPro(proId);
         console.log("-----PRO-INACTIVITY-----", store.inactivityByPro);
 
-        let patients = []
-        store.bookingsByPro.map((booking) => {
-          patients.push({
-            "id": booking.patient_id, 
-            "name": booking.patient_name, 
-            "lastname": booking.patient_lastname, 
-            "email": booking.patient_email, 
+        let patientsMap = new Map();
+
+        store.bookingsByPro.forEach((booking) => {
+          const patient = {
+            "id": booking.patient_id,
+            "name": booking.patient_name,
+            "lastname": booking.patient_lastname,
+            "email": booking.patient_email,
             "phone": booking.patient_phone
-          })
-        })
-        store.patientsByPro = patients
-        console.log("-----PATIENTS_BY_PRO------", store.patientsByPro)
+          };
+
+          patientsMap.set(patient.id, patient);
+        });
+
+        const finalPatients = Array.from(patientsMap.values());
+        store.patientsByPro = finalPatients;
+
+        console.log("-----PATIENTS_BY_PRO------", store.patientsByPro);
 
         setDetailsLoaded(true)
 
@@ -70,7 +91,7 @@ export default function Calendar() {
     };
 
     if (store.bookingsByPro.length === 0) {
-      fetchData(); 
+      fetchData();
 
     }
 
@@ -101,7 +122,7 @@ export default function Calendar() {
       setEndingDatesLoaded(true)
     }
     console.log("bookingsByPro with ending date:", store.bookingsByPro);
-  }, [detailsLoaded]);
+  }, [detailsLoaded, store.bookingsByPro]);
 
 
 
@@ -123,6 +144,86 @@ export default function Calendar() {
   const handleNewPatient = () => {
     setNewPatient(!newPatient)
   }
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setInputValue(value);
+
+    const filtered = store.patientsByPro.filter(patient =>
+      `${patient.name} ${patient.lastname}`.toLowerCase().includes(value.toLowerCase())
+    );
+    console.log(filtered)
+
+    setFilteredPatients(filtered);
+
+    if (filtered.length === 0 || value.trim() === '') {
+      setFilteredPatients([]);
+    }
+
+  };
+
+  const handleSelectPatient = (patient) => {
+    setInputValue(`${patient.name} ${patient.lastname}`)
+    setSelectedPatient(patient)
+    setPatientPhone(patient.phone)
+    setPatientEmail(patient.email)
+    setFilteredPatients([])
+  };
+
+  const handleNewPatientName = (newName) => {
+    setNewPatientName(newName)
+  }
+
+  const handleNewPatientLastname = (newLastname) => {
+    setNewPatientLastname(newLastname)
+  }
+
+  const handleNewPatientEmail = (newEmail) => {
+    setNewPatientEmail(newEmail)
+  }
+
+  const handleNewPatientPhone = (newPhone) => {
+    setNewPatientPhone(newPhone)
+  }
+
+  const handleSelectedProService = (proServiceId) => {
+    setSelectedProService(parseInt(proServiceId))
+  }
+
+  const handleBookingDate = (newDate) => {
+    setBookingDate(newDate)
+  }
+
+  const handleBookingTime = (newTime) => {
+    setBookingTime(newTime)
+  }
+
+  const handleProNotes = (newNotes) => {
+    setProNotes(newNotes)
+  }
+
+  const handleSaveBooking = async (e) => {
+    e.preventDefault()
+
+    if (!newPatient) {
+      let newBooking = {}
+      newBooking["patient_id"] = selectedPatient.id
+      newBooking["pro_service_id"] = selectedProService
+      newBooking["date"] = bookingDate
+      newBooking["starting_time"] = bookingTime
+      newBooking["pro_notes"] = proNotes
+      newBooking["status"] = "pending"
+      console.log(newBooking)
+
+      await actions.newBooking(newBooking)
+      alert("Booking saved!")
+      await actions.getBookingsByPro(store.currentPro.id);
+      console.log("-----PRO-BOOKINGS-----", store.bookingsByPro);
+
+    }
+
+  }
+
 
   return (
     <div className="min-vh-100">
@@ -148,40 +249,40 @@ export default function Calendar() {
               events={
                 endingDatesLoaded
                   ? [
-                      // Mapeo de bookings
-                      ...store.bookingsByPro.map((booking) => ({
-                        title: booking.service_name,
-                        start: `${booking.date}T${booking.starting_time}:00`,
-                        end: `${booking.date}T${booking.ending_time}`,
-                        extendedProps: {
-                          date: booking.date,
-                          startTime: booking.starting_time,
-                          specialization: booking.specialization,
-                          service: booking.service_name, 
-                          patientName: booking.patient_name,
-                          patientLastName: booking.patient_lastname,
-                          status: booking.status,
-                          duration: booking.duration,
-                          patientNotes: booking.patient_notes,
-                          proNotes: booking.pro_notes
-                        },
-                        // Propiedades específicas para bookings
-                        color: '#14C4B9', 
-                        className: 'booking-event', 
-                      })),
-                      // Mapeo de holidays
-                      ...store.inactivityByPro.map((inactivity) => ({
-                        title: 'Holiday',
-                        start: !inactivity.starting_hour ? 
-                          `${inactivity.starting_date}T00:00:00` : `${inactivity.starting_date}T${inactivity.starting_hour}`,
-                        end: !inactivity.ending_date && !inactivity.ending_hour ? 
-                          `${inactivity.starting_date}T23:59:59` : inactivity.ending_date && !inactivity.ending_hour ? 
-                            `${inactivity.ending_date}T23:59:59` : `${inactivity.ending_date}T${inactivity.ending_hour}`,
-                        // Propiedades específicas para holidays
-                        color: '#FF0000', 
-                        className: 'holiday-event', 
-                      })),
-                    ]
+                    // Mapeo de bookings
+                    ...store.bookingsByPro.map((booking) => ({
+                      title: booking.service_name,
+                      start: `${booking.date}T${booking.starting_time}:00`,
+                      end: `${booking.date}T${booking.ending_time}`,
+                      extendedProps: {
+                        date: booking.date,
+                        startTime: booking.starting_time,
+                        specialization: booking.specialization,
+                        service: booking.service_name,
+                        patientName: booking.patient_name,
+                        patientLastName: booking.patient_lastname,
+                        status: booking.status,
+                        duration: booking.duration,
+                        patientNotes: booking.patient_notes,
+                        proNotes: booking.pro_notes
+                      },
+                      // Propiedades específicas para bookings
+                      color: '#14C4B9',
+                      className: 'booking-event',
+                    })),
+                    // Mapeo de holidays
+                    ...store.inactivityByPro.map((inactivity) => ({
+                      title: 'Holiday',
+                      start: !inactivity.starting_hour ?
+                        `${inactivity.starting_date}T00:00:00` : `${inactivity.starting_date}T${inactivity.starting_hour}`,
+                      end: !inactivity.ending_date && !inactivity.ending_hour ?
+                        `${inactivity.starting_date}T23:59:59` : inactivity.ending_date && !inactivity.ending_hour ?
+                          `${inactivity.ending_date}T23:59:59` : `${inactivity.ending_date}T${inactivity.ending_hour}`,
+                      // Propiedades específicas para holidays
+                      color: '#FF0000',
+                      className: 'holiday-event',
+                    })),
+                  ]
                   : []
               }
             />
@@ -223,50 +324,99 @@ export default function Calendar() {
             </div>
 
             <div className="rounded bg-dark bg-opacity-10 p-3 text-black-50 fw-light">
-              <form>
+              <form onSubmit={handleSaveBooking}>
                 <div>
                   <h5 className="mb-4 text-decoration-underline">Booking Details</h5>
                   <label className="form-label">Date & Time</label>
-                  <input type='date' placeholder="Date" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
-                  <input type='time' placeholder="Starting Time" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
+                  <input type='date' onChange={(e) => handleBookingDate(e.target.value)} className="d-block mb-3 p-2 w-100 rounded border-0"></input>
+                  <input type='time' onChange={(e) => handleBookingTime(e.target.value)} className="d-block mb-3 p-2 w-100 rounded border-0"></input>
                   <div className="mb-3">
                     <label htmlFor="service" className="form-label">Service</label>
-                    <select id="service" className="form-select w-100" defaultValue="" required /* onChange={} */>
+                    <select id="service" className="form-select w-100" value={selectedProService} required onChange={(e) => handleSelectedProService(e.target.value)}>
                       <option value="" disabled>Select a service</option>
-                      {store.proServicesByPro.map((proService)=>{
+                      {store.proServicesByPro.map((proService) => {
                         return (
-                          <option value={proService.id}>{proService.service_name}</option>
+                          <option key={proService.id} value={proService.id}>{proService.service_name}</option>
                         )
                       })}
                     </select>
                   </div>
                   <div className="mb-3">
                     <label htmlFor="notes" className="form-label">Notes</label>
-                    <textarea id="notes" placeholder="My Notes" className="form-control w-100"></textarea>
+                    <textarea id="notes" value={proNotes} placeholder="My Notes" className="form-control w-100" onChange={(e) => handleProNotes(e.target.value)}></textarea>
                   </div>
                 </div>
-                
 
-                <div>
-                  <h5 className="mb-2 text-decoration-underline">Patient details</h5>
-                  <div className="">
-                    <input
-                      type="checkbox"
-                      className="form-check-input me-2 mb-3"
-                      id="newPatient"
-                      value={newPatient}
-                      checked={newPatient}
-                      onChange={handleNewPatient}
-                    />
-                    <label className="form-check-label me-5" htmlFor='holidayType'>
-                      <span>New patient</span>
-                    </label>
+                {!newPatient ?
+                  <div>
+                    <h5 className="mb-2 text-decoration-underline">Patient details</h5>
+                    <div className="">
+                      <input
+                        type="checkbox"
+                        className="form-check-input me-2 mb-3"
+                        id="newPatient"
+                        value={newPatient}
+                        checked={newPatient}
+                        onChange={handleNewPatient}
+                      />
+                      <label className="form-check-label me-5" htmlFor='holidayType'>
+                        <span>New patient</span>
+                      </label>
+                    </div>
+                    <div className="autocomplete">
+                      <input
+                        className="d-block mb-3 p-2 w-100 rounded border-0"
+                        type="text"
+                        id="patient"
+                        value={inputValue}
+                        onChange={handleInputChange}
+                        placeholder="Search for a patient..."
+                      />
+                      {filteredPatients.length > 0 && (
+                        <div className="autocomplete-dropdown">
+                          {filteredPatients.map((patient) => (
+                            <div
+                              key={patient.id}
+                              className="autocomplete-option"
+                              onClick={() => handleSelectPatient(patient)}
+                            >
+                              {patient.name} {patient.lastname}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <input value={patientEmail} readOnly disabled type='text' placeholder="Email" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
+                    <input value={patientPhone} readOnly disabled type='text' placeholder="Phone" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
                   </div>
-                  <input type='text' placeholder="Name" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
-                  <input type='text' placeholder="Last Name" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
-                  <input type='text' placeholder="Email" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
-                  <input type='text' placeholder="Phone" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
-                </div>
+                  :
+                  <div>
+                    <h5 className="mb-2 text-decoration-underline">Patient details</h5>
+                    <div className="">
+                      <input
+                        type="checkbox"
+                        className="form-check-input me-2 mb-3"
+                        id="newPatient"
+                        value={newPatient}
+                        checked={newPatient}
+                        onChange={handleNewPatient}
+                      />
+                      <label className="form-check-label me-5" htmlFor='holidayType'>
+                        <span>New patient</span>
+                      </label>
+                    </div>
+                    <input value={newPatientName} onChange={(e) => handleNewPatientName(e.target.value)} type='text' placeholder="Name" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
+                    <input value={newPatientLastname} onChange={(e) => handleNewPatientLastname(e.target.value)} type='text' placeholder="Last Name" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
+                    <input value={newPatientEmail} onChange={(e) => handleNewPatientEmail(e.target.value)} type='text' placeholder="Email" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
+                    <input value={newPatientPhone} onChange={(e) => handleNewPatientPhone(e.target.value)} type='text' placeholder="Phone" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
+                  </div>}
+                <input
+                  type='submit'
+                  value="Save Booking"
+                  className="btn btn-sm border-0 text-white"
+                  style={{ backgroundColor: "#14C4B9" }}
+                />
+
 
               </form>
             </div>

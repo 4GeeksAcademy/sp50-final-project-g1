@@ -131,6 +131,7 @@ class ProServices(db.Model):
 
     def serialize(self):
         return {"pro_id": self.pro_id,
+                "id": self.id,
                 "service_id": self.service_id,
                 "price": self.price,
                 "duration": self.duration,
