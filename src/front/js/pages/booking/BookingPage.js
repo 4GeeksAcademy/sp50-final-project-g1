@@ -204,7 +204,7 @@ export default function BookingPage() {
 
       {/* BOOKING INFO FORM */}
       {showBookingInfo ? (
-        <div className="bg-white position-fixed top-0 end-0 bottom-0 min-vh-100 py-5 px-4 w-25 shadow" style={{ zIndex: "10", width: "100%", maxWidth: "400px" }}>
+        <div className="bg-white position-fixed top-0 end-0 bottom-0 min-vh-100 py-5 px-4 w-25 shadow overflow-auto" style={{ zIndex: "10", width: "100%", maxWidth: "400px" }}>
           <form onSubmit={(e) => handleSubmit(e)}>
             <div className="d-flex justify-content-between mb-5">
               <h5 className="me-4 text-black-50 text-decoration-underline fw-bold" >BOOKING DETAILS</h5>

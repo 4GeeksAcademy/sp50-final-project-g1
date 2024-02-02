@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../../store/appContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function AccountData() {
 
@@ -37,10 +37,10 @@ export default function AccountData() {
         console.error('Error al obtener datos del profesional:', error);
       }
     };
-    if(!Object.keys(store.currentPro).length){
+    if (!Object.keys(store.currentPro).length) {
       fetchData();
     }
-    
+
   }, [store.isLoggedIn, store.token]);
 
 
@@ -65,7 +65,7 @@ export default function AccountData() {
               <h4 className=" text-decoration-underline">MY BOOKING PAGE URL</h4>
               <p>Share it with your patient or place it in your website to collect bookings</p>
               <div className="p-3 rounded-3 border text-black-50" style={{ backgroundColor: "#E0F3F3" }}>
-                <div><span>{`https://www.docdate.com/${userName}`}</span></div>
+                <div><Link to={`/${userName}`} >{`www.docdate/${userName}`}</Link></div>
               </div>
             </div>
 
