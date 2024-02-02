@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Context } from "../../store/appContext";
 
 export default function BookingPage() {
   let { userName } = useParams();
 
+  const { store, actions } = useContext(Context)
+
   // load from api or store
-  const [proServiceList, setProServiceList] = useState([]);
   const [proBusySlot, setProBusySlot] = useState([]);
   const [proWorkingHors, setProWorkingHors] = useState([]);
 
@@ -20,7 +22,18 @@ export default function BookingPage() {
   // Effect: on page load 
   useEffect(() => {
 
-    // API Calls: 
+    // API Calls:
+    const fetchPro = async (userName) => {
+      await actions.getProByUsername(userName)
+      console.log("----PRO----", store.currentPro)
+      await actions.getProServicesByPro(store.currentPro.id)
+      console.log("----PROSERV----", store.proServicesByPro)
+      await actions.getHoursByPro(store.currentPro.id)
+      console.log("----WORKING_HOURS----", store.hoursByPro)
+    }
+    fetchPro(userName)
+
+    
 
     // API calls: response with pro services
     const apiProServiceResponse = [
@@ -32,7 +45,7 @@ export default function BookingPage() {
       { id: "166", name: "Streatching", duration: 30 },
       { id: "167", name: "Electro medical", duration: 40 },
     ];
-    setProServiceList(apiProServiceResponse);
+    /* setProServiceList(apiProServiceResponse); */
 
     // API calls: response with sum of all busy time: bookng + holiday.
     const apiProBusyResponse = [
@@ -54,6 +67,14 @@ export default function BookingPage() {
     setProBusySlot(apiProBusyResponse);
 
     // API: response with workingday hours slot 
+    /* WORKINGDAY EXAMPLE {
+      id: 1
+      working_day: 2
+      starting_hour_morning: "10:00"
+      ending_hour_morning: "14:00"
+      starting_hour_after: "16:00"
+      ending_hour_after: "20:00"
+    } */
     const apiProWorkingHours = [
       { start: "9:00", end: "11:00" },
       { start: "16:00", end: "20:00" }
@@ -211,9 +232,9 @@ export default function BookingPage() {
               <label htmlFor="booking-service" className="form-label visually-hidden">Select a Service</label>
               <select id="booking-service" className="form-select w-100" onChange={(event) => handleServiceSelection(event.target.value)}>
                 <option value="">Select a service</option>
-                {proServiceList ? (
-                  proServiceList.map(service => (
-                    <option key={service.id} value={JSON.stringify({ id: service.id, duration: service.duration, name: service.name })}>{service.name}</option>
+                {store.proServicesByPro ? (
+                  store.proServicesByPro.map(service => (
+                    <option key={service.id} value={JSON.stringify({ id: service.id, duration: service.duration, name: service.service_name })}>{service.service_name}</option>
                   ))
                 ) : ("No service for this calendar")}
               </select>
