@@ -65,7 +65,7 @@ export default function AccountData() {
               <h4 className=" text-decoration-underline">MY BOOKING PAGE URL</h4>
               <p>Share it with your patient or place it in your website to collect bookings</p>
               <div className="p-3 rounded-3 border text-black-50" style={{ backgroundColor: "#E0F3F3" }}>
-                <div><Link to={`/${userName}`} >{`www.docdate/${userName}`}</Link></div>
+                <div><Link to={`/${userName}`} >{`www.docdate.com/${userName}`}</Link></div>
               </div>
             </div>
 
