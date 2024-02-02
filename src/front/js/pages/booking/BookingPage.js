@@ -59,14 +59,14 @@ export default function BookingPage() {
 
   }, []);
 
-
+  // CALENDAR SLOT CREATION!
   const generateAvailableSlots = (proWorkingHors, selectedService, proBusySlot, selectedDay) => {
     const availableSlots = [];
     const serviceDurationInMinutes = parseInt(selectedService.duration);
     const slotsForSelectedDay = proBusySlot.filter(slot => slot.day === selectedDay);
 
 
-    // Trasform busy slots in 'minutes': es. 9:00 = 540; 10:00 = 600; 11:00 = 660;
+    // 1- Trasform busy slots in 'minutes': es. 9:00 = 540; 10:00 = 600; 11:00 = 660;
     const occupiedSlots = slotsForSelectedDay.map(slot => {
       const slotHour = parseInt(slot.hour.split(':')[0]);
       const slotMinute = parseInt(slot.hour.split(':')[1]);
@@ -78,13 +78,13 @@ export default function BookingPage() {
       };
     });
 
-    // create an object with proWorkingHors in minutes. eg: const workingTime = {start: 600, end: 1200}
+    // 2 - create an object with proWorkingHors in minutes. eg: const workingTime = {start: 600, end: 1200}
     const workingTime = {
       start: parseInt(proWorkingHors[0].start.split(':')[0]) * 60 + parseInt(proWorkingHors[0].start.split(':')[1]),
       end: parseInt(proWorkingHors[0].end.split(':')[0]) * 60 + parseInt(proWorkingHors[0].end.split(':')[1])
     };
 
-    // Loop through workingTime for each minute i.
+    // 3 - Loop through workingTime for each minute i.
     for (let i = workingTime.start; i < workingTime.end; i++) {
       let possibleSlot = { start: i, end: i + serviceDurationInMinutes };
 
@@ -109,7 +109,7 @@ export default function BookingPage() {
       }
     }
 
-    // Filter available slots to ensure they do not overlap
+    // 4 - Filter available slots to ensure they do not overlap
     const nonOverlappingSlots = [];
     for (let i = 0; i < availableSlots.length; i++) {
       let isOverlapping = false;
@@ -128,12 +128,10 @@ export default function BookingPage() {
       }
     }
 
-    // Format non-overlapping slots into readable format
+    // 5 - Format non-overlapping slots into readable format
     const formattedSlots = nonOverlappingSlots.map(slot => {
       const startHour = Math.floor(slot.start / 60).toString().padStart(2, '0');
       const startMinute = (slot.start % 60).toString().padStart(2, '0');
-      const endHour = Math.floor(slot.end / 60).toString().padStart(2, '0');
-      const endMinute = (slot.end % 60).toString().padStart(2, '0');
       return `${startHour}:${startMinute}`;
     });
 
