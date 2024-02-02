@@ -20,6 +20,8 @@ export default function BookingPage() {
   // Effect: on page load 
   useEffect(() => {
 
+    // API Calls: 
+
     // API calls: response with pro services
     const apiProServiceResponse = [
       { id: "161", name: "Generic visit", duration: 50 },
@@ -32,12 +34,9 @@ export default function BookingPage() {
     ];
     setProServiceList(apiProServiceResponse);
 
-    // API calls: response with sum of all busy time: bookng + holiday
+    // API calls: response with sum of all busy time: bookng + holiday.
     const apiProBusyResponse = [
-      { day: "04-02-2024", hour: "9:00", duration: 60 },
-      { day: "04-02-2024", hour: "10:00", duration: 30 },
-      { day: "04-02-2024", hour: "11:00", duration: 30 },
-      { day: "04-02-2024", hour: "17:00", duration: 45 },
+
       { day: "06-02-2024", hour: "9:00", duration: 60 },
       { day: "06-02-2024", hour: "10:00", duration: 60 },
       { day: "06-02-2024", hour: "11:00", duration: 60 },
@@ -48,12 +47,16 @@ export default function BookingPage() {
       { day: "06-02-2024", hour: "16:00", duration: 60 },
       { day: "06-02-2024", hour: "17:00", duration: 60 },
       { day: "06-02-2024", hour: "18:00", duration: 60 },
+      { day: "06-02-2024", hour: "18:00", duration: 60 },
+      // holiday
+      { day: "10-02-2024", hour: "00:00", duration: 1440 },
     ];
     setProBusySlot(apiProBusyResponse);
 
     // API: response with workingday hours slot 
     const apiProWorkingHours = [
-      { start: "9:00", end: "20:00" }
+      { start: "9:00", end: "11:00" },
+      { start: "16:00", end: "20:00" }
     ]
     setProWorkingHors(apiProWorkingHours)
 
@@ -78,14 +81,20 @@ export default function BookingPage() {
       };
     });
 
-    // 2 - create an object with proWorkingHors in minutes. eg: const workingTime = {start: 600, end: 1200}
-    const workingTime = {
-      start: parseInt(proWorkingHors[0].start.split(':')[0]) * 60 + parseInt(proWorkingHors[0].start.split(':')[1]),
-      end: parseInt(proWorkingHors[0].end.split(':')[0]) * 60 + parseInt(proWorkingHors[0].end.split(':')[1])
-    };
+    // 2 - create an object with proWorkingHors in minutes. eg: const workingTime = [{start: 600, end: 1200}]
+    const workingTime = proWorkingHors.map((shift) => {
+      return (
+        {
+          start: parseInt(shift.start.split(':')[0]) * 60 + parseInt(shift.start.split(':')[1]),
+          end: parseInt(shift.end.split(':')[0]) * 60 + parseInt(shift.end.split(':')[1])
+        }
+      )
+    })
 
-    // 3 - Loop through workingTime for each minute i.
-    for (let i = workingTime.start; i < workingTime.end; i++) {
+    console.log('working time in minutes: ', workingTime)
+
+    // 3.1 - Loop through workingTime for each minute i.
+    for (let i = workingTime[0].start; i < workingTime[0].end; i++) {
       let possibleSlot = { start: i, end: i + serviceDurationInMinutes };
 
       let isIntersected = false;
@@ -104,7 +113,32 @@ export default function BookingPage() {
       }
 
       // If the possible slot does not intersect with any busy slots, add it to available slots
-      if (!isIntersected && possibleSlot.end <= workingTime.end) {
+      if (!isIntersected && possibleSlot.end <= workingTime[0].end) {
+        availableSlots.push(possibleSlot);
+      }
+    }
+
+    // 3.2 - Loop through workingTime for each minute i.
+    for (let i = workingTime[1].start; i < workingTime[1].end; i++) {
+      let possibleSlot = { start: i, end: i + serviceDurationInMinutes };
+
+      let isIntersected = false;
+
+      // Loop through occupiedSlots
+      for (let j = 0; j < occupiedSlots.length; j++) {
+        // Check if possible slot intersects with the busy slot
+        if (
+          (possibleSlot.start >= occupiedSlots[j].start && possibleSlot.start < occupiedSlots[j].end) ||
+          (possibleSlot.end > occupiedSlots[j].start && possibleSlot.end <= occupiedSlots[j].end) ||
+          (possibleSlot.start < occupiedSlots[j].start && possibleSlot.end > occupiedSlots[j].end)
+        ) {
+          isIntersected = true;
+          break;
+        }
+      }
+
+      // If the possible slot does not intersect with any busy slots, add it to available slots
+      if (!isIntersected && possibleSlot.end <= workingTime[1].end) {
         availableSlots.push(possibleSlot);
       }
     }
@@ -279,3 +313,9 @@ export default function BookingPage() {
     </>
   );
 }
+
+
+
+
+
+
