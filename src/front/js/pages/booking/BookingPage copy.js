@@ -1,3 +1,12 @@
+
+
+
+
+
+
+
+
+
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -12,13 +21,15 @@ export default function BookingPage() {
   // patient selections
   const [selectedService, setSelectedService] = useState(null);
   const [selectedHour, setSelectedHour] = useState(null);
-  const [selectedDay, setSelectedDay] = useState('06-02-2024');
+  const [selectedDay, setSelectedDay] = useState('');
 
   // patient interaction
   const [showBookingInfo, setShowBookingInfo] = useState(false);
 
   // Effect: on page load 
   useEffect(() => {
+
+    // API Calls: 
 
     // API calls: response with pro services
     const apiProServiceResponse = [
@@ -32,35 +43,46 @@ export default function BookingPage() {
     ];
     setProServiceList(apiProServiceResponse);
 
-    // API calls: response with sum of all busy time: bookng + holiday
+    // API calls: response with sum of all busy time: bookng + holiday.
     const apiProBusyResponse = [
       { day: "04-02-2024", hour: "9:00", duration: 60 },
       { day: "04-02-2024", hour: "10:00", duration: 30 },
       { day: "04-02-2024", hour: "11:00", duration: 30 },
       { day: "04-02-2024", hour: "17:00", duration: 45 },
       { day: "06-02-2024", hour: "9:00", duration: 60 },
-      { day: "06-02-2024", hour: "10:00", duration: 30 },
-      { day: "06-02-2024", hour: "11:00", duration: 30 },
-      { day: "06-02-2024", hour: "17:00", duration: 45 },
+      { day: "06-02-2024", hour: "10:00", duration: 60 },
+      { day: "06-02-2024", hour: "11:00", duration: 60 },
+      { day: "06-02-2024", hour: "12:00", duration: 60 },
+      { day: "06-02-2024", hour: "13:00", duration: 60 },
+      { day: "06-02-2024", hour: "14:00", duration: 60 },
+      { day: "06-02-2024", hour: "15:00", duration: 60 },
+      { day: "06-02-2024", hour: "16:00", duration: 60 },
+      { day: "06-02-2024", hour: "17:00", duration: 60 },
+      { day: "06-02-2024", hour: "18:00", duration: 60 },
+      { day: "06-02-2024", hour: "18:00", duration: 60 },
+      // holiday
+      { day: "10-02-2024", hour: "00:00", duration: 1440 },
     ];
     setProBusySlot(apiProBusyResponse);
 
     // API: response with workingday hours slot 
     const apiProWorkingHours = [
-      { start: "9:00", end: "20:00" }
+      { start: "9:00", end: "14:00" },
+      // { start: "15:00", end: "20:00" }
     ]
     setProWorkingHors(apiProWorkingHours)
 
-
   }, []);
 
-
-  const generateAvailableSlots = (proWorkingHors, selectedService, proBusySlot) => {
+  // CALENDAR SLOT CREATION!
+  const generateAvailableSlots = (proWorkingHors, selectedService, proBusySlot, selectedDay) => {
     const availableSlots = [];
     const serviceDurationInMinutes = parseInt(selectedService.duration);
+    const slotsForSelectedDay = proBusySlot.filter(slot => slot.day === selectedDay);
 
-    // Trasform busy slots in 'minutes': es. 9:00 = 540; 10:00 = 600; 11:00 = 660;
-    const occupiedSlots = proBusySlot.map(slot => {
+
+    // 1- Trasform busy slots in 'minutes': es. 9:00 = 540; 10:00 = 600; 11:00 = 660;
+    const occupiedSlots = slotsForSelectedDay.map(slot => {
       const slotHour = parseInt(slot.hour.split(':')[0]);
       const slotMinute = parseInt(slot.hour.split(':')[1]);
       const durationInMinutes = parseInt(slot.duration);
@@ -71,13 +93,13 @@ export default function BookingPage() {
       };
     });
 
-    // create an object with proWorkingHors in minutes. eg: const workingTime = {start: 600, end: 1200}
+    // 2 - create an object with proWorkingHors in minutes. eg: const workingTime = [{start: 600, end: 1200}]
     const workingTime = {
       start: parseInt(proWorkingHors[0].start.split(':')[0]) * 60 + parseInt(proWorkingHors[0].start.split(':')[1]),
       end: parseInt(proWorkingHors[0].end.split(':')[0]) * 60 + parseInt(proWorkingHors[0].end.split(':')[1])
     };
 
-    // Loop through workingTime for each minute i.
+    // 3 - Loop through workingTime for each minute i.
     for (let i = workingTime.start; i < workingTime.end; i++) {
       let possibleSlot = { start: i, end: i + serviceDurationInMinutes };
 
@@ -102,7 +124,7 @@ export default function BookingPage() {
       }
     }
 
-    // Filter available slots to ensure they do not overlap
+    // 4 - Filter available slots to ensure they do not overlap
     const nonOverlappingSlots = [];
     for (let i = 0; i < availableSlots.length; i++) {
       let isOverlapping = false;
@@ -121,12 +143,10 @@ export default function BookingPage() {
       }
     }
 
-    // Format non-overlapping slots into readable format
+    // 5 - Format non-overlapping slots into readable format
     const formattedSlots = nonOverlappingSlots.map(slot => {
       const startHour = Math.floor(slot.start / 60).toString().padStart(2, '0');
       const startMinute = (slot.start % 60).toString().padStart(2, '0');
-      const endHour = Math.floor(slot.end / 60).toString().padStart(2, '0');
-      const endMinute = (slot.end % 60).toString().padStart(2, '0');
       return `${startHour}:${startMinute}`;
     });
 
@@ -137,12 +157,12 @@ export default function BookingPage() {
   // Functions: booking flow
   const handleDaySelection = (day) => {
     setShowBookingInfo(true);
+    setSelectedDay(day)
   };
 
   const handleHourSelect = (slot) => {
     setSelectedHour(slot);
   };
-
 
   const handleServiceSelection = (service) => {
     console.log('service: ', JSON.parse(service))
@@ -157,6 +177,7 @@ export default function BookingPage() {
     e.preventDefault();
     console.log('clicking on submit');
   }
+
 
   return (
     <>
@@ -184,9 +205,9 @@ export default function BookingPage() {
                 <div className="mb-5 border-bottom">
                   <span className="fs-2 text-black-50">February</span>
                 </div>
-                <div className="" style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "1rem" }}>
-                  <span className=" py-3 rounded-circle bg-info text-white text-center fs-5" onClick={(e) => handleDaySelection(e.target.innerHTML)}>1</span>
-                  <span className=" py-3 rounded-circle bg-info text-white text-center fs-5" onClick={(e) => handleDaySelection(e.target.innerHTML)}>2</span>
+                <div className="" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
+                  <span className=" py-3 rounded text-white text-center fs-5" style={{ backgroundColor: "#14C4B9" }} onClick={(e) => handleDaySelection(e.target.innerHTML)}>06-02-2024</span>
+                  <span className=" py-3 rounded text-white text-center fs-5" style={{ backgroundColor: "#14C4B9" }} onClick={(e) => handleDaySelection(e.target.innerHTML)}>04-02-2024</span>
                 </div>
               </div>
             ) : null}
@@ -196,7 +217,7 @@ export default function BookingPage() {
 
       {/* BOOKING INFO FORM */}
       {showBookingInfo ? (
-        <div className="bg-white position-fixed top-0 end-0 bottom-0 min-vh-100 py-5 px-4 w-25 shadow" style={{ zIndex: "10", width: "100%", maxWidth: "400px" }}>
+        <div className="bg-white position-fixed top-0 end-0 bottom-0 min-vh-100 py-5 px-4 w-25 shadow overflow-auto" style={{ zIndex: "10", width: "100%", maxWidth: "400px" }}>
           <form onSubmit={(e) => handleSubmit(e)}>
             <div className="d-flex justify-content-between mb-5">
               <h5 className="me-4 text-black-50 text-decoration-underline fw-bold" >BOOKING DETAILS</h5>
@@ -207,13 +228,13 @@ export default function BookingPage() {
             <div className="rounded bg-light small p-3 mb-5" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem" }}>
 
               {proBusySlot ? (
-                generateAvailableSlots(proWorkingHors, selectedService, proBusySlot).map((slot, index) => (
+                generateAvailableSlots(proWorkingHors, selectedService, proBusySlot, selectedDay).map((slot, index) => (
                   <span
                     key={index}
                     className="btn btn-light"
                     style={{
-                      color: selectedHour === slot.hour ? "#ffffff" : "#14C4B9",
-                      backgroundColor: selectedHour === slot.hour ? "#14C4B9" : "#ffffff",
+                      color: selectedHour === slot ? "#ffffff" : "#14C4B9",
+                      backgroundColor: selectedHour === slot ? "#14C4B9" : "#ffffff",
                       borderColor: "#14C4B9"
                     }}
                     onClick={() => handleHourSelect(slot)}
