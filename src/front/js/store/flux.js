@@ -105,6 +105,21 @@ const getState = ({getStore, getActions, setStore}) => {
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
+			getProByUsername: async(username) => {
+				const url = process.env.BACKEND_URL + `/pros/${username}`;
+				const options = {
+					method: "GET"           
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					const data = await response.json()
+					setStore({currentPro: data})	
+				}
+				else{
+					/* alert("Sorry, somenthing went wrong.") */
+					console.log("Error :", response.status, response.statusText)
+				}
+			},
 			updatePro: async(object) => {
 				const url = process.env.BACKEND_URL + `/pros/${object.id}`;
 				const options = {

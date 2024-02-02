@@ -378,6 +378,15 @@ def handle_pro(proid):
         db.session.commit()
         return jsonify({"message": "pro deleted successfully"}), 200
     
+# Get a pro by username
+@api.route("/pros/<string:username>", methods=["GET"])
+def get_pro_by_username(username):
+    pro = Pros.query.filter_by(bookingpage_url=username).first()
+    if not pro:
+        return jsonify({"message": "pro not found"}), 404
+    if request.method == 'GET':
+        return jsonify(pro.serialize()), 200
+    
 
 # Get all ProServices or post a new one.
 @api.route("/proservices", methods=["GET", "POST"])
