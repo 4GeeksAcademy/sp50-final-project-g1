@@ -30,41 +30,102 @@ export default function BookingPage() {
       console.log("----PROSERV----", store.proServicesByPro)
       await actions.getHoursByPro(store.currentPro.id)
       console.log("----WORKING_HOURS----", store.hoursByPro)
+      await actions.getBookingsByPro(store.currentPro.id)
+      console.log("----BOOKINGS----", store.bookingsByPro)
+      await actions.getInactivityByPro(store.currentPro.id)
+      console.log("----HOLYDAYS----", store.inactivityByPro)
+
+      let apiProBusyResponse = []
+
+      if (store.bookingsByPro) {
+        apiProBusyResponse = [...apiProBusyResponse, ...store.bookingsByPro];
+      }
+    
+      if (store.inactivityByPro) {
+        store.inactivityByPro.map((inactivity) => {
+          if(inactivity.ending_date) {
+            const startDateStr = inactivity.starting_date
+            const endDateStr = inactivity.ending_date
+            function calculateTotalMinutes(startDateStr, endDateStr) {
+            const startDate = new Date(startDateStr)
+            const endDate = new Date(endDateStr)
+            endDate.setDate(endDate.getDate() + 1)
+            const minuteDifference = (endDate.getTime() - startDate.getTime()) / (1000 * 60)
+            let calculatedBooking = {
+              date: inactivity.starting_date,
+              starting_time: "00:00",
+              duration: minuteDifference
+            }
+            apiProBusyResponse.push(calculatedBooking)
+            } 
+          calculateTotalMinutes(startDateStr, endDateStr)
+          }
+          if (!inactivity.ending_date && !inactivity.starting_hour && !inactivity.ending_hour) {
+            let busy = {
+              date: inactivity.starting_date,
+              starting_time: "00:00",
+              duration: 1440
+            }
+            apiProBusyResponse.push(busy)
+          }
+          if (inactivity.starting_hour && inactivity.ending_hour) {
+            const startingTimeStr = inactivity.starting_hour
+            const endingTimeStr = inactivity.ending_hour
+            function calculateDifferenceMinutes(startingTimeStr, endingTimeStr) {
+              const startTime = new Date(`1970-01-01T${startingTimeStr}`)
+              const endTime = new Date(`1970-01-01T${endingTimeStr}`)
+              const minuteDifference = (endTime - startTime) / (1000 * 60);
+              let busy = {
+                date: inactivity.starting_date,
+                starting_time: inactivity.starting_hour,
+                duration: minuteDifference
+              }
+              apiProBusyResponse.push(busy)
+            }
+            calculateDifferenceMinutes(startingTimeStr, endingTimeStr)
+          }
+          if (inactivity.starting_date && inactivity.starting_hour && !inactivity.ending_hour) {
+            const startingTimeStr = inactivity.starting_hour
+            function calculateMinutesToEndDay(startingTimeStr) {
+              const time = new Date(`1970-01-01T${startingTimeStr}`)
+              const dayTime = time.getHours();
+              const dayMinutes = time.getMinutes();
+              const finalMinutes = (24 * 60) - (dayTime * 60 + dayMinutes);
+              let busy = {
+                date: inactivity.starting_date,
+                starting_time: inactivity.starting_hour,
+                duration: finalMinutes
+              }
+              apiProBusyResponse.push(busy)
+            }
+            calculateMinutesToEndDay(startingTimeStr)
+          }
+        })
+      }
+      console.log("---apiProBusy---", apiProBusyResponse)
+      setProBusySlot(apiProBusyResponse)
     }
     fetchPro(userName)
-
     
 
-    // API calls: response with pro services
-    const apiProServiceResponse = [
-      { id: "161", name: "Generic visit", duration: 50 },
-      { id: "162", name: "Manipulation", duration: 60 },
-      { id: "163", name: "Phone Consultancy", duration: 45 },
-      { id: "164", name: "Rehab", duration: 50 },
-      { id: "165", name: "Pediatric manipulation", duration: 40 },
-      { id: "166", name: "Streatching", duration: 30 },
-      { id: "167", name: "Electro medical", duration: 40 },
-    ];
-    /* setProServiceList(apiProServiceResponse); */
-
     // API calls: response with sum of all busy time: bookng + holiday.
-    const apiProBusyResponse = [
+    /* const apiProBusyResponse = [
 
-      { day: "06-02-2024", hour: "9:00", duration: 60 },
-      { day: "06-02-2024", hour: "10:00", duration: 60 },
-      { day: "06-02-2024", hour: "11:00", duration: 60 },
-      { day: "06-02-2024", hour: "12:00", duration: 60 },
-      { day: "06-02-2024", hour: "13:00", duration: 60 },
-      { day: "06-02-2024", hour: "14:00", duration: 60 },
-      { day: "06-02-2024", hour: "15:00", duration: 60 },
-      { day: "06-02-2024", hour: "16:00", duration: 60 },
-      { day: "06-02-2024", hour: "17:00", duration: 60 },
-      { day: "06-02-2024", hour: "18:00", duration: 60 },
-      { day: "06-02-2024", hour: "18:00", duration: 60 },
+      { date: "06-02-2024", starting_time: "09:00", duration: 60 },
+      { date: "06-02-2024", starting_time: "10:00", duration: 60 },
+      { date: "06-02-2024", starting_time: "11:00", duration: 60 },
+      { date: "06-02-2024", starting_time: "12:00", duration: 60 },
+      { date: "06-02-2024", starting_time: "13:00", duration: 60 },
+      { date: "06-02-2024", starting_time: "14:00", duration: 60 },
+      { date: "06-02-2024", starting_time: "15:00", duration: 60 },
+      { date: "06-02-2024", starting_time: "16:00", duration: 60 },
+      { date: "06-02-2024", starting_time: "17:00", duration: 60 },
+      { date: "06-02-2024", starting_time: "18:00", duration: 60 },
+      { date: "06-02-2024", starting_time: "18:00", duration: 60 },
       // holiday
-      { day: "10-02-2024", hour: "00:00", duration: 1440 },
+      { date: "10-02-2024", starting_time: "00:00", duration: 1440 },
     ];
-    setProBusySlot(apiProBusyResponse);
+    setProBusySlot(apiProBusyResponse); */
 
     // API: response with workingday hours slot 
     /* WORKINGDAY EXAMPLE {
@@ -76,10 +137,11 @@ export default function BookingPage() {
       ending_hour_after: "20:00"
     } */
     const apiProWorkingHours = [
-      { start: "9:00", end: "11:00" },
+      { start: "09:00", end: "11:00" },
       { start: "16:00", end: "20:00" }
     ]
     setProWorkingHors(apiProWorkingHours)
+
 
   }, []);
 
@@ -87,13 +149,13 @@ export default function BookingPage() {
   const generateAvailableSlots = (proWorkingHors, selectedService, proBusySlot, selectedDay) => {
     const availableSlots = [];
     const serviceDurationInMinutes = parseInt(selectedService.duration);
-    const slotsForSelectedDay = proBusySlot.filter(slot => slot.day === selectedDay);
+    const slotsForSelectedDay = proBusySlot.filter(slot => slot.date === selectedDay);
 
 
     // 1- Trasform busy slots in 'minutes': es. 9:00 = 540; 10:00 = 600; 11:00 = 660;
     const occupiedSlots = slotsForSelectedDay.map(slot => {
-      const slotHour = parseInt(slot.hour.split(':')[0]);
-      const slotMinute = parseInt(slot.hour.split(':')[1]);
+      const slotHour = parseInt(slot.starting_time.split(':')[0]);
+      const slotMinute = parseInt(slot.starting_time.split(':')[1]);
       const durationInMinutes = parseInt(slot.duration);
 
       return {
@@ -113,6 +175,7 @@ export default function BookingPage() {
     })
 
     console.log('working time in minutes: ', workingTime)
+    console.log("---ProBusy---", proBusySlot)
 
     // 3.1 - Loop through workingTime for each minute i.
     for (let i = workingTime[0].start; i < workingTime[0].end; i++) {
