@@ -113,7 +113,7 @@ def setup_commands(app):
 
     ## BE CAREFUL!!! THIS WILL DELETE ALL DATA IN THE DATABASE
     @app.cli.command("red-button")
-    def insert_bookings():
+    def red_button():
         db.session.query(Bookings).delete()
         print("Bookings deleted")
         db.session.query(Hours).delete()
@@ -132,4 +132,19 @@ def setup_commands(app):
         print("Pros deleted")
         db.session.commit()
         print("-------------> Database deleted!!! <-------------")
+
+    @app.cli.command("insert-services")
+    def insert_services():
+        count = 5
+        specialization_list = ["Psychology", "Psychology", "Oftalmologist", "Oftalmologist", "Cardiology", "Cardiology", "Physiotherapy", "Physiotherapy", "General Medicine", "General Medicine"]
+        service_list =["First visit", "Online Session", "First visit", "Treatment", "First visit", "Surgery", "First visit", "Joints massage", "First visit", "Phone Session",]
+        for x in range(1, (int(count) * 2) + 1):
+            service = Services()
+            service.id = x
+            service.specialization = specialization_list[x - 1]
+            service.service_name = service_list[x - 1]
+            db.session.add(service)
+            db.session.commit()
+            print("service: ", service.specialization, service.service_name, " created.")
+        print("All test services created")
 

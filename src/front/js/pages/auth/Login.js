@@ -33,7 +33,6 @@ export default function Login() {
       setToken(data.access_token)
       actions.login(data.access_token)
       console.log("logged in")
-      navigate("/dashboard/calendar")
     }
     else {
       const data = await response.json()
@@ -54,25 +53,22 @@ export default function Login() {
   }, [store.isLoggedIn])
 
   useEffect(() => {
-    const currentId = pro
-    console.log(currentId)
     const fetchData = async () => {
-      await actions.getPro(currentId)
+      await actions.getPro(pro)
       console.log(store.currentPro)
-      const currentPro = store.currentPro
-      if (currentPro.config_status === 0) {
+      if (store.currentPro.config_status === 0) {
         navigate("/signup/personal-data")
       }
-      if (currentPro.config_status === 1) {
+      if (store.currentPro.config_status === 1) {
         navigate("/signup/location")
       }
-      if (currentPro.config_status === 2) {
+      if (store.currentPro.config_status === 2) {
         navigate("/signup/specialization")
       }
-      if (currentPro.config_status === 3) {
+      if (store.currentPro.config_status === 3) {
         navigate("/signup/hours")
       }
-      if (currentPro.config_status === 4) {
+      if (store.currentPro.config_status === 4) {
         navigate("/dashboard/calendar")
       }
     }
