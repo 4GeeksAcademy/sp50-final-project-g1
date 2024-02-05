@@ -1,27 +1,26 @@
-
-
-
-
-
-
-
-
-
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Context } from "../../store/appContext";
 
 export default function BookingPage() {
   let { userName } = useParams();
 
+  const { store, actions } = useContext(Context)
+
   // load from api or store
-  const [proServiceList, setProServiceList] = useState([]);
   const [proBusySlot, setProBusySlot] = useState([]);
   const [proWorkingHors, setProWorkingHors] = useState([]);
 
-  // patient selections
-  const [selectedService, setSelectedService] = useState(null);
+  // patient input
+  const [selectedProService, setSelectedProService] = useState(null);
   const [selectedHour, setSelectedHour] = useState(null);
-  const [selectedDay, setSelectedDay] = useState('');
+  const [selectedDay, setSelectedDay] = useState(null);
+  const [patientEmail, setPatientEmail] = useState(null);
+  const [patientName, setPatientName] = useState(null);
+  const [patientPhone, setPatientPhone] = useState(null);
+  const [consenseMarketing, setConsenseMarketing] = useState(false);
+  const [consenseThirdParty, setConsenseThirdParty] = useState(false);
+  const [consensePrivacy, setConsensePivacy] = useState(false);
 
   // patient interaction
   const [showBookingInfo, setShowBookingInfo] = useState(false);
@@ -29,62 +28,114 @@ export default function BookingPage() {
   // Effect: on page load 
   useEffect(() => {
 
-    // API Calls: 
+    // API Calls:
+    const fetchPro = async (userName) => {
+      await actions.getProByUsername(userName)
+      // console.log("----PRO----", store.currentPro)
+      await actions.getProServicesByPro(store.currentPro.id)
+      // console.log("----PROSERV----", store.proServicesByPro)
+      await actions.getHoursByPro(store.currentPro.id)
+      console.log("----WORKING_HOURS----", store.hoursByPro)
+      await actions.getBookingsByPro(store.currentPro.id)
+      // console.log("----BOOKINGS----", store.bookingsByPro)
+      await actions.getInactivityByPro(store.currentPro.id)
+      // console.log("----HOLYDAYS----", store.inactivityByPro)
 
-    // API calls: response with pro services
-    const apiProServiceResponse = [
-      { id: "161", name: "Generic visit", duration: 50 },
-      { id: "162", name: "Manipulation", duration: 60 },
-      { id: "163", name: "Phone Consultancy", duration: 45 },
-      { id: "164", name: "Rehab", duration: 50 },
-      { id: "165", name: "Pediatric manipulation", duration: 40 },
-      { id: "166", name: "Streatching", duration: 30 },
-      { id: "167", name: "Electro medical", duration: 40 },
-    ];
-    setProServiceList(apiProServiceResponse);
 
-    // API calls: response with sum of all busy time: bookng + holiday.
-    const apiProBusyResponse = [
-      { day: "04-02-2024", hour: "9:00", duration: 60 },
-      { day: "04-02-2024", hour: "10:00", duration: 30 },
-      { day: "04-02-2024", hour: "11:00", duration: 30 },
-      { day: "04-02-2024", hour: "17:00", duration: 45 },
-      { day: "06-02-2024", hour: "9:00", duration: 60 },
-      { day: "06-02-2024", hour: "10:00", duration: 60 },
-      { day: "06-02-2024", hour: "11:00", duration: 60 },
-      { day: "06-02-2024", hour: "12:00", duration: 60 },
-      { day: "06-02-2024", hour: "13:00", duration: 60 },
-      { day: "06-02-2024", hour: "14:00", duration: 60 },
-      { day: "06-02-2024", hour: "15:00", duration: 60 },
-      { day: "06-02-2024", hour: "16:00", duration: 60 },
-      { day: "06-02-2024", hour: "17:00", duration: 60 },
-      { day: "06-02-2024", hour: "18:00", duration: 60 },
-      { day: "06-02-2024", hour: "18:00", duration: 60 },
-      // holiday
-      { day: "10-02-2024", hour: "00:00", duration: 1440 },
-    ];
-    setProBusySlot(apiProBusyResponse);
+      /////////////////////////////////////////////////////////
+      // 1 - generate proBusy list: sum of booking and holiday
 
-    // API: response with workingday hours slot 
-    const apiProWorkingHours = [
-      { start: "9:00", end: "14:00" },
-      // { start: "15:00", end: "20:00" }
-    ]
-    setProWorkingHors(apiProWorkingHours)
+      let apiProBusyResponse = []
+
+      // Add all booking list
+      if (store.bookingsByPro) {
+        apiProBusyResponse = [...apiProBusyResponse, ...store.bookingsByPro];
+      }
+
+
+      if (store.inactivityByPro) {
+        store.inactivityByPro.map((inactivity) => {
+          // Add long period holiday
+          if (inactivity.ending_date) {
+            const startDateStr = inactivity.starting_date
+            const endDateStr = inactivity.ending_date
+            function calculateTotalMinutes(startDateStr, endDateStr) {
+              const startDate = new Date(startDateStr)
+              const endDate = new Date(endDateStr)
+              endDate.setDate(endDate.getDate() + 1)
+              const minuteDifference = (endDate.getTime() - startDate.getTime()) / (1000 * 60)
+              let calculatedBooking = {
+                date: inactivity.starting_date,
+                starting_time: "00:00",
+                duration: minuteDifference
+              }
+              apiProBusyResponse.push(calculatedBooking)
+            }
+            calculateTotalMinutes(startDateStr, endDateStr)
+          }
+          // Full day holiday 
+          if (!inactivity.ending_date && !inactivity.starting_hour && !inactivity.ending_hour) {
+            let busy = {
+              date: inactivity.starting_date,
+              starting_time: "00:00",
+              duration: 1440
+            }
+            apiProBusyResponse.push(busy)
+          }
+
+          // calculate partial day holiday
+          if (inactivity.starting_hour && inactivity.ending_hour) {
+            const startingTimeStr = inactivity.starting_hour
+            const endingTimeStr = inactivity.ending_hour
+            function calculateDifferenceMinutes(startingTimeStr, endingTimeStr) {
+              const startTime = new Date(`1970-01-01T${startingTimeStr}`)
+              const endTime = new Date(`1970-01-01T${endingTimeStr}`)
+              const minuteDifference = (endTime - startTime) / (1000 * 60);
+              let busy = {
+                date: inactivity.starting_date,
+                starting_time: inactivity.starting_hour,
+                duration: minuteDifference
+              }
+              apiProBusyResponse.push(busy)
+            }
+            calculateDifferenceMinutes(startingTimeStr, endingTimeStr)
+          }
+
+          if (inactivity.starting_date && inactivity.starting_hour && !inactivity.ending_hour) {
+            const startingTimeStr = inactivity.starting_hour
+            function calculateMinutesToEndDay(startingTimeStr) {
+              const time = new Date(`1970-01-01T${startingTimeStr}`)
+              const dayTime = time.getHours();
+              const dayMinutes = time.getMinutes();
+              const finalMinutes = (24 * 60) - (dayTime * 60 + dayMinutes);
+              let busy = {
+                date: inactivity.starting_date,
+                starting_time: inactivity.starting_hour,
+                duration: finalMinutes
+              }
+              apiProBusyResponse.push(busy)
+            }
+            calculateMinutesToEndDay(startingTimeStr)
+          }
+        })
+      }
+      // console.log("---apiProBusy---", apiProBusyResponse)
+      setProBusySlot(apiProBusyResponse)
+      setProWorkingHors(store.hoursByPro)
+    }
+    fetchPro(userName)
 
   }, []);
-
   // CALENDAR SLOT CREATION!
-  const generateAvailableSlots = (proWorkingHors, selectedService, proBusySlot, selectedDay) => {
+  const generateAvailableSlots = (proWorkingHours, selectedProService, proBusySlot, selectedDay) => {
     const availableSlots = [];
-    const serviceDurationInMinutes = parseInt(selectedService.duration);
-    const slotsForSelectedDay = proBusySlot.filter(slot => slot.day === selectedDay);
-
+    const serviceDurationInMinutes = parseInt(selectedProService.duration);
+    const busySlotsForSelectedDay = proBusySlot.filter(slot => slot.date === selectedDay.dayString);
 
     // 1- Trasform busy slots in 'minutes': es. 9:00 = 540; 10:00 = 600; 11:00 = 660;
-    const occupiedSlots = slotsForSelectedDay.map(slot => {
-      const slotHour = parseInt(slot.hour.split(':')[0]);
-      const slotMinute = parseInt(slot.hour.split(':')[1]);
+    const busySlotsInMinutes = busySlotsForSelectedDay.map(slot => {
+      const slotHour = parseInt(slot.starting_time.split(':')[0]);
+      const slotMinute = parseInt(slot.starting_time.split(':')[1]);
       const durationInMinutes = parseInt(slot.duration);
 
       return {
@@ -93,25 +144,43 @@ export default function BookingPage() {
       };
     });
 
-    // 2 - create an object with proWorkingHors in minutes. eg: const workingTime = [{start: 600, end: 1200}]
-    const workingTime = {
-      start: parseInt(proWorkingHors[0].start.split(':')[0]) * 60 + parseInt(proWorkingHors[0].start.split(':')[1]),
-      end: parseInt(proWorkingHors[0].end.split(':')[0]) * 60 + parseInt(proWorkingHors[0].end.split(':')[1])
-    };
+    // 2 - create an object with proWorkingHors in minutes. eg: const workingTime = [{id:1, working_day: 2, starting_hour_morning: 600, ending_hour_morning: 1200}]
+    const workingTime = proWorkingHours.map((shift) => {
+      return (
+        {
+          id: shift.id,
+          working_day: shift.working_day,
+          starting_hour_morning: parseInt(shift.starting_hour_morning.split(':')[0]) * 60 + parseInt(shift.starting_hour_morning.split(':')[1]),
+          ending_hour_morning: parseInt(shift.ending_hour_morning.split(':')[0]) * 60 + parseInt(shift.ending_hour_morning.split(':')[1]),
+          starting_hour_after: parseInt(shift.starting_hour_after.split(':')[0]) * 60 + parseInt(shift.starting_hour_after.split(':')[1]),
+          ending_hour_after: parseInt(shift.ending_hour_after.split(':')[0]) * 60 + parseInt(shift.ending_hour_after.split(':')[1])
+        }
+      )
+    });
 
-    // 3 - Loop through workingTime for each minute i.
-    for (let i = workingTime.start; i < workingTime.end; i++) {
+    // 3.0 - find the working day slot
+    const workingDay = workingTime.find(item => item.working_day === selectedDay.day);
+
+    // 3.0.1 - Check if pro work on selectedDay
+    if (!workingDay) {
+      console.log(`Pro is not working on day ${selectedDay.day}`);
+      return [];
+    }
+
+    /////////////  SLOT 1 - morning /////////////////////////////////
+    // 3.1 - Loop through workingTime for each minute i.
+    for (let i = workingDay.starting_hour_morning; i < workingDay.ending_hour_morning; i++) {
       let possibleSlot = { start: i, end: i + serviceDurationInMinutes };
 
       let isIntersected = false;
 
-      // Loop through occupiedSlots
-      for (let j = 0; j < occupiedSlots.length; j++) {
+      // Loop through busySlotsInMinutes
+      for (let j = 0; j < busySlotsInMinutes.length; j++) {
         // Check if possible slot intersects with the busy slot
         if (
-          (possibleSlot.start >= occupiedSlots[j].start && possibleSlot.start < occupiedSlots[j].end) ||
-          (possibleSlot.end > occupiedSlots[j].start && possibleSlot.end <= occupiedSlots[j].end) ||
-          (possibleSlot.start < occupiedSlots[j].start && possibleSlot.end > occupiedSlots[j].end)
+          (possibleSlot.start >= busySlotsInMinutes[j].start && possibleSlot.start < busySlotsInMinutes[j].end) ||
+          (possibleSlot.end > busySlotsInMinutes[j].start && possibleSlot.end <= busySlotsInMinutes[j].end) ||
+          (possibleSlot.start < busySlotsInMinutes[j].start && possibleSlot.end > busySlotsInMinutes[j].end)
         ) {
           isIntersected = true;
           break;
@@ -119,7 +188,33 @@ export default function BookingPage() {
       }
 
       // If the possible slot does not intersect with any busy slots, add it to available slots
-      if (!isIntersected && possibleSlot.end <= workingTime.end) {
+      if (!isIntersected && possibleSlot.end <= workingDay.ending_hour_morning) {
+        availableSlots.push(possibleSlot);
+      }
+    }
+
+    /////////////  SLOT 2 - afternoon /////////////////////////////////
+    // 3.2 - Loop through workingDay for each minute i.
+    for (let i = workingDay.starting_hour_after; i < workingDay.ending_hour_after; i++) {
+      let possibleSlot = { start: i, end: i + serviceDurationInMinutes };
+
+      let isIntersected = false;
+
+      // Loop through busySlotsInMinutes
+      for (let j = 0; j < busySlotsInMinutes.length; j++) {
+        // Check if possible slot intersects with the busy slot
+        if (
+          (possibleSlot.start >= busySlotsInMinutes[j].start && possibleSlot.start < busySlotsInMinutes[j].end) ||
+          (possibleSlot.end > busySlotsInMinutes[j].start && possibleSlot.end <= busySlotsInMinutes[j].end) ||
+          (possibleSlot.start < busySlotsInMinutes[j].start && possibleSlot.end > busySlotsInMinutes[j].end)
+        ) {
+          isIntersected = true;
+          break;
+        }
+      }
+
+      // If the possible slot does not intersect with any busy slots, add it to available slots
+      if (!isIntersected && possibleSlot.end <= workingDay.ending_hour_after) {
         availableSlots.push(possibleSlot);
       }
     }
@@ -154,10 +249,14 @@ export default function BookingPage() {
   };
 
 
-  // Functions: booking flow
-  const handleDaySelection = (day) => {
+  // Functions: interactions
+  const handleDaySelection = (daySel) => {
     setShowBookingInfo(true);
-    setSelectedDay(day)
+    const fullDate = new Date(daySel)
+    const dayOfWeek = fullDate.getDay()
+    console.log('day of week format: ', dayOfWeek)
+    console.log('day selected: ', daySel)
+    setSelectedDay({ dayString: daySel, day: dayOfWeek })
   };
 
   const handleHourSelect = (slot) => {
@@ -165,17 +264,21 @@ export default function BookingPage() {
   };
 
   const handleServiceSelection = (service) => {
-    console.log('service: ', JSON.parse(service))
-    setSelectedService(JSON.parse(service))
+    setSelectedProService(JSON.parse(service))
   }
-
-  const handleCloseForm = () => {
-    setShowBookingInfo(false);
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('clicking on submit');
+    console.log('////// submit form /////////');
+    console.log('pro service id: ', selectedProService.id);
+    console.log('day: ', selectedDay);
+    console.log('hour: ', selectedHour);
+    console.log('patient email: ', patientEmail);
+    console.log('patient name: ', patientName);
+    console.log('patient phone: ', patientPhone);
+    console.log('consense privacy: ', consensePrivacy);
+    console.log('consense Third Party: ', consenseThirdParty);
+    console.log('consense marketing: ', consenseMarketing);
   }
 
 
@@ -192,22 +295,21 @@ export default function BookingPage() {
               <label htmlFor="booking-service" className="form-label visually-hidden">Select a Service</label>
               <select id="booking-service" className="form-select w-100" onChange={(event) => handleServiceSelection(event.target.value)}>
                 <option value="">Select a service</option>
-                {proServiceList ? (
-                  proServiceList.map(service => (
-                    <option key={service.id} value={JSON.stringify({ id: service.id, duration: service.duration, name: service.name })}>{service.name}</option>
+                {store.proServicesByPro ? (
+                  store.proServicesByPro.map(service => (
+                    <option key={service.id} value={JSON.stringify({ id: service.id, duration: service.duration, name: service.service_name })}>{service.service_name}</option>
                   ))
                 ) : ("No service for this calendar")}
               </select>
             </div>
             {/* BOOKING CALENDAR */}
-            {selectedService ? (
+            {selectedProService ? (
               <div id="booking-calendar" className="m-auto bg-white rounded border p-5">
                 <div className="mb-5 border-bottom">
                   <span className="fs-2 text-black-50">February</span>
                 </div>
                 <div className="" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
-                  <span className=" py-3 rounded text-white text-center fs-5" style={{ backgroundColor: "#14C4B9" }} onClick={(e) => handleDaySelection(e.target.innerHTML)}>06-02-2024</span>
-                  <span className=" py-3 rounded text-white text-center fs-5" style={{ backgroundColor: "#14C4B9" }} onClick={(e) => handleDaySelection(e.target.innerHTML)}>04-02-2024</span>
+                  <input type="date" onChange={(e) => handleDaySelection(e.target.value)}></input>
                 </div>
               </div>
             ) : null}
@@ -217,18 +319,18 @@ export default function BookingPage() {
 
       {/* BOOKING INFO FORM */}
       {showBookingInfo ? (
-        <div className="bg-white position-fixed top-0 end-0 bottom-0 min-vh-100 py-5 px-4 w-25 shadow overflow-auto" style={{ zIndex: "10", width: "100%", maxWidth: "400px" }}>
+        <div className="bg-white position-fixed top-0 end-0 bottom-0 min-vh-100 py-5 px-4 shadow overflow-auto" style={{ zIndex: "10", width: "100%", maxWidth: "400px" }}>
           <form onSubmit={(e) => handleSubmit(e)}>
             <div className="d-flex justify-content-between mb-5">
               <h5 className="me-4 text-black-50 text-decoration-underline fw-bold" >BOOKING DETAILS</h5>
-              <button type="button" className="btn-close" onClick={handleCloseForm}></button>
+              <button type="button" className="btn-close" onClick={() => setShowBookingInfo(false)}></button>
             </div>
             {/* day hours availability */}
             <span className="mb-1 d-inline-block text-black-50 fs-6 text-decoration-underline">Select Visit Hour</span>
             <div className="rounded bg-light small p-3 mb-5" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem" }}>
 
               {proBusySlot ? (
-                generateAvailableSlots(proWorkingHors, selectedService, proBusySlot, selectedDay).map((slot, index) => (
+                generateAvailableSlots(proWorkingHors, selectedProService, proBusySlot, selectedDay).map((slot, index) => (
                   <span
                     key={index}
                     className="btn btn-light"
@@ -256,9 +358,9 @@ export default function BookingPage() {
                   In order to complete this booking, you'll be asked to confirm your email.
                 </p>
                 <div className="rounded bg-light p-3 fw-lighter small mb-5">
-                  <input className="p-2 w-100 rounded-3 border-0 mb-2" type="email" placeholder="your@mail.com"></input>
-                  <input className="p-2 w-100 rounded-3 border-0 mb-2" type="text" placeholder="Your full name"></input>
-                  <input className="p-2 w-100 rounded-3 border-0 mb-2" type="number" placeholder="12123234"></input>
+                  <input className="p-2 w-100 rounded-3 border-0 mb-2" type="email" placeholder="your@mail.com" onChange={(e) => setPatientEmail(e.target.value)}></input>
+                  <input className="p-2 w-100 rounded-3 border-0 mb-2" type="text" placeholder="Your full name" onChange={(e) => setPatientName(e.target.value)}></input>
+                  <input className="p-2 w-100 rounded-3 border-0 mb-2" type="number" placeholder="12123234" onChange={(e) => setPatientPhone(e.target.value)}></input>
                 </div>
                 {/* Privacy consense */}
                 <div className="rounded p-3 fw-light mb-5" style={{ backgroundColor: "#E0F3F3" }}>
@@ -267,19 +369,19 @@ export default function BookingPage() {
                     In order to complete this booking, you'll be asked to confirm your email.
                   </p>
                   <div className="form-check">
-                    <input className="form-check-input" type="checkbox" id="privacy" />
+                    <input className="form-check-input" type="checkbox" id="privacy" onChange={() => setConsensePivacy(!consensePrivacy)} />
                     <label className="form-check-label small fw-lighter" htmlFor="privacy">
                       Privacy Consent
                     </label>
                   </div>
                   <div className="form-check">
-                    <input className="form-check-input" type="checkbox" id="contactusageconsense" />
+                    <input className="form-check-input" type="checkbox" id="contactusageconsense" onChange={() => setConsenseThirdParty(!consenseThirdParty)} />
                     <label className="form-check-label small fw-lighter" htmlFor="contactusageconsense">
                       Third Party Consent
                     </label>
                   </div>
                   <div className="form-check">
-                    <input className="form-check-input" type="checkbox" id="marketingconsent" />
+                    <input className="form-check-input" type="checkbox" id="marketingconsent" onChange={() => setConsenseMarketing(!consenseMarketing)} />
                     <label className="form-check-label small fw-lighter" htmlFor="marketingconsent">
                       Marketing Consent
                     </label>
@@ -294,3 +396,9 @@ export default function BookingPage() {
     </>
   );
 }
+
+
+
+
+
+
