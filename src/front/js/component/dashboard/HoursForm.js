@@ -19,7 +19,7 @@ export default function HoursForm() {
   // Effect on page
   useEffect(() => {
     if (!store.isLoggedIn) {
-       // navigate('/login');
+      // navigate('/login');
     } else {
       const fetchData = async () => {
         const response = await actions.authentication(store.token);
@@ -111,7 +111,7 @@ export default function HoursForm() {
     { name: 'Thu', id: 4 },
     { name: 'Fri', id: 5 },
     { name: 'Sat', id: 6 },
-    { name: 'Sun', id: 7 }
+    { name: 'Sun', id: 0 }
   ];
 
 

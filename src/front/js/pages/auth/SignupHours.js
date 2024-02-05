@@ -112,7 +112,7 @@ export default function SignupHours() {
     { name: 'Thu', id: 4 },
     { name: 'Fri', id: 5 },
     { name: 'Sat', id: 6 },
-    { name: 'Sun', id: 7 }
+    { name: 'Sun', id: 0 }
   ];
 
 
