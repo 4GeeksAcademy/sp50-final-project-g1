@@ -13,23 +13,27 @@ export default function SignupSpecialization() {
   const [specializations, setSpecializations] = useState('');
   const [prices, setPrices] = useState({});
   const [durations, setDurations] = useState({});
-  const [fullServiceList, setFullServiceList] = useState(store.services)
   const [specializationList, setSpecializationList] = useState([])
   const [currentServices, setCurrentServices] = useState([])
   const [selectedServices, setSelectedServices] = useState([])
 
 
   useEffect(() => {
-    let uniqueSpecializations = new Set()
-    fullServiceList.forEach(service => {
-      uniqueSpecializations.add(service.specialization)
-    })
-    setSpecializationList(Array.from(uniqueSpecializations))
+    const fetchData = async() => {
+      await actions.getServices()
+      let uniqueSpecializations = new Set()
+      store.services.forEach(service => {
+        uniqueSpecializations.add(service.specialization)
+      })
+      setSpecializationList(Array.from(uniqueSpecializations))
+    }
+    fetchData()
+    
   }, [])  
 
   useEffect(() => {
     let filteredServices = []
-    fullServiceList.forEach(service => {
+    store.services.forEach(service => {
       if(service.specialization === specializations) {
         filteredServices.push(service)
       }
