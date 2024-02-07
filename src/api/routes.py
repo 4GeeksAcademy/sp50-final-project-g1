@@ -140,7 +140,7 @@ def patients():
                                 phone=data.get('phone'))
             db.session.add(new_patient)
             db.session.commit()
-            return jsonify({"message": "Record added successfully", "patient": new_patient.serialize()}), 201
+            return jsonify(new_patient.serialize()), 201
         except IntegrityError as e:
             if 'violates unique constraint "patients_email_key"' in str(e.orig):
                 return jsonify({'error': 'duplicated_email'}), 400
@@ -162,7 +162,7 @@ def specific_patient(patientid):
         patient.email = data.get('email', patient.email)
         patient.phone = data.get('phone', patient.phone)
         db.session.commit()
-        return jsonify({"message": "Patient updated successfully"}), 200
+        return jsonify(patient.serialize()), 200
     if request.method == 'DELETE': #NB: delete all booking related to the patient_id
         ## Join patients and bookings table and filter all record by patient_id = patientid
         bookings_by_patient = Bookings.query.join(Patients).filter_by(id=patientid).all()
@@ -173,6 +173,15 @@ def specific_patient(patientid):
         db.session.delete(patient)
         db.session.commit()
         return jsonify({"message": "Patient deleted successfully. All booking associated to this patient has been delated"}), 200
+    
+# Get patient by email
+@api.route("/patients/<string:patient_email>", methods=["GET"])
+def get_patient_by_emial(patient_email):
+    patient = Patients.query.filter_by(email=patient_email).first()
+    if not patient:
+        return jsonify({"error": "patient not found"}), 404
+    if request.method == 'GET':
+        return jsonify(patient.serialize()), 200
 
 
 
@@ -199,10 +208,10 @@ def get_add_bookings():
                                pro_service_id=data['pro_service_id'],
                                patient_id=data['patient_id'],
                                pro_notes=data.get('pro_notes'),   # using .get method begause we can set default value
-                               patient_notes=data.get('patient_note'))  # using .get method begause we can set default value
+                               patient_notes=data.get('patient_notes'))  # using .get method begause we can set default value
         db.session.add(new_booking)
         db.session.commit()
-        return jsonify({"message": "Booking added successfully"}), 201
+        return jsonify({"message": "Booking added successfully", "booking": new_booking.serialize()}), 201
 
       
 # Get and Update a specific record in the 'booking' table
