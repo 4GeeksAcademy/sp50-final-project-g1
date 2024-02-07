@@ -14,8 +14,15 @@ const getState = ({getStore, getActions, setStore}) => {
 			bookingsByPro: [],
 			patientsByPro: [],
 			token: "",
+      patientSelectedDay: "",
 		},
 		actions: {
+      
+      selectDay: (day) => {
+        setStore({ patientSelectedDay: day })
+      },
+
+      
 			// Login
 			login: (token) => {
 				setStore({isLoggedIn: true})
