@@ -37,7 +37,8 @@ export default function BookingPage() {
   const [selectedDay, setSelectedDay] = useState(null);
   const [patientEmail, setPatientEmail] = useState(null);
   const [patientName, setPatientName] = useState(null);
-  const [patientPhone, setPatientPhone] = useState(null);
+  const [patientLastname, setPatientLastname] = useState(null)
+  const [patientPhone, setPatientPhone] = useState("");
   const [patientNote, setPatientNote] = useState('');
   const [consenseMarketing, setConsenseMarketing] = useState(false);
   const [consenseThirdParty, setConsenseThirdParty] = useState(false);
@@ -289,22 +290,22 @@ export default function BookingPage() {
     setSelectedProService(JSON.parse(service))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
 
     const booking = {
       date: selectedDay.dayString,
-      duration: selectedProService.duration,
-      pro_service: selectedProService.id,
+      pro_service_id: selectedProService.id,
       starting_time: selectedHour,
       status: 'pending',
+      patient_notes: patientNote,
     }
 
     const patient = {
-      patient_email: patientEmail,
-      patient_name: patientName,
-      patient_phone: patientPhone,
-      patient_note: patientNote,
+      email: patientEmail,
+      name: patientName,
+      lastname: patientLastname,
+      phone: patientPhone,
       patient_consense_privacy: consensePrivacy,
       patient_consense_third_party: consenseThirdParty,
       patient_consense_marketing: consenseMarketing,
@@ -313,6 +314,34 @@ export default function BookingPage() {
     console.log('-- Form submit --')
     console.log('booking: ', booking)
     console.log('patient: ', patient)
+
+    const isPatient = await actions.getPatientByEmail(patientEmail)
+    if (isPatient) {
+      if (isPatient.name.toUpperCase() != patient.name.toUpperCase() || isPatient.lastname.toUpperCase() != patient.lastname.toUpperCase()){
+        isPatient.name = patient.name
+        isPatient.lastname = patient.lastname
+        if (patient.phone != "") {
+          isPatient.pone = patient.phone
+        }
+        const updatedPatient = await actions.updatePatient(isPatient)
+        console.log(updatedPatient)
+        booking.patient_id = updatedPatient.id
+        const newBooking = await actions.newBooking(booking)
+        console.log(newBooking)
+      }
+      else {
+        booking.patient_id = isPatient.id
+        const newBooking = await actions.newBooking(booking)
+        console.log(newBooking)
+      }
+    }
+    if (!isPatient) {
+      const newPatient = await actions.newPatient(patient)
+      console.log(newPatient)
+      booking.patient_id = newPatient.id
+      const newBooking = await actions.newBooking(booking)
+      console.log(newBooking)
+    }
   }
 
 
@@ -395,7 +424,8 @@ export default function BookingPage() {
                 </p>
                 <div className="rounded bg-light p-3 fw-lighter small mb-5">
                   <input className="p-2 w-100 rounded-3 border-0 mb-2" type="email" placeholder="your@mail.com" onChange={(e) => setPatientEmail(e.target.value)}></input>
-                  <input className="p-2 w-100 rounded-3 border-0 mb-2" type="text" placeholder="Your full name" onChange={(e) => setPatientName(e.target.value)}></input>
+                  <input className="p-2 w-100 rounded-3 border-0 mb-2" type="text" placeholder="Your name" onChange={(e) => setPatientName(e.target.value)}></input>
+                  <input className="p-2 w-100 rounded-3 border-0 mb-2" type="text" placeholder="Your lastname" onChange={(e) => setPatientLastname(e.target.value)}></input>
                   <input className="p-2 w-100 rounded-3 border-0 mb-2" type="number" placeholder="12123234" onChange={(e) => setPatientPhone(e.target.value)}></input>
                   <div className="mb-3">
                     <label htmlFor="notes" className="form-label">Notes</label>

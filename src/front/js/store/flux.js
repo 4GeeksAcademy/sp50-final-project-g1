@@ -591,7 +591,8 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					return true
+					const data = await response.json()
+					return data
 				}
 				else{
 					/* alert("Sorry, somenthing went wrong.") */
@@ -681,6 +682,22 @@ const getState = ({getStore, getActions, setStore}) => {
 					console.log("Error :", response.status, response.statusText)
 				}
 			},
+			getPatientByEmail: async(patient_email) => {
+				const url = process.env.BACKEND_URL + `/patients/${patient_email}`;
+				const options = {
+					method: "GET"           
+				};
+				const response = await fetch(url, options)
+				if(response.ok){
+					const data = await response.json()
+					return data
+				}
+				else{
+					const data = await response.json()
+					console.log(data.error)
+					return null	
+				}
+			},
 			updatePatient: async(object) => {
 				const url = process.env.BACKEND_URL + `/patients/${object.id}`;
 				const options = {
@@ -692,7 +709,8 @@ const getState = ({getStore, getActions, setStore}) => {
 				};
 				const response = await fetch(url, options)
 				if(response.ok){
-					return true
+					const data = response.json()
+					return data
 				}
 				else{
 					/* alert("Sorry, somenthing went wrong.") */
