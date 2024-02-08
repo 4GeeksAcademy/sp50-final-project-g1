@@ -17,9 +17,7 @@ export default function Calendar() {
   // state
   const [today, setToday] = useState(currentDate)
   const [selectDate, setSelectDate] = useState('')
-
-  const [ProWorkingHors, setProWorkingHors] = useState('')
-
+  const [proWorkingHors, setProWorkingHors] = useState([])
 
   const slot = [
     // { date: "2024-02-09" },
@@ -71,16 +69,9 @@ export default function Calendar() {
     const fetchPro = async (userName) => {
       await actions.getProByUsername(userName)
       // console.log("----PRO----", store.currentPro)
-      await actions.getProServicesByPro(store.currentPro.id)
-      // console.log("----PROSERV----", store.proServicesByPro)
+
       await actions.getHoursByPro(store.currentPro.id)
       console.log("----WORKING_HOURS----", store.hoursByPro)
-      await actions.getBookingsByPro(store.currentPro.id)
-      // console.log("----BOOKINGS----", store.bookingsByPro)
-      await actions.getInactivityByPro(store.currentPro.id)
-      // console.log("----HOLYDAYS----", store.inactivityByPro)
-
-
 
       setProWorkingHors(store.hoursByPro)
     }
@@ -94,8 +85,7 @@ export default function Calendar() {
   }
 
   return (
-    <div className="bg-light m-0 p-0">
-
+    <div>
 
       {/* CALENDAR DESIGN */}
       <div className="bg-white rounded border p-4 my-5 mx-auto" style={{ width: "100%", maxWidth: "400px" }}>
@@ -111,7 +101,6 @@ export default function Calendar() {
             <span className="ms-3" onClick={() => setToday(today.month(today.month() + 1))}>{` >`}</span>
           </div>
         </div>
-
 
         {/* Calendar header date */}
         <div className="mb-3 text-center border-bottom" style={{ width: "100%", display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "0.5rem" }}>
@@ -131,32 +120,30 @@ export default function Calendar() {
         {/* Calendar number's day */}
         <div className="" style={{ width: "100%", display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "0.5rem" }}>
           {generateCalendarDate(today.month(), today.year()).map(({ date, currentMonth, today }, index) => {
-            // Verifica se la data corrente è presente negli slot
-            const isSlotDay = slot.find(slotDay => slotDay.date === date.format('YYYY-MM-DD'));
 
+            // Verifica se la data corrente è presente negli slot
+            const isDay = proWorkingHors.some(day => day.working_day === date.day());
             // Calcola se la data è antecedente alla data odierna
             const isPastDate = date.isBefore(currentDate, 'day');
-
-            // Calcola se la data corrente è uguale alla data del giorno
-            const isCurrentDate = date.isSame(currentDate, 'day');
 
             // Applica lo stile condizionale
             const dayStyle = {
               width: "30px",
               height: "30px",
-              borderRadius: isSlotDay ? "50%" : (today ? "50%" : ''),
-              color: currentMonth ? (today || isSlotDay ? "#ffffff" : "#8B8B8B") : "#DCDCDC",
-              backgroundColor: isSlotDay ? "#14C4B9" : (today ? "#101010" : "#ffffff"),
+              borderRadius: "50%",
+              color: today || isDay ? "#ffffff" : "#DCDCDC",
+              backgroundColor: today ? "#101010" : (isDay ? "#14C4B9" : "#ffffff"),
               cursor: "pointer",
-              visibility: (currentMonth && !isPastDate && !isCurrentDate) ? "visible" : "hidden" // Nascondi i giorni precedenti alla data odierna e quelli dei mesi precedenti e successivi
+              visibility: (currentMonth && !isPastDate) ? "visible" : "hidden"
             };
 
+            // single day number
             return (
               <div
                 key={index}
                 className="text-center d-flex justify-content-center align-items-center"
                 style={dayStyle}
-                onClick={() => handleSelectDay(date.format('YYYY-MM-DD'))}
+                onClick={!today ? () => handleSelectDay(date.format('YYYY-MM-DD')) : null}
               >
                 <span className="day small">
                   {date.date()}
@@ -166,15 +153,7 @@ export default function Calendar() {
           })}
         </div>
 
-
-
-
-        <div className="border-top small text-black-50 mt-4 pt-3">
-          Selected date: {selectDate}
-        </div>
       </div>
-
-
     </div>
   );
 }

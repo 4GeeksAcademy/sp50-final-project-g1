@@ -13,6 +13,7 @@ export default function Login() {
   const [password, setPassword] = useState("")
   const [token, setToken] = useState(localStorage.getItem("token"))
   const [pro, setPro] = useState({})
+  const [passwordVisibility, setPasswordVisibility] = useState(false)
 
   const handleSubmit = async (e) => {
 
@@ -101,8 +102,8 @@ export default function Login() {
                   <div className="col-12 mb-3">
                     <label htmlFor="email" className="form-label">Password</label>
                     <div className="input-group has-validation">
-                      <input type="text" className="form-control" id="email" placeholder="*******" onChange={(e) => setPassword(e.target.value)} />
-                      <span className="input-group-text">@</span>
+                      <input type={!passwordVisibility ? "password" : "text"} className="form-control" id="email" placeholder="*******" onChange={(e) => setPassword(e.target.value)} />
+                      <span className="input-group-text small" onClick={() => setPasswordVisibility(!passwordVisibility)}>show</span>
                       <div className="invalid-feedback">
                         Password required
                       </div>

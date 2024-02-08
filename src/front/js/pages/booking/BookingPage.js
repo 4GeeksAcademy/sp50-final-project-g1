@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Context } from "../../store/appContext";
 
-
-
+// components
+import Calendar from "../../component/booking/calendar";
 
 
 ///////////////////////////////////////
@@ -11,15 +11,6 @@ import { Context } from "../../store/appContext";
 // can't see sunday timeslot: set daynumber to 0 for sunday (do not user 7)
 // run error if working day don't have a time range (eg: afternoon).
 /////////////////////////////////////
-
-
-
-
-
-
-
-
-
 
 
 export default function BookingPage() {
@@ -54,13 +45,13 @@ export default function BookingPage() {
     // API Calls:
     const fetchPro = async (userName) => {
       await actions.getProByUsername(userName)
-      // console.log("----PRO----", store.currentPro)
+      console.log("----PRO----", store.currentPro)
       await actions.getProServicesByPro(store.currentPro.id)
       // console.log("----PROSERV----", store.proServicesByPro)
       await actions.getHoursByPro(store.currentPro.id)
       // console.log("----WORKING_HOURS----", store.hoursByPro)
       await actions.getBookingsByPro(store.currentPro.id)
-      console.log("----BOOKINGS----", store.bookingsByPro)
+      // console.log("----BOOKINGS----", store.bookingsByPro)
       await actions.getInactivityByPro(store.currentPro.id)
       // console.log("----HOLYDAYS----", store.inactivityByPro)
 
@@ -147,6 +138,12 @@ export default function BookingPage() {
     fetchPro(userName)
 
   }, []);
+
+  useEffect(() => {
+    if (store.patientSelectedDay != '') {
+      handleDaySelection(store.patientSelectedDay)
+    }
+  }, [store.patientSelectedDay, selectedProService])
 
   // CALENDAR SLOT CREATION!
   const generateAvailableSlots = (proWorkingHours, selectedProService, proBusySlot, selectedDay) => {
@@ -273,6 +270,7 @@ export default function BookingPage() {
 
   // Functions: interactions
   const handleDaySelection = (daySel) => {
+
     setShowBookingInfo(true);
     const fullDate = new Date(daySel)
     const dayOfWeek = fullDate.getDay()
@@ -287,10 +285,11 @@ export default function BookingPage() {
   };
 
   const handleServiceSelection = (service) => {
+    console.log('service', service)
     setSelectedProService(JSON.parse(service))
   }
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const booking = {
@@ -317,7 +316,7 @@ export default function BookingPage() {
 
     const isPatient = await actions.getPatientByEmail(patientEmail)
     if (isPatient) {
-      if (isPatient.name.toUpperCase() != patient.name.toUpperCase() || isPatient.lastname.toUpperCase() != patient.lastname.toUpperCase()){
+      if (isPatient.name.toUpperCase() != patient.name.toUpperCase() || isPatient.lastname.toUpperCase() != patient.lastname.toUpperCase()) {
         isPatient.name = patient.name
         isPatient.lastname = patient.lastname
         if (patient.phone != "") {
@@ -365,17 +364,10 @@ export default function BookingPage() {
                 ) : ("No service for this calendar")}
               </select>
             </div>
+
             {/* BOOKING CALENDAR */}
-            {selectedProService ? (
-              <div id="booking-calendar" className="m-auto bg-white rounded border p-5">
-                <div className="mb-5 border-bottom">
-                  <span className="fs-2 text-black-50">February</span>
-                </div>
-                <div className="" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
-                  <input type="date" onChange={(e) => handleDaySelection(e.target.value)}></input>
-                </div>
-              </div>
-            ) : null}
+            {selectedProService ? (<Calendar />) : null}
+
           </div>
         </div>
       </section>
@@ -383,10 +375,16 @@ export default function BookingPage() {
       {/* BOOKING INFO FORM */}
       {showBookingInfo ? (
         <div className="bg-white position-fixed top-0 end-0 bottom-0 min-vh-100 py-5 px-4 shadow overflow-auto" style={{ zIndex: "10", width: "100%", maxWidth: "400px" }}>
+
+
           <form onSubmit={(e) => handleSubmit(e)}>
-            <div className="d-flex justify-content-between mb-5">
+            <div className="d-flex justify-content-between mb-4">
               <h5 className="me-4 text-black-50 text-decoration-underline fw-bold" >BOOKING DETAILS</h5>
               <button type="button" className="btn-close" onClick={() => setShowBookingInfo(false)}></button>
+            </div>
+
+            <div className="mb-4 text-black-50 small">
+              <span>SELECTED DAY: </span><span className="fw-bold" style={{ color: "#14C4B9", }}>{store.patientSelectedDay}</span>
             </div>
             {/* day hours availability */}
             <span className="mb-1 d-inline-block text-black-50 fs-6 text-decoration-underline">Select Visit Hour</span>

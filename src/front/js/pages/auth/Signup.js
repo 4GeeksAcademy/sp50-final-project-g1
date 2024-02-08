@@ -7,13 +7,14 @@ export default function Signup() {
 
   const navigate = useNavigate()
 
-  const {store, actions} = useContext(Context)
+  const { store, actions } = useContext(Context)
 
   const [email, setEmail] = useState()
   const [username, setUsername] = useState()
   const [password, setPassword] = useState()
   const [token, setToken] = useState(localStorage.getItem("token"))
   const [pro, setPro] = useState({})
+  const [passwordVisibility, setPasswordVisibility] = useState(false)
 
 
 
@@ -31,15 +32,15 @@ export default function Signup() {
       config_status: 0
     }
 
-   await actions.newPro(object)
+    await actions.newPro(object)
 
-   const url = process.env.BACKEND_URL + '/login'
+    const url = process.env.BACKEND_URL + '/login'
     const options = {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({email, password})
+      body: JSON.stringify({ email, password })
     }
     const response = await fetch(url, options);
     console.log(response)
@@ -54,7 +55,7 @@ export default function Signup() {
   useEffect(() => {
     if (store.isLoggedIn) {
       const fetchData = async () => {
-        if(token){
+        if (token) {
           const proId = await actions.authentication(token)
           setPro(proId.logged_in_as)
         }
@@ -70,42 +71,42 @@ export default function Signup() {
       await actions.getPro(currentId)
       console.log(store.currentPro)
       const currentPro = store.currentPro
-      if (currentPro.config_status === 0){
+      if (currentPro.config_status === 0) {
         navigate("/signup/personal-data")
       }
-      if (currentPro.config_status === 1){
+      if (currentPro.config_status === 1) {
         navigate("/signup/location")
       }
-      if (currentPro.config_status === 2){
+      if (currentPro.config_status === 2) {
         navigate("/signup/specialization")
       }
-      if (currentPro.config_status === 3){
+      if (currentPro.config_status === 3) {
         navigate("/signup/hours")
       }
-      if (currentPro.config_status >= 4){
+      if (currentPro.config_status >= 4) {
         navigate("/dashboard/calendar")
       }
     }
     fetchData()
-  },[pro])
+  }, [pro])
 
   return (
-    <> 
-    <section id="access" className="text-black-50 d-flex align-items-center" style={{ minHeight: '70vh'}}>
-      <div className="container p-5">
+    <>
+      <section id="access" className="text-black-50 d-flex align-items-center" style={{ minHeight: '70vh' }}>
+        <div className="container p-5">
 
-        <div className="row">
+          <div className="row">
 
-          {/* SIGNUP */}
-          <div className="col-12 col-md-6 mb-5 mx-auto">
-            <h5>Signup</h5>
-            <div className=" rounded-3 p-4 mb-3" style={{backgroundColor:"#D9D9D9"}}>
+            {/* SIGNUP */}
+            <div className="col-12 col-md-6 mb-5 mx-auto">
+              <h5>Signup</h5>
+              <div className=" rounded-3 p-4 mb-3" style={{ backgroundColor: "#D9D9D9" }}>
 
-              <form className="needs-validation" noValidate="" >
-                
+                <form className="needs-validation" noValidate="" >
+
                   <div className="col-12 mb-3">
                     <label htmlFor="email" className="form-label">Email</label>
-                    <input type="email" className="form-control" id="email" placeholder="you@example.com" onChange={(e) => setEmail(e.target.value)}/>
+                    <input type="email" className="form-control" id="email" placeholder="you@example.com" onChange={(e) => setEmail(e.target.value)} />
                     <div className="invalid-feedback">
                       Please enter a valid email address for shipping updates.
                     </div>
@@ -124,24 +125,24 @@ export default function Signup() {
                   <div className="col-12 mb-3">
                     <label htmlFor="email" className="form-label">Password</label>
                     <div className="input-group has-validation">
-                      <input type="text" className="form-control" id="email" placeholder="*******"  onChange={(e) => setPassword(e.target.value)} />
-                      <span className="input-group-text">@</span>
+                      <input type={!passwordVisibility ? "password" : "text"} className="form-control" id="email" placeholder="*******" onChange={(e) => setPassword(e.target.value)} />
+                      <span className="input-group-text small" onClick={() => setPasswordVisibility(!passwordVisibility)}>show</span>
                       <div className="invalid-feedback">
                         Password required
                       </div>
                     </div>
                   </div>
-                <button className="w-100 btn btn-primary btn-lg mt-5" onClick={(e) => handleSubmit(e)} style={{backgroundColor:"#14C4B9", border:"none"}} >Submit</button>
-              </form>
+                  <button className="w-100 btn btn-primary btn-lg mt-5" onClick={(e) => handleSubmit(e)} style={{ backgroundColor: "#14C4B9", border: "none" }} >Submit</button>
+                </form>
+              </div>
+              <p>Already have an account? <Link to="/login" style={{ color: "#14C4B9" }}>Login Here</Link></p>
             </div>
-            <p>Already have an account? <Link to="/login" style={{color:"#14C4B9"}}>Login Here</Link></p>
+
           </div>
 
         </div>
+      </section>
 
-      </div>
-    </section>
-    
     </>
   )
 }
