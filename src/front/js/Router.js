@@ -28,6 +28,8 @@ import NavbarSignup from "./Layout/SignupLayout";
 import NavbarBooking from "./Layout/BookingLayout";
 import DashboardSignup from "./Layout/DashboardLayout";
 
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
 
 
 // Create your first component
@@ -39,6 +41,7 @@ const Router = () => {
 
   return (
     <div>
+      <GoogleOAuthProvider clientId={process.env.GOOGLE_CLIENT_ID}>
       <BrowserRouter basename={basename}>
         <ScrollToTop>
 
@@ -69,6 +72,7 @@ const Router = () => {
 
         </ScrollToTop>
       </BrowserRouter>
+      </GoogleOAuthProvider>
     </div>
   );
 };

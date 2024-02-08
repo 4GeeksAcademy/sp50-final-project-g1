@@ -1,6 +1,7 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
+import os
 from flask import Flask, request, jsonify, Blueprint
 from flask_cors import CORS
 from api.models import db, Pros, Hours, Patients, Bookings, Locations, ProServices, Services, InactivityDays
@@ -8,6 +9,7 @@ from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from sqlalchemy.exc import IntegrityError
+import requests
 
 
 api = Blueprint('api', __name__)
@@ -19,14 +21,36 @@ CORS(api)  # Allow CORS requests to this API
 def login():
     email = request.json.get("email")
     password = request.json.get("password")
-
     pro = Pros.query.filter_by(email=email, password=password).first()
-    
     if pro:
         access_token = create_access_token(identity=pro.id)
         return jsonify(access_token=access_token)
-    
     return jsonify({"msg": "Wrong email or password"}), 404
+
+#Get google tokens
+@api.route('/tokens_exchange/<int:proid>', methods=['POST'])
+def tokens_exchange(proid):
+    auth_code = request.form['code']
+    client_id = 'tu_client_id'
+    client_secret = 'tu_client_secret'
+    redirect_uri = 'tu_redirect_uri'
+    payload = {
+        'code': auth_code,
+        'client_id': os.getenv("GOOGLE_CLIENT_ID"),
+        'client_secret': os.getenv("GOOGLE_CLIENT_SECRET"),
+        'redirect_uri': os.getenv("GOOGLE_REDIRECT_URI"),
+        'grant_type': 'authorization_code'
+    }
+    response = requests.post('https://oauth2.googleapis.com/token', data=payload)
+    if response.status_code == 200:
+        tokens = response.json()
+        pro = Pros.query.get(proid)
+        pro.google_access_token = tokens['access_token']
+        pro.google_refresh_token = tokens['refresh_token']
+        db.session.commit()
+        return jsonify({'message': 'Tokens obtenidos exitosamente', 'tokens': tokens}), 200
+    else:
+        return jsonify({'error': 'Error al obtener tokens', 'status_code': response.status_code}), response.status_code
 
 # DASHBOARD - get user data to show in the dashboard
 @api.route("/dashboard", methods=["GET"])

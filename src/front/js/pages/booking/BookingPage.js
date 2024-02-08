@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { Context } from "../../store/appContext";
 
 // components
-import Calendar from "../../component/booking/calendar";
+import Calendar from "../../component/booking/Calendar";
 
 
 ///////////////////////////////////////
