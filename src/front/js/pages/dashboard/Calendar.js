@@ -233,12 +233,12 @@ export default function Calendar() {
       console.log(newPatient)
 
       const finalPatient = await actions.newPatient(newPatient)
-      store.patientsByPro = [...store.patientsByPro, finalPatient.patient]
+      store.patientsByPro = [...store.patientsByPro, finalPatient]
       console.log("----Store_with_final----", store.patientsByPro)
       console.log(finalPatient.patient)
 
       let newBooking = {
-        "patient_id": finalPatient.patient.id,
+        "patient_id": finalPatient.id,
         "pro_service_id": selectedProService,
         "date": bookingDate,
         "starting_time": bookingTime,
@@ -313,8 +313,18 @@ export default function Calendar() {
                       className: 'holiday-event',
                     })),
                   ]
-                  : []
-              }
+                  : store.inactivityByPro.map((inactivity) => ({
+                    title: 'Holiday',
+                    start: !inactivity.starting_hour ?
+                      `${inactivity.starting_date}T00:00:00` : `${inactivity.starting_date}T${inactivity.starting_hour}`,
+                    end: !inactivity.ending_date && !inactivity.ending_hour ?
+                      `${inactivity.starting_date}T23:59:59` : inactivity.ending_date && !inactivity.ending_hour ?
+                        `${inactivity.ending_date}T23:59:59` : `${inactivity.ending_date}T${inactivity.ending_hour}`,
+                    // Propiedades específicas para holidays
+                    color: '#FF0000',
+                    className: 'holiday-event',
+                  }))
+                }
             />
           </div>
         </div>

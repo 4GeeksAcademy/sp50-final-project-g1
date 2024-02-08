@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../../store/appContext";
 import { useNavigate, Link } from "react-router-dom";
+import  GoogleLogin from  "@stack-pulse/next-google-login"
+
 
 export default function AccountData() {
 
@@ -43,6 +45,12 @@ export default function AccountData() {
 
   }, [store.isLoggedIn, store.token]);
 
+  const responseGoogle = (response) => {
+    console.log(response)
+  }
+  const responseError = (error) => {
+    console.log(error)
+  }
 
   return (
     <>
@@ -73,7 +81,16 @@ export default function AccountData() {
               <h4 className=" text-decoration-underline">GOOGLE CALENDAR API CONNECTION</h4>
               <p>Connect your google calendar with the DocDate agenda and keep all your events in one place</p>
               <div className="p-5 rounded-3 bg-white border text-black-50">
-                <div><span>CALENDAR CONNECTED: </span><span>{googleCalendar}</span></div>
+                <div><span><GoogleLogin 
+                          clientId={process.env.GOOGLE_CLIENT_ID}
+                          buttonText="Authorize Calendar"
+                          onSuccess={responseGoogle}
+                          onFailure={responseError}
+                          cookiePolicy={"single_host_origin"}
+                          responseType="code"
+                          accessType="offline"
+                          scope="openid email profile https://www.googleapis.com/auth/calendar" 
+                          /></span></div>
               </div>
             </div>
 
