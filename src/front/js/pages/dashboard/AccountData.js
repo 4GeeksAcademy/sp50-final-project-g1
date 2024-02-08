@@ -5,6 +5,8 @@ import { useNavigate, Link } from "react-router-dom";
 // Google Login auth
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { GoogleLogin } from '@react-oauth/google';
+import { useGoogleLogin } from '@react-oauth/google';
+
 
 export default function AccountData() {
 
@@ -50,17 +52,29 @@ export default function AccountData() {
 
   }, [store.isLoggedIn, store.token]);
 
-  const responseGoogle = (response) => {
-    console.log(response)
-  }
-  const responseError = (error) => {
-    console.log(error)
-  }
-
+  const googleLogin = useGoogleLogin({
+    onSuccess: codeResponse => {
+      const code = codeResponse.code;
+  
+      fetch(process.env.BACKEND_URL + '/tokens_exchange/' + store.currentPro.id, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          'code': code,
+        }),
+      })
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(error => console.error('Error:', error));
+    },
+    flow: 'auth-code',
+    scope: "openid email profile https://www.googleapis.com/auth/calendar"
+  });
+  
   return (
     <>
-      <GoogleOAuthProvider clientId={process.env.GOOGLE_CLIENT_ID}>
-
         {!store.isLoggedIn ? navigate('/login') :
           <div className=" min-vh-100">
 
@@ -91,14 +105,19 @@ export default function AccountData() {
                   <div>
 
                     {/*  GOOGLE LOGIN BUTTON */}
-                    <GoogleLogin
+
+                    {/* <GoogleLogin
                       onSuccess={credentialResponse => {
                         console.log('GOOGLE LOGIN SUCCESS', credentialResponse);
                       }}
                       onError={() => {
                         console.log('Login Failed');
                       }}
-                    />
+                    /> */}
+
+                    <button onClick={() => googleLogin()}>Authorize google Calendar</button>
+
+
 
 
 
@@ -110,8 +129,6 @@ export default function AccountData() {
 
           </div>
         }
-
-      </GoogleOAuthProvider>
     </>
   )
 }
