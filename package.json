@@ -77,10 +77,12 @@
 		"@fullcalendar/daygrid": "^6.1.10",
 		"@fullcalendar/react": "^6.1.10",
 		"@fullcalendar/timegrid": "^6.1.10",
+		"@stack-pulse/next-google-login": "^1.0.5",
 		"dayjs": "^1.11.10",
 		"prop-types": "^15.6.1",
 		"react": "^16.8.4",
 		"react-dom": "^16.8.4",
+		"react-google-login": "^5.2.2",
 		"react-polyfills": "0.0.1",
 		"react-router-dom": "^6.3.0"
 	}

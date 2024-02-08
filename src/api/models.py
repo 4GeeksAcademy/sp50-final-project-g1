@@ -16,6 +16,8 @@ class Pros(db.Model):
     suscription = db.Column(db.Integer)
     config_status = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String)
+    google_access_token = db.Column(db.String)
+    google_refresh_token = db.Column(db.String)
     location = db.relationship("Locations")
     inactivity = db.relationship("InactivityDays")
     services = db.relationship("ProServices")
