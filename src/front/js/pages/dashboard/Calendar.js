@@ -28,7 +28,7 @@ export default function Calendar() {
   const [bookingTime, setBookingTime] = useState("")
   const [proNotes, setProNotes] = useState("")
 
-
+  // Fetch data
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -85,16 +85,18 @@ export default function Calendar() {
 
         setDetailsLoaded(true)
 
+        // Llamada a la comprobacion de token si hay
+        checkAndUpdateAccessToken()
+
+
       } catch (error) {
         console.error('Error al obtener datos del profesional:', error)
       }
     };
 
     if (store.bookingsByPro.length === 0) {
-      fetchData();
-
+      fetchData()
     }
-
   }, [store.isLoggedIn, store.token, store.bookingsByPro])
 
   // Give calculated ending time to bookings
@@ -125,6 +127,72 @@ export default function Calendar() {
   }, [detailsLoaded, store.bookingsByPro])
 
 
+  // Logica para la actualización de google token si es necesario.
+  const isAccessTokenValid = (accessToken, expiresIn) => {
+    if (!accessToken || !expiresIn) {
+      return false;
+    }
+  
+    const expirationDate = new Date(expiresIn);
+    const currentDate = new Date();
+  
+    return expirationDate > currentDate;
+  };
+
+  const refreshAccessToken = async (refreshToken) => {
+    const tokenEndpoint = 'https://oauth2.googleapis.com/token';
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+  
+    try {
+      const response = await fetch(tokenEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          'refresh_token': refreshToken,
+          'client_id': clientId,
+          'client_secret': clientSecret,
+          'grant_type': 'refresh_token',
+        }),
+      });
+  
+      if (response.ok) {
+        const tokenData = await response.json();
+        return tokenData;
+      } else {
+        console.error('Access token refresh error:', response.statusText);
+        return null;
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      return null;
+    }
+  };
+
+  const checkAndUpdateAccessToken = async () => {
+    const tokens = await actions.getGoogleTokensByPro(store.currentPro.id)
+    console.log(tokens)
+    const accessToken = tokens.access_token
+    const expiresIn = tokens.expires_in
+    const refreshToken = tokens.refresh_token
+    if (!isAccessTokenValid(accessToken, expiresIn)) {
+      const newAccessToken = await refreshAccessToken(refreshToken);
+      if (newAccessToken) {
+        console.log(newAccessToken)
+        const pro = store.currentPro
+        pro.google_access_token = newAccessToken.access_token
+        const expirationDate = new Date()
+        expirationDate.setMinutes(expirationDate.getMinutes() + newAccessToken.expires_in)
+        const localExpirationDateString = expirationDate.toISOString().slice(0, 19)
+        pro.google_access_expires = localExpirationDateString
+        console.log(pro)
+        await actions.updatePro(pro)
+        console.log("token updated")
+      }
+    }
+  };
 
   // Definisci la funzione per gestire i clic sulle date
   const handleEventClick = (arg) => {

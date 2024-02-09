@@ -55,6 +55,7 @@ export default function AccountData() {
   const googleLogin = useGoogleLogin({
     onSuccess: codeResponse => {
       const code = codeResponse.code;
+      console.log(codeResponse)
   
       fetch(process.env.BACKEND_URL + '/tokens_exchange/' + store.currentPro.id, {
         method: 'POST',
@@ -67,7 +68,38 @@ export default function AccountData() {
       })
       .then(response => response.json())
       .then(data => console.log(data))
-      .catch(error => console.error('Error:', error));
+      .then(() => {
+        store.bookingsByPro.map(async (booking) => {
+          const googleEvent = {
+            'summary': 'DocDate Appointment',
+            'description': `${booking.specialization}: ${booking.service_name}`,
+            'start': {
+                'dateTime': `${booking.date}T${booking.starting_time}:00`,
+                'timeZone': `${booking.time_zone}`,
+            },
+            'end': {
+                'dateTime': `${booking.date}T${booking.ending_time}`,
+                'timeZone': `${booking.time_zone}`,
+            },
+          };
+          console.log(googleEvent)
+          await fetch(process.env.BACKEND_URL + `/create-event/${store.currentPro.id}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ googleEvent }),
+          })
+            .then(response => response.json())
+            .then(data => {
+              console.log('Respuesta del servidor:', data);
+            })
+            .catch(error => {
+              console.error('Error al enviar la solicitud:', error);
+            });
+        })
+      })
+      .catch(error => console.error('Error:', error))
     },
     flow: 'auth-code',
     scope: "openid email profile https://www.googleapis.com/auth/calendar"
