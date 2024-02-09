@@ -19,11 +19,6 @@ export default function Calendar() {
   const [selectDate, setSelectDate] = useState('')
   const [proWorkingHors, setProWorkingHors] = useState([])
 
-  const slot = [
-    // { date: "2024-02-09" },
-    // { date: "2024-02-10" },
-    // { date: "2024-02-11" }
-  ]
 
   const generateCalendarDate = (month = currentDate.month(), year = currentDate.year()) => {
     const firstDateOfMonth = dayjs().year(year).month(month).startOf('month');
@@ -68,8 +63,6 @@ export default function Calendar() {
     // API Calls:
     const fetchPro = async (userName) => {
       await actions.getProByUsername(userName)
-      // console.log("----PRO----", store.currentPro)
-
       await actions.getHoursByPro(store.currentPro.id)
       console.log("----WORKING_HOURS----", store.hoursByPro)
 

@@ -87,8 +87,8 @@ export default function NavDashSide() {
 
         {/* PATIENTS */}
         <li className="mb-5">
-          <Link to="/dashboard/calendar" className="text-decoration-none" >
-            {currentUrl === "/dashboard/patients" ? (
+          <Link to="/dashboard/patients-list" className="text-decoration-none" >
+            {currentUrl === "/dashboard/patients-list" ? (
               <div>
                 <span className="p-1 me-2 rounded-circle d-inline-block" style={{ backgroundColor: "#14C4B9" }}>
                   <img src={iconPatients} width="30" height="30" className="p-1" ></img>
@@ -109,7 +109,7 @@ export default function NavDashSide() {
 
         {/* MY STUDIO */}
         <li className="mb-5">
-          <Link to="/dashboard/calendar" className="text-decoration-none" >
+          <Link to="/dashboard/studio" className="text-decoration-none" >
             {currentUrl === "/dashboard/studio" ? (
               <div>
                 <span className="p-1 me-2 rounded-circle d-inline-block" style={{ backgroundColor: "#14C4B9" }}>
@@ -130,8 +130,8 @@ export default function NavDashSide() {
 
         {/* SERVICES */}
         <li className="mb-5">
-          <Link to="/dashboard/calendar" className="text-decoration-none" >
-            {currentUrl === "/dashboard/patients" ? (
+          <Link to="/dashboard/services" className="text-decoration-none" >
+            {currentUrl === "/dashboard/services" ? (
               <div>
                 <span className="p-1 me-2 rounded-circle d-inline-block" style={{ backgroundColor: "#14C4B9" }}>
                   <img src={iconServices} width="30" height="30" className="p-1" ></img>
