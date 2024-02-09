@@ -13,9 +13,14 @@ import SignupPersonalData from "./pages/auth/SignupPersonalData.js";
 import SignupLocation from "./pages/auth/SignupLocation.js";
 import SignupSpecialization from "./pages/auth/SignupSpecialization.js";
 import SignupHours from "./pages/auth/SignupHours.js";
+
 import DashAccountData from "./pages/dashboard/AccountData.js";
 import DashCalendar from "./pages/dashboard/Calendar.js";
 import DashWorkingDay from "./pages/dashboard/WorkingDay.js";
+import PatientsList from "./pages/dashboard/PatientsList.js";
+import Studio from "./pages/dashboard/Studio.js";
+import Services from "./pages/dashboard/Services.js";
+
 import BookingPage from "./pages/booking/BookingPage.js";
 
 // Import components
@@ -65,6 +70,9 @@ const Router = () => {
             <Route path="/dashboard/account-data" element={<DashboardSignup><DashAccountData /></DashboardSignup>} />
             <Route path="/dashboard/calendar" element={<DashboardSignup><DashCalendar /></DashboardSignup>} />
             <Route path="/dashboard/working-day" element={<DashboardSignup><DashWorkingDay /></DashboardSignup>} />
+            <Route path="/dashboard/patients-list" element={<DashboardSignup><PatientsList /></DashboardSignup>} />
+            <Route path="/dashboard/studio" element={<DashboardSignup><Studio /></DashboardSignup>} />
+            <Route path="/dashboard/services" element={<DashboardSignup><Services /></DashboardSignup>} />
 
             {/* NOT FOUND */}
             <Route path="*" element={<NavbarLayout><File404 /></NavbarLayout>} />
