@@ -39,6 +39,7 @@ def setup_commands(app):
             location.name = "Studio" + str(x)
             location.address = "Street" + str(x)
             location.pro_id = x
+            location.time_zone = "Europe/Madrid"
             location.city = "City" + str(x)
             location.country = "Country" + str(x)
             db.session.add(location)

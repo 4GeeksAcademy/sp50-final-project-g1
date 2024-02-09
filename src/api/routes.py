@@ -10,6 +10,11 @@ from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from sqlalchemy.exc import IntegrityError
 import requests
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+import datetime
+import json
 
 
 api = Blueprint('api', __name__)
@@ -27,30 +32,90 @@ def login():
         return jsonify(access_token=access_token)
     return jsonify({"msg": "Wrong email or password"}), 404
 
-#Get google tokens
+#Get google tokens first time
 @api.route('/tokens_exchange/<int:proid>', methods=['POST'])
 def tokens_exchange(proid):
     auth_code = request.form['code']
-    client_id = 'tu_client_id'
-    client_secret = 'tu_client_secret'
-    redirect_uri = 'tu_redirect_uri'
+    client_id = os.getenv("GOOGLE_CLIENT_ID")
+    client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
+    redirect_uri = os.getenv("GOOGLE_REDIRECT_URI")
     payload = {
         'code': auth_code,
-        'client_id': os.getenv("GOOGLE_CLIENT_ID"),
-        'client_secret': os.getenv("GOOGLE_CLIENT_SECRET"),
-        'redirect_uri': os.getenv("GOOGLE_REDIRECT_URI"),
+        'client_id': client_id,
+        'client_secret': client_secret,
+        'redirect_uri': redirect_uri,
         'grant_type': 'authorization_code'
     }
     response = requests.post('https://oauth2.googleapis.com/token', data=payload)
     if response.status_code == 200:
         tokens = response.json()
         pro = Pros.query.get(proid)
+        seconds = tokens['expires_in'] * 60
+        exp_date = datetime.datetime.now() + datetime.timedelta(seconds=seconds)
+        exp_date_str = exp_date.strftime('%Y-%m-%dT%H:%M:%S')
         pro.google_access_token = tokens['access_token']
+        pro.google_access_expires = exp_date_str
         pro.google_refresh_token = tokens['refresh_token']
         db.session.commit()
         return jsonify({'message': 'Tokens obtenidos exitosamente', 'tokens': tokens}), 200
     else:
         return jsonify({'error': 'Error al obtener tokens', 'status_code': response.status_code}), response.status_code
+    
+#Get google tokens by pro
+@api.route('/pros/<int:proid>/tokens', methods=["GET"])
+@jwt_required()
+def get_tokens(proid):
+    pro = Pros.query.get(proid)
+    if pro:
+        expires_in = pro.google_access_expires
+        access_token = pro.google_access_token
+        refresh_token = pro.google_refresh_token
+        return jsonify({'access_token': access_token, 'refresh_token': refresh_token, 'expires_in': expires_in}), 200
+    else:
+        return jsonify({'error': 'pro not found'}), 404
+    
+#Create Google Event
+@api.route('/create-event/<int:proid>', methods=['POST'])
+def create_event(proid):
+    pro = Pros.query.get(proid)
+
+    # Obtener los datos del evento desde el cuerpo de la solicitud
+    event_data = request.json.get("googleEvent")  # Asumiendo que los datos del evento se envían en formato JSON desde el frontend
+    print("EVENTOOOOOOOOO", event_data)
+
+    # Construir el objeto de credenciales
+    TOKEN_PATH = {
+        "token": pro.google_access_token,
+        "refresh_token": pro.google_refresh_token,
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "client_id": os.getenv("GOOGLE_CLIENT_ID"),
+        "client_secret": os.getenv("GOOGLE_CLIENT_SECRET"),
+        "scopes": ["https://www.googleapis.com/auth/calendar"],
+        "expiry": pro.google_access_expires + "Z"
+    }
+
+    # Alcance de la API de Google Calendar para lectura y escritura de eventos.
+    SCOPES = ['https://www.googleapis.com/auth/calendar']
+
+    # Cargar las credenciales desde el objeto de token
+    creds = Credentials.from_authorized_user_info(TOKEN_PATH, SCOPES)
+
+    # Crear un servicio de la API de Google Calendar
+    service = build('calendar', 'v3', credentials=creds)
+
+    # Utilizar los datos del evento recibidos desde el frontend
+    event = event_data
+
+
+    # Enviar la solicitud para crear el evento
+    created_event = service.events().insert(calendarId='primary', body=event).execute()
+
+    # Obtener el ID del nuevo evento creado
+    event_id = created_event.get('id')
+
+    # Retornar la respuesta al frontend
+    return jsonify({'event_id': event_id})
+
 
 # DASHBOARD - get user data to show in the dashboard
 @api.route("/dashboard", methods=["GET"])
@@ -307,7 +372,8 @@ def get_add_locations():
             city=data['city'],
             address=data.get('address'),
             country=data.get('country'),
-            pro_id=data['pro_id']
+            pro_id=data['pro_id'],
+            time_zone=data.get('time_zone')
         )
 
         db.session.add(new_location)
@@ -332,6 +398,7 @@ def specific_location(locationid):
         location.city = data.get('city', location.city)
         location.country = data.get('country', location.country)
         location.pro_id = data.get('pro_id', location.pro_id)
+        location.time_zone = data.get('time_zone', location.time_zone)
         db.session.commit()
         return jsonify({"message": "Record updated successfully"}), 200
     if request.method == 'DELETE':
@@ -403,9 +470,12 @@ def handle_pro(proid):
         pro.bookingpage_url = data.get('bookingpage_url', pro.bookingpage_url)
         pro.suscription = data.get('suscription', pro.suscription)
         pro.config_status = data.get('config_status', pro.config_status)
+        pro.google_access_token = data.get('google_access_token', pro.google_access_token)
+        pro.google_access_expires = data.get('google_access_expires', pro.google_access_expires)
+        pro.google_refresh_token = data.get('google_refresh_token', pro.google_refresh_token)
         pro.title = data.get('title', pro.title)
         db.session.commit()
-        return jsonify({"message": "pro updated successfully"}), 200
+        return jsonify(pro.serialize()), 200
     if request.method == 'DELETE':
         db.session.delete(pro)
         db.session.commit()
