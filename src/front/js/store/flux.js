@@ -72,6 +72,26 @@ const getState = ({getStore, getActions, setStore}) => {
 				
 			},
 
+			getGoogleTokensByPro: async(pro_id) => {
+				const store = getStore()
+				const url = process.env.BACKEND_URL + `/pros/${pro_id}/tokens`;
+				const options = {
+					method: "GET",
+					headers: {
+						'Authorization': `Bearer ${store.token}`
+					}           
+				};
+				const response = await fetch(url, options)
+				if (response.ok) {
+					const data = await response.json()
+					return data
+				}
+				else {
+					const data = await response.json()
+					return data
+				}
+			},
+
 			// Pro actions
 			newPro: async(object) => {
 				const url = process.env.BACKEND_URL + '/pros';
@@ -139,6 +159,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				const response = await fetch(url, options)
 				if(response.ok){
 					const data = await response.json()
+					setStore({currentPro: data})
 					return data
 				}
 				else{

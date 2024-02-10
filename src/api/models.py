@@ -17,6 +17,7 @@ class Pros(db.Model):
     config_status = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String)
     google_access_token = db.Column(db.String)
+    google_access_expires = db.Column(db.String)
     google_refresh_token = db.Column(db.String)
     location = db.relationship("Locations")
     inactivity = db.relationship("InactivityDays")
@@ -42,6 +43,7 @@ class Locations(db.Model):
     address = db.Column(db.String, nullable=False)
     city = db.Column(db.String, nullable=False)
     country = db.Column(db.String, nullable=False)
+    time_zone = db.Column(db.String)
     pro_id = db.Column(db.ForeignKey("pros.id"), unique=True, nullable=False)
     pro = db.relationship("Pros")
 
@@ -54,7 +56,8 @@ class Locations(db.Model):
                 "address": self.address,
                 "city": self.city,
                 "country": self.country,
-                "pro_id": self.pro_id}
+                "pro_id": self.pro_id,
+                "time_zone": self.time_zone}
 
 class Hours(db.Model):
     __tablename__ = "hours"
@@ -188,7 +191,8 @@ class Bookings(db.Model):
                 "patient_phone": self.patient.phone,
                 "duration": self.pro_service.duration,
                 "patient_notes": self.patient_notes,
-                "pro_notes": self.pro_notes}
+                "pro_notes": self.pro_notes,
+                "time_zone": self.pro_service.pros.location[0].time_zone}
 
 
 
