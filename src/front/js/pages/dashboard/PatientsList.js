@@ -9,50 +9,51 @@ export default function PatientsList() {
   const [patientsList, setPatientsList] = useState(store.patientsByPro)
 
 
+
+  const handleSearchInput = (query) => {
+    const newList = store.patientsByPro.filter(patient =>
+      patient.name.toLowerCase().includes(query.toLowerCase()) ||
+      patient.email.toLowerCase().includes(query.toLowerCase()) ||
+      patient.phone.includes(query)
+    )
+    setPatientsList(newList)
+  }
+
   return (
     <div className=" min-vh-100">
       <div id='account-data' className="align-items-center bg-light py-5 container">
-
-        <div className="text-black-50 mx-auto w-75" style={{ marginBottom: "6rem" }}>
-          <div className="">
-            <input type="text" placeholder='Search a patient' className="p-3 mb-2 rounded bg-white w-100 border"></input>
-            <p className="small text-black-50 fw-light">Start typing to search for a patient.</p>
-
-          </div>
+        <div className="text-black-50 mx-auto w-75">
+          <h4 className=" text-decoration-underline mb-1 p-0">MY PATIENTS</h4>
+          {/* <p className="small text-black-50 fw-light">The list of patient that made a visit with you.</p> */}
+          <hr />
         </div>
 
-        <div className="text-black-50 mx-auto w-75" style={{ marginBottom: "6rem" }}>
-          <div className="d-flex">
-            <h4 className=" text-decoration-underline">MY PATIENTS</h4>
-            <button className="ms-auto btn-sm text-white border-0" style={{ backgroundColor: "#14C4B9", border: "none" }} >Add a Visit</button>
-          </div>
-          <hr />
-          <p className="small text-black-50 fw-light">Define your days or period of inactivity to lock your agenda.</p>
+        <div className="text-black-50 mx-auto w-75 mb-5">
+          <input type="text" placeholder='Start typing to search a patient' className="p-1 w-100 border p-3" style={{ borderRadius: "25px" }} onChange={(e) => handleSearchInput(e.target.value)}></input>
+        </div>
 
+
+        <div className="text-black-50 mx-auto w-75" style={{ marginBottom: "6rem" }}>
           <div className="p-4 mb-3 rounded border bg-white">
             <div className="me-auto d-flex justify-content-between text-center small text-black-50 border-bottom pb-4 mb-4">
               <span className="" style={{ width: "15%" }}>Name</span>
               <span className="" style={{ width: "15%" }}>Lastname</span>
               <span className="" style={{ width: "25%" }}>Email</span>
               <span className="" style={{ width: "25%" }}>Phone</span>
-              <span className="" style={{ width: "20%" }}>Last Booking</span>
             </div>
 
-            {patientsList.map((patient) => {
+            {patientsList.map((patient) =>
 
-              return (
-                <div key={patient.id} className="me-auto d-flex text-center justify-content-between small text-black-50 pb-3 align-items-center">
-                  <span className="" style={{ width: "15%" }}>{patient.name}</span>
-                  <span className="" style={{ width: "15%" }}>{patient.lastname}</span>
-                  <span className="" style={{ width: "25%" }}>{patient.email}</span>
-                  <span className="" style={{ width: "25%" }}>{patient.phone}</span>
-                  <span className="" style={{ width: "20%", color: "#14C4B9" }}>02/02/2024</span>
-                </div>
-              )
-            })}
+              <div key={patient.id} className="me-auto d-flex text-center justify-content-between small text-black-50 pb-3 align-items-center">
+                <span className="" style={{ width: "15%" }}>{patient.name}</span>
+                <span className="" style={{ width: "15%" }}>{patient.lastname}</span>
+                <span className="" style={{ width: "25%" }}><a href={`mailto:${patient.email}`} style={{ color: "#14C4B9" }}>{patient.email}</a></span>
+                <span className="" style={{ width: "25%" }}>{patient.phone}</span>
+              </div>
+
+            )}
 
           </div>
-
         </div>
 
       </div>
