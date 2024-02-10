@@ -327,11 +327,13 @@ export default function BookingPage() {
         booking.patient_id = updatedPatient.id
         const newBooking = await actions.newBooking(booking)
         console.log(newBooking)
+        setShowBookingInfo(false)
       }
       else {
         booking.patient_id = isPatient.id
         const newBooking = await actions.newBooking(booking)
         console.log(newBooking)
+        setShowBookingInfo(false)
       }
     }
     if (!isPatient) {
@@ -340,6 +342,7 @@ export default function BookingPage() {
       booking.patient_id = newPatient.id
       const newBooking = await actions.newBooking(booking)
       console.log(newBooking)
+      setShowBookingInfo(false)
     }
   }
 
@@ -366,7 +369,11 @@ export default function BookingPage() {
             </div>
 
             {/* BOOKING CALENDAR */}
-            {selectedProService ? (<Calendar />) : null}
+            {selectedProService ? (
+              <div className=" w-100 rounded bg-white border p-2">
+                <Calendar />
+              </div>
+            ) : null}
 
           </div>
         </div>
@@ -458,7 +465,7 @@ export default function BookingPage() {
               </>
             ) : (null)}
 
-            <input type="submit" value="Book Now" className="btn btn-sm ms-auto text-white" disabled={!patientEmail || !selectedDay || !selectedHour || !selectedProService} style={{ backgroundColor: "#14C4B9" }}></input>
+            <input type="submit" value="Book Now" className="btn btn-sm ms-auto text-white" disabled={!patientEmail || !selectedDay || !selectedHour || !selectedProService || !patientName || !patientLastname} style={{ backgroundColor: "#14C4B9" }}></input>
 
           </form>
         </div>
