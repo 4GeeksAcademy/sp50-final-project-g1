@@ -81,7 +81,7 @@ export default function Calendar() {
     <div>
 
       {/* CALENDAR DESIGN */}
-      <div className="bg-white rounded border p-4 my-5 mx-auto" style={{ width: "100%", maxWidth: "400px" }}>
+      <div className="bg-white rounded shadow p-4 my-5 mx-auto" style={{ width: "100%", maxWidth: "400px" }}>
 
         {/* Current date  */}
         <div className="border-bottom pb-3 d-flex justify-content-between">

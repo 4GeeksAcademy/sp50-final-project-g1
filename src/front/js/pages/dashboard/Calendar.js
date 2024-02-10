@@ -9,7 +9,7 @@ export default function Calendar() {
   const { store, actions } = useContext(Context)
   // Definisci lo stato per la gestione dei clic sulle date
   const [selectedEvent, setSelectedEvent] = useState({});
-  const [showOffcanvas, setShowOffcanvas] = useState(false);
+  const [showBookingDetails, setShowBookingDetails] = useState(false);
   const [showAddBooking, setShowAddBooking] = useState(false);
   const [detailsLoaded, setDetailsLoaded] = useState(false)
   const [endingDatesLoaded, setEndingDatesLoaded] = useState(false)
@@ -158,10 +158,10 @@ export default function Calendar() {
     if (!accessToken || !expiresIn) {
       return false;
     }
-  
+
     const expirationDate = new Date(expiresIn);
     const currentDate = new Date();
-  
+
     return expirationDate > currentDate;
   };
 
@@ -169,7 +169,7 @@ export default function Calendar() {
     const tokenEndpoint = 'https://oauth2.googleapis.com/token';
     const clientId = process.env.GOOGLE_CLIENT_ID;
     const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-  
+
     try {
       const response = await fetch(tokenEndpoint, {
         method: 'POST',
@@ -183,7 +183,7 @@ export default function Calendar() {
           'grant_type': 'refresh_token',
         }),
       });
-  
+
       if (response.ok) {
         const tokenData = await response.json();
         return tokenData;
@@ -221,18 +221,20 @@ export default function Calendar() {
   };
 
 
-  // Definisci la funzione per gestire i clic sulle date
+  // Click on event
   const handleEventClick = (arg) => {
     setSelectedEvent(arg.event);
-    setShowOffcanvas(!showOffcanvas)
+    setShowBookingDetails(!showBookingDetails)
+    setShowAddBooking(false)
   }
 
   const handleCloseCanvas = () => {
-    setShowOffcanvas(!showOffcanvas)
+    setShowBookingDetails(!showBookingDetails)
   }
 
   const handleAddBookingForm = () => {
     setShowAddBooking(!showAddBooking)
+    setShowBookingDetails(false)
   }
 
   const handleNewPatient = () => {
@@ -421,7 +423,7 @@ export default function Calendar() {
         </div>
 
         {/* BOOKING DETAILS  */}
-        {showOffcanvas ? (
+        {showBookingDetails ? (
           <form onSubmit={(e) => handleBookingEditSubmit(e)} className="bg-white position-fixed top-0 end-0 bottom-0 min-vh-100 py-5 px-4 shadow" style={{ zIndex: "2", width: "100%", maxWidth: "450px" }} >
 
             <div className="d-flex justify-content-between mb-5">

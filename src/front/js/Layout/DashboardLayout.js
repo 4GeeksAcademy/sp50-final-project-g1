@@ -16,9 +16,9 @@ export default function DashboardLayout({ children }) {
         <div className="bg-light w-100">
           <NavDashPath />
           {children}
-          <Footer />
         </div>
       </div>
+      <Footer />
     </>
   );
 };

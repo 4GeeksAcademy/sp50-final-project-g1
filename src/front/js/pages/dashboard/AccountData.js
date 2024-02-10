@@ -56,7 +56,7 @@ export default function AccountData() {
     onSuccess: codeResponse => {
       const code = codeResponse.code;
       console.log(codeResponse)
-  
+
       fetch(process.env.BACKEND_URL + '/tokens_exchange/' + store.currentPro.id, {
         method: 'POST',
         headers: {
@@ -66,79 +66,79 @@ export default function AccountData() {
           'code': code,
         }),
       })
-      .then(response => response.json())
-      .then(data => console.log(data))
-      .then(() => {
-        store.bookingsByPro.map(async (booking) => {
-          const googleEvent = {
-            'summary': 'DocDate Appointment',
-            'description': `${booking.specialization}: ${booking.service_name}`,
-            'start': {
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .then(() => {
+          store.bookingsByPro.map(async (booking) => {
+            const googleEvent = {
+              'summary': 'DocDate Appointment',
+              'description': `${booking.specialization}: ${booking.service_name}`,
+              'start': {
                 'dateTime': `${booking.date}T${booking.starting_time}:00`,
                 'timeZone': `${booking.time_zone}`,
-            },
-            'end': {
+              },
+              'end': {
                 'dateTime': `${booking.date}T${booking.ending_time}`,
                 'timeZone': `${booking.time_zone}`,
-            },
-          };
-          console.log(googleEvent)
-          await fetch(process.env.BACKEND_URL + `/create-event/${store.currentPro.id}`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ googleEvent }),
-          })
-            .then(response => response.json())
-            .then(data => {
-              console.log('Respuesta del servidor:', data);
+              },
+            };
+            console.log(googleEvent)
+            await fetch(process.env.BACKEND_URL + `/create-event/${store.currentPro.id}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ googleEvent }),
             })
-            .catch(error => {
-              console.error('Error al enviar la solicitud:', error);
-            });
+              .then(response => response.json())
+              .then(data => {
+                console.log('Respuesta del servidor:', data);
+              })
+              .catch(error => {
+                console.error('Error al enviar la solicitud:', error);
+              });
+          })
         })
-      })
-      .catch(error => console.error('Error:', error))
+        .catch(error => console.error('Error:', error))
     },
     flow: 'auth-code',
     scope: "openid email profile https://www.googleapis.com/auth/calendar"
   });
-  
+
   return (
     <>
-        {!store.isLoggedIn ? navigate('/login') :
-          <div className=" min-vh-100">
+      {!store.isLoggedIn ? navigate('/login') :
+        <div className=" min-vh-100">
 
-            <div id='account-data' className="align-items-center bg-light py-5 container">
+          <div id='account-data' className="align-items-center bg-light py-5 container">
 
-              <div className="text-black-50 mx-auto w-75" style={{ marginBottom: "6rem" }}>
-                <h4 className=" text-decoration-underline">ACCOUNT DATA</h4>
-                <div className="p-5 rounded bg-white border text-black-50">
-                  <div><span>EMAIL: </span><span>{email}</span></div>
-                  <div><span>USERNAME: </span><span>{userName}</span></div>
-                  <div><span>PHONE: </span><span>{phone}</span></div>
-                  <div><span>PASSWORX: </span><span>************</span></div>
-                </div>
+            <div className="text-black-50 mx-auto w-75" style={{ marginBottom: "6rem" }}>
+              <h4 className=" text-decoration-underline">ACCOUNT DATA</h4>
+              <div className="p-5 rounded bg-white border text-black-50">
+                <div><span>EMAIL: </span><span>{email}</span></div>
+                <div><span>USERNAME: </span><span>{userName}</span></div>
+                <div><span>PHONE: </span><span>{phone}</span></div>
+                <div><span>PASSWORD: </span><span>************</span></div>
               </div>
+            </div>
 
-              <div className=" text-black-50 mx-auto w-75" style={{ marginBottom: "6rem" }}>
-                <h4 className=" text-decoration-underline">MY BOOKING PAGE URL</h4>
-                <p>Share it with your patient or place it in your website to collect bookings</p>
-                <div className="p-3 rounded-3 border text-black-50" style={{ backgroundColor: "#E0F3F3" }}>
-                  <div><Link to={`/${userName}`} >{`www.docdate.com/${userName}`}</Link></div>
-                </div>
+            <div className=" text-black-50 mx-auto w-75" style={{ marginBottom: "6rem" }}>
+              <h4 className=" text-decoration-underline">MY BOOKING PAGE URL</h4>
+              <p>Share it with your patient or place it in your website to collect bookings</p>
+              <div className="p-3 rounded-3 border text-black-50" style={{ backgroundColor: "#E0F3F3" }}>
+                <div><Link to={`/${userName}`} >{`www.docdate.com/${userName}`}</Link></div>
               </div>
+            </div>
 
-              <div className="text-black-50 mx-auto w-75" style={{ marginBottom: "6rem" }}>
-                <h4 className=" text-decoration-underline">GOOGLE CALENDAR API CONNECTION</h4>
-                <p>Connect your google calendar with the DocDate agenda and keep all your events in one place</p>
-                <div className="p-5 rounded-3 bg-white border text-black-50">
-                  <div>
+            <div className="text-black-50 mx-auto w-75" style={{ marginBottom: "6rem" }}>
+              <h4 className=" text-decoration-underline">GOOGLE CALENDAR API CONNECTION</h4>
+              <p>Connect your google calendar with the DocDate agenda and keep all your events in one place</p>
+              <div className="p-5 rounded-3 bg-white border text-black-50">
+                <div>
 
-                    {/*  GOOGLE LOGIN BUTTON */}
+                  {/*  GOOGLE LOGIN BUTTON */}
 
-                    {/* <GoogleLogin
+                  {/* <GoogleLogin
                       onSuccess={credentialResponse => {
                         console.log('GOOGLE LOGIN SUCCESS', credentialResponse);
                       }}
@@ -147,20 +147,20 @@ export default function AccountData() {
                       }}
                     /> */}
 
-                    <button onClick={() => googleLogin()}>Authorize google Calendar</button>
+                  <button onClick={() => googleLogin()}>Authorize google Calendar</button>
 
 
 
 
 
-                  </div>
                 </div>
               </div>
-
             </div>
 
           </div>
-        }
+
+        </div>
+      }
     </>
   )
 }
