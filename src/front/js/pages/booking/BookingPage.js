@@ -267,7 +267,6 @@ export default function BookingPage() {
     return formattedSlots;
   };
 
-
   // Functions: interactions
   const handleDaySelection = (daySel) => {
 
@@ -328,12 +327,16 @@ export default function BookingPage() {
         const newBooking = await actions.newBooking(booking)
         console.log(newBooking)
         setShowBookingInfo(false)
+        await newGoogleEvent(newBooking)
+        console.log("gEventCreated")
       }
       else {
         booking.patient_id = isPatient.id
         const newBooking = await actions.newBooking(booking)
         console.log(newBooking)
         setShowBookingInfo(false)
+        await newGoogleEvent(newBooking)
+        console.log("gEventCreated")
       }
     }
     if (!isPatient) {
@@ -343,9 +346,44 @@ export default function BookingPage() {
       const newBooking = await actions.newBooking(booking)
       console.log(newBooking)
       setShowBookingInfo(false)
+      await newGoogleEvent(newBooking)
+      console.log("gEventCreated")
     }
   }
 
+  const newGoogleEvent = async (booking) => {
+    function getEndingDate(booking, date, starting_time, minutes) {
+      const fullDate = new Date(`${date}T${starting_time}`)
+      fullDate.setMinutes(fullDate.getMinutes() + parseInt(minutes, 10))
+      const hours = fullDate.getHours().toString().padStart(2, '0')
+      const nerMinutes = fullDate.getMinutes().toString().padStart(2, '0')
+      const seconds = fullDate.getSeconds().toString().padStart(2, '0')
+      const finalTime = `${hours}:${nerMinutes}:${seconds}`
+  
+      booking.ending_time = finalTime
+      return booking;
+    }
+    const finalEvent = getEndingDate(booking, booking.date, booking.starting_time, booking.duration)
+    const googleEvent = {
+      'summary': 'DocDate Appointment',
+      'description': `${finalEvent.specialization}: ${finalEvent.service_name}`,
+      'start': {
+        'dateTime': `${finalEvent.date}T${finalEvent.starting_time}:00`,
+        'timeZone': `Europe/London`,
+      },
+      'end': {
+        'dateTime': `${finalEvent.date}T${finalEvent.ending_time}`,
+        'timeZone': `Europe/London`,
+      },
+    };
+    await fetch(process.env.BACKEND_URL + `/create-event/${store.currentPro.id}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ googleEvent }),
+    })
+  }
 
   return (
     <>

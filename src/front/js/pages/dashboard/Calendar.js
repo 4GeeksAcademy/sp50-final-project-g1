@@ -165,9 +165,9 @@ export default function Calendar() {
   };
 
   const refreshAccessToken = async (refreshToken) => {
-    const tokenEndpoint = 'https://oauth2.googleapis.com/token';
-    const clientId = process.env.GOOGLE_CLIENT_ID;
-    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    const tokenEndpoint = 'https://oauth2.googleapis.com/token'
+    const clientId = process.env.GOOGLE_CLIENT_ID
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET
 
     try {
       const response = await fetch(tokenEndpoint, {
