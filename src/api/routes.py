@@ -86,7 +86,7 @@ def create_event(proid):
         "client_id": os.getenv("GOOGLE_CLIENT_ID"),
         "client_secret": os.getenv("GOOGLE_CLIENT_SECRET"),
         "scopes": ["https://www.googleapis.com/auth/calendar"],
-        "expiry": pro.google_access_expires + "Z"
+        "expiry": pro.google_access_expires
     }
     SCOPES = ['https://www.googleapis.com/auth/calendar']
     creds = Credentials.from_authorized_user_info(TOKEN_PATH, SCOPES)
