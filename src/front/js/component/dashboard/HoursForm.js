@@ -118,7 +118,7 @@ export default function HoursForm() {
 
   return (
 
-    <div className="text-black-50 mx-auto w-75" style={{ marginBottom: "6rem" }}>
+    <div className="text-black-50 mx-auto" style={{ marginBottom: "6rem", width: "100%", maxWidth: "750px" }}>
       <h4 className=" text-decoration-underline">DAYS OF WEEK</h4>
       <hr />
       <div className="needs-validation" noValidate="">

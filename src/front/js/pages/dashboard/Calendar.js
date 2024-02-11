@@ -349,15 +349,15 @@ export default function Calendar() {
 
 
   return (
-    <div className="min-vh-100">
-      <div id='account-data' className="align-items-center bg-light py-5 container">
-        <div className="text-black-50 mx-auto w-75" style={{ marginBottom: "6rem" }}>
+    <div className="pt-4 " style={{ minHeight: "80vh" }}>
+      <div id='account-data' className="align-items-center bg-light py-3 container">
+        <div className="text-black-50 mx-auto" style={{ marginBottom: "6rem", width: "100%", maxWidth: "650px" }}>
           <div className="d-flex">
             <h4 className=" text-decoration-underline">MY CALENDAR</h4>
             <button className="btn btn-sm ms-auto text-white" style={{ backgroundColor: "#14C4B9" }} onClick={handleAddBookingForm}>Add New Booking</button>
           </div>
           <hr />
-          <div className="p-5 rounded bg-white border text-black-50">
+          <div className="p-3 rounded bg-white border text-black-50">
             <FullCalendar
               plugins={[timeGridPlugin]}
               initialView='timeGridWeek'

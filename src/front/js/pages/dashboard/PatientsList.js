@@ -20,20 +20,20 @@ export default function PatientsList() {
   }
 
   return (
-    <div className=" min-vh-100">
+    <div className="" style={{ minHeight: "80vh" }}>
       <div id='account-data' className="align-items-center bg-light py-5 container">
-        <div className="text-black-50 mx-auto w-75">
+        <div className="text-black-50 mx-auto" style={{ width: "100%", maxWidth: "750px" }}>
           <h4 className=" text-decoration-underline mb-1 p-0">MY PATIENTS</h4>
           {/* <p className="small text-black-50 fw-light">The list of patient that made a visit with you.</p> */}
           <hr />
         </div>
 
-        <div className="text-black-50 mx-auto w-75 mb-5">
+        <div className="text-black-50 mx-auto mb-5" style={{ width: "100%", maxWidth: "750px" }}>
           <input type="text" placeholder='Start typing to search a patient' className="p-1 w-100 border p-3" style={{ borderRadius: "25px" }} onChange={(e) => handleSearchInput(e.target.value)}></input>
         </div>
 
 
-        <div className="text-black-50 mx-auto w-75" style={{ marginBottom: "6rem" }}>
+        <div className="text-black-50 mx-auto" style={{ marginBottom: "6rem", width: "100%", maxWidth: "750px" }}>
           <div className="p-4 mb-3 rounded border bg-white">
             <div className="me-auto d-flex justify-content-between text-center small text-black-50 border-bottom pb-4 mb-4">
               <span className="" style={{ width: "15%" }}>Name</span>

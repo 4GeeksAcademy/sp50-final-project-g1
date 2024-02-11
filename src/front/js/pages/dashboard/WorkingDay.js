@@ -7,7 +7,7 @@ import HolidayForm from "../../component/dashboard/HolidayForm";
 export default function WorkingDay() {
 
   return (
-    <div className=" min-vh-100">
+    <div className="" style={{ minHeight: "80vh" }}>
       <div id='account-data' className="align-items-center bg-light py-5 container">
         <HoursForm />
         <HolidayForm />

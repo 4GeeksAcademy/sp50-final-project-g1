@@ -106,39 +106,36 @@ export default function AccountData() {
   });
 
   return (
-    <>
-      {!store.isLoggedIn ? navigate('/login') :
-        <div className=" min-vh-100">
+    <div className="" style={{ minHeight: "80vh" }}>
+      <div id='account-data' className="align-items-center bg-light py-5 container">
 
-          <div id='account-data' className="align-items-center bg-light py-5 container">
+        <div className="text-black-50 mx-auto" style={{ marginBottom: "6rem", width: "100%", maxWidth: "750px" }}>
+          <h4 className=" text-decoration-underline">ACCOUNT DATA</h4>
+          <div className="p-5 rounded bg-white border text-black-50">
+            <div><span>EMAIL: </span><span>{email}</span></div>
+            <div><span>USERNAME: </span><span>{userName}</span></div>
+            <div><span>PHONE: </span><span>{phone}</span></div>
+            <div><span>PASSWORD: </span><span>************</span></div>
+          </div>
+        </div>
 
-            <div className="text-black-50 mx-auto w-75" style={{ marginBottom: "6rem" }}>
-              <h4 className=" text-decoration-underline">ACCOUNT DATA</h4>
-              <div className="p-5 rounded bg-white border text-black-50">
-                <div><span>EMAIL: </span><span>{email}</span></div>
-                <div><span>USERNAME: </span><span>{userName}</span></div>
-                <div><span>PHONE: </span><span>{phone}</span></div>
-                <div><span>PASSWORD: </span><span>************</span></div>
-              </div>
-            </div>
+        <div className=" text-black-50 mx-auto" style={{ marginBottom: "6rem", width: "100%", maxWidth: "750px" }}>
+          <h4 className=" text-decoration-underline">MY BOOKING PAGE URL</h4>
+          <p>Share it with your patient or place it in your website to collect bookings</p>
+          <div className="p-3 rounded-3 border text-black-50" style={{ backgroundColor: "#E0F3F3" }}>
+            <div><Link to={`/${userName}`} >{`www.docdate.com/${userName}`}</Link></div>
+          </div>
+        </div>
 
-            <div className=" text-black-50 mx-auto w-75" style={{ marginBottom: "6rem" }}>
-              <h4 className=" text-decoration-underline">MY BOOKING PAGE URL</h4>
-              <p>Share it with your patient or place it in your website to collect bookings</p>
-              <div className="p-3 rounded-3 border text-black-50" style={{ backgroundColor: "#E0F3F3" }}>
-                <div><Link to={`/${userName}`} >{`www.docdate.com/${userName}`}</Link></div>
-              </div>
-            </div>
+        <div className="text-black-50 mx-auto" style={{ marginBottom: "6rem", width: "100%", maxWidth: "750px" }}>
+          <h4 className=" text-decoration-underline">GOOGLE CALENDAR API CONNECTION</h4>
+          <p>Connect your google calendar with the DocDate agenda and keep all your events in one place</p>
+          <div className="p-5 rounded-3 bg-white border text-black-50">
+            <div>
 
-            <div className="text-black-50 mx-auto w-75" style={{ marginBottom: "6rem" }}>
-              <h4 className=" text-decoration-underline">GOOGLE CALENDAR API CONNECTION</h4>
-              <p>Connect your google calendar with the DocDate agenda and keep all your events in one place</p>
-              <div className="p-5 rounded-3 bg-white border text-black-50">
-                <div>
+              {/*  GOOGLE LOGIN BUTTON */}
 
-                  {/*  GOOGLE LOGIN BUTTON */}
-
-                  {/* <GoogleLogin
+              {/* <GoogleLogin
                       onSuccess={credentialResponse => {
                         console.log('GOOGLE LOGIN SUCCESS', credentialResponse);
                       }}
@@ -147,20 +144,14 @@ export default function AccountData() {
                       }}
                     /> */}
 
-                  <button onClick={() => googleLogin()}>Authorize google Calendar</button>
+              <button onClick={() => googleLogin()}>Authorize google Calendar</button>
 
-
-
-
-
-                </div>
-              </div>
             </div>
-
           </div>
-
         </div>
-      }
-    </>
+
+      </div>
+    </div>
+
   )
 }

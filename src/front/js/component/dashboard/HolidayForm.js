@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 
 export default function HolidayForm() {
 
-  const navigate = useNavigate()
   const { store, actions } = useContext(Context)
 
   const [currentInactivityDays, setCurrentInactivityDays] = useState([])
@@ -67,7 +66,7 @@ export default function HolidayForm() {
     setEndTime('')
   }
 
-  const handleHolidaySubmit = async(e) => {
+  const handleHolidaySubmit = async (e) => {
     e.preventDefault()
     console.log('click on submit one day holiday')
 
@@ -86,7 +85,7 @@ export default function HolidayForm() {
   return (
 
     <>
-      <div className="text-black-50 mx-auto w-75" style={{ marginBottom: "6rem" }}>
+      <div className="text-black-50 mx-auto" style={{ marginBottom: "6rem", width: "100%", maxWidth: "750px" }}>
         <div className="d-flex">
           <h4 className=" text-decoration-underline">HOLIDAYS</h4>
           <button className="ms-auto btn-sm text-white border-0" style={{ backgroundColor: "#14C4B9", border: "none" }} onClick={handleAddHoliday}>Add New</button>
