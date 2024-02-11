@@ -110,17 +110,6 @@ export default function Calendar() {
 
   // Give calculated ending time to bookings
   useEffect(() => {
-    function getEndingDate(booking, date, starting_time, minutes) {
-      const fullDate = new Date(`${date}T${starting_time}`)
-      fullDate.setMinutes(fullDate.getMinutes() + parseInt(minutes, 10))
-      const hours = fullDate.getHours().toString().padStart(2, '0')
-      const nerMinutes = fullDate.getMinutes().toString().padStart(2, '0')
-      const seconds = fullDate.getSeconds().toString().padStart(2, '0')
-      const finalTime = `${hours}:${nerMinutes}:${seconds}`
-
-      booking.ending_time = finalTime
-      return booking;
-    }
     if (store.bookingsByPro.length > 0) {
       store.bookingsByPro = store.bookingsByPro.map((booking) => {
         return getEndingDate(
@@ -135,7 +124,17 @@ export default function Calendar() {
 
   }, [detailsLoaded, store.bookingsByPro])
 
+  function getEndingDate(booking, date, starting_time, minutes) {
+    const fullDate = new Date(`${date}T${starting_time}`)
+    fullDate.setMinutes(fullDate.getMinutes() + parseInt(minutes, 10))
+    const hours = fullDate.getHours().toString().padStart(2, '0')
+    const nerMinutes = fullDate.getMinutes().toString().padStart(2, '0')
+    const seconds = fullDate.getSeconds().toString().padStart(2, '0')
+    const finalTime = `${hours}:${nerMinutes}:${seconds}`
 
+    booking.ending_time = finalTime
+    return booking;
+  }
 
   const handleBookingEditSubmit = (e) => {
     e.preventDefault();
@@ -312,25 +311,43 @@ export default function Calendar() {
         "status": "pending"
       }
 
-      await actions.newBooking(newBooking)
+      const booked = await actions.newBooking(newBooking)
       alert("Booking saved!")
       await actions.getBookingsByPro(store.currentPro.id)
-      // console.log("-----PRO-BOOKINGS-----", store.bookingsByPro)
+      
+      const finalBooked = getEndingDate(booked, booked.date, booked.starting_time, booked.duration)
+
+      const googleEvent = {
+        'summary': 'DocDate Appointment',
+        'description': `${finalBooked.specialization}: ${finalBooked.service_name}`,
+        'start': {
+          'dateTime': `${finalBooked.date}T${finalBooked.starting_time}:00`,
+          'timeZone': `Europe/London`,
+        },
+        'end': {
+          'dateTime': `${finalBooked.date}T${finalBooked.ending_time}`,
+          'timeZone': `Europe/London`,
+        },
+      };
+      console.log(googleEvent)
+      await fetch(process.env.BACKEND_URL + `/create-event/${store.currentPro.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ googleEvent }),
+      })
+      console.log("gEvent created!")
     }
-    else {
-      let newPatient = {
+    if(newPatient) {
+      let newPatients = {
         "name": newPatientName,
         "lastname": newPatientLastname,
         "email": newPatientEmail,
         "phone": newPatientPhone,
       }
-
-
-
-      const finalPatient = await actions.newPatient(newPatient)
+      const finalPatient = await actions.newPatient(newPatients)
       store.patientsByPro = [...store.patientsByPro, finalPatient]
-
-
       let newBooking = {
         "patient_id": finalPatient.id,
         "pro_service_id": selectedProService,
@@ -339,10 +356,33 @@ export default function Calendar() {
         "pro_notes": proNotes,
         "status": "pending"
       }
-
-      await actions.newBooking(newBooking)
+      const booked = await actions.newBooking(newBooking)
       alert("Booking saved!")
       await actions.getBookingsByPro(store.currentPro.id)
+
+      const finalBooked = getEndingDate(booked, booked.date, booked.starting_time, booked.duration)
+
+      const googleEvent = {
+        'summary': 'DocDate Appointment',
+        'description': `${finalBooked.specialization}: ${finalBooked.service_name}`,
+        'start': {
+          'dateTime': `${finalBooked.date}T${finalBooked.starting_time}:00`,
+          'timeZone': `Europe/London`,
+        },
+        'end': {
+          'dateTime': `${finalBooked.date}T${finalBooked.ending_time}`,
+          'timeZone': `Europe/London`,
+        },
+      };
+      console.log(googleEvent)
+      await fetch(process.env.BACKEND_URL + `/create-event/${store.currentPro.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ googleEvent }),
+      })
+      console.log("gEvent created!")
     }
 
   }
@@ -482,7 +522,7 @@ export default function Calendar() {
             </div>
 
             <div className="rounded bg-light p-3 text-black-50 fw-light">
-              <form onSubmit={handleSaveBooking}>
+              <form onSubmit={(e) => handleSaveBooking(e)}>
                 <div>
                   <h5 className="mb-4 text-decoration-underline">Booking Details</h5>
                   <label className="form-label">Date & Time</label>
@@ -553,10 +593,10 @@ export default function Calendar() {
                     <input value={newPatientEmail} onChange={(e) => handleNewPatientEmail(e.target.value)} type='text' placeholder="Email" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
                     <input value={newPatientPhone} onChange={(e) => handleNewPatientPhone(e.target.value)} type='text' placeholder="Phone" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
                   </div>}
-
+                  <input type='submit' value="Save Booking" className="ms-auto mt-3 btn btn-sm border-0 text-white" style={{ backgroundColor: "#14C4B9" }} />
               </form>
             </div>
-            <input type='submit' value="Save Booking" className="ms-auto mt-3 btn btn-sm border-0 text-white" style={{ backgroundColor: "#14C4B9" }} />
+            
 
           </div>
 

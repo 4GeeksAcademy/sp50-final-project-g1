@@ -78,12 +78,7 @@ def get_tokens(proid):
 @api.route('/create-event/<int:proid>', methods=['POST'])
 def create_event(proid):
     pro = Pros.query.get(proid)
-
-    # Obtener los datos del evento desde el cuerpo de la solicitud
-    event_data = request.json.get("googleEvent")  # Asumiendo que los datos del evento se envían en formato JSON desde el frontend
-    print("EVENTOOOOOOOOO", event_data)
-
-    # Construir el objeto de credenciales
+    event_data = request.json.get("googleEvent") 
     TOKEN_PATH = {
         "token": pro.google_access_token,
         "refresh_token": pro.google_refresh_token,
@@ -93,27 +88,12 @@ def create_event(proid):
         "scopes": ["https://www.googleapis.com/auth/calendar"],
         "expiry": pro.google_access_expires + "Z"
     }
-
-    # Alcance de la API de Google Calendar para lectura y escritura de eventos.
     SCOPES = ['https://www.googleapis.com/auth/calendar']
-
-    # Cargar las credenciales desde el objeto de token
     creds = Credentials.from_authorized_user_info(TOKEN_PATH, SCOPES)
-
-    # Crear un servicio de la API de Google Calendar
     service = build('calendar', 'v3', credentials=creds)
-
-    # Utilizar los datos del evento recibidos desde el frontend
     event = event_data
-
-
-    # Enviar la solicitud para crear el evento
     created_event = service.events().insert(calendarId='primary', body=event).execute()
-
-    # Obtener el ID del nuevo evento creado
     event_id = created_event.get('id')
-
-    # Retornar la respuesta al frontend
     return jsonify({'event_id': event_id})
 
 
@@ -300,7 +280,7 @@ def get_add_bookings():
                                patient_notes=data.get('patient_notes'))  # using .get method begause we can set default value
         db.session.add(new_booking)
         db.session.commit()
-        return jsonify({"message": "Booking added successfully", "booking": new_booking.serialize()}), 201
+        return jsonify(new_booking.serialize()), 201
 
       
 # Get and Update a specific record in the 'booking' table
