@@ -34,3 +34,28 @@
   padding: 5px !important;
   font-size: 14px;
 }
+
+.booking-event {
+  background-color: #14C4B9;
+  border: none;
+}
+.booking-event:hover {
+  cursor: pointer;
+  background-color: #14b1a6;
+}
+.general-button {
+  background-color: #14C4B9;
+  transition: 0s;
+}
+.general-button:hover {
+  cursor: pointer;
+  background-color: #14b1a6;
+  transition: 0s;
+}
+.btn-close:hover{
+  color: #14C4B9 !important;
+  text-shadow: #14C4B9;
+  border-bottom: 2px solid #14C4B9;
+  border-top: 2px solid #14C4B9;
+  
+}

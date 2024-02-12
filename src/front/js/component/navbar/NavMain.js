@@ -17,7 +17,6 @@ export default function Navbar() {
   }
 
   const handleDashboard = () => {
-    console.log('status: ', store)
     if (store.currentPro.config_status === 0) {
       navigate("/signup/personal-data")
     }

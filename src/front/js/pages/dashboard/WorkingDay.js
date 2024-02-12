@@ -4,6 +4,8 @@ import React from "react";
 import HoursForm from "../../component/dashboard/HoursForm";
 import HolidayForm from "../../component/dashboard/HolidayForm";
 
+import "../../../styles/calendar.css"
+
 export default function WorkingDay() {
 
   return (
