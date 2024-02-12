@@ -52,9 +52,9 @@ export default function Navbar() {
             {store.currentPro.config_status < 4 ? (
               <button className="btn btn-sm btn-light me-3" onClick={handleDashboard} >Configuration</button>
             ) : (
-              <button className="btn btn-sm btn-light me-3" onClick={handleDashboard} >Dash</button>
+              <button className="btn btn-sm btn-light border me-3" onClick={handleDashboard} >Dash</button>
             )}
-            <button className="btn btn-sm btn-primary" onClick={handleLogout}>Logout</button>
+            <button className="btn btn-sm btn-primary border-0" onClick={handleLogout} style={{ backgroundColor: "#14C4B9" }}>Logout</button>
           </div>
         ) : (
           <div className="text-black">

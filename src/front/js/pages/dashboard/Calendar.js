@@ -141,12 +141,12 @@ export default function Calendar() {
     setBookingEdit(!bookingEdit);
 
     const updatedBooking = {
-      editedProService: editedProService !== '' && editedProService !== undefined ? editedProService : selectedEvent.extendedProps.service,
-      editedDate: editedDate !== '' && editedDate !== undefined ? editedDate : selectedEvent.extendedProps.date,
-      editedHour: editedHour !== '' && editedHour !== undefined ? editedHour : selectedEvent.extendedProps.startTime,
-      editedNote: editedNote !== '' && editedNote !== undefined ? editedNote : selectedEvent.extendedProps.proNotes,
+      BookingId: selectedEvent.extendedProps.id,
+      ProService: editedProService !== '' && editedProService !== undefined ? editedProService : selectedEvent.extendedProps.service,
+      date: editedDate !== '' && editedDate !== undefined ? editedDate : selectedEvent.extendedProps.date,
+      hour: editedHour !== '' && editedHour !== undefined ? editedHour : selectedEvent.extendedProps.startTime,
+      proNote: editedNote !== '' && editedNote !== undefined ? editedNote : selectedEvent.extendedProps.proNotes,
     };
-
     console.log(updatedBooking);
   };
 
@@ -229,6 +229,10 @@ export default function Calendar() {
 
   const handleCloseCanvas = () => {
     setShowBookingDetails(!showBookingDetails)
+    setEditedDate('')
+    setEditedProService('')
+    setEditedHour('')
+    setEditedNote('')
   }
 
   const handleAddBookingForm = () => {
@@ -314,7 +318,7 @@ export default function Calendar() {
       const booked = await actions.newBooking(newBooking)
       alert("Booking saved!")
       await actions.getBookingsByPro(store.currentPro.id)
-      
+
       const finalBooked = getEndingDate(booked, booked.date, booked.starting_time, booked.duration)
 
       const googleEvent = {
@@ -339,7 +343,7 @@ export default function Calendar() {
       })
       console.log("gEvent created!")
     }
-    if(newPatient) {
+    if (newPatient) {
       let newPatients = {
         "name": newPatientName,
         "lastname": newPatientLastname,
@@ -413,26 +417,30 @@ export default function Calendar() {
                 endingDatesLoaded
                   ? [
                     // Mapeo de bookings
-                    ...store.bookingsByPro.map((booking) => ({
-                      title: booking.service_name,
-                      start: `${booking.date}T${booking.starting_time}:00`,
-                      end: `${booking.date}T${booking.ending_time}`,
-                      extendedProps: {
-                        date: booking.date,
-                        startTime: booking.starting_time,
-                        specialization: booking.specialization,
-                        service: booking.service_name,
-                        patientName: booking.patient_name,
-                        patientLastName: booking.patient_lastname,
-                        status: booking.status,
-                        duration: booking.duration,
-                        patientNotes: booking.patient_notes,
-                        proNotes: booking.pro_notes
-                      },
-                      // Propiedades específicas para bookings
-                      color: '#14C4B9',
-                      className: 'booking-event',
-                    })),
+                    ...store.bookingsByPro.map((booking) => (
+                      {
+                        title: booking.service_name,
+                        start: `${booking.date}T${booking.starting_time}:00`,
+                        end: `${booking.date}T${booking.ending_time}`,
+                        extendedProps: {
+                          booking: booking,
+                          id: booking.id,
+                          date: booking.date,
+                          startTime: booking.starting_time,
+                          specialization: booking.specialization,
+                          service: booking.service_name,
+                          proServiceId: booking.pro_service_id,
+                          patientName: booking.patient_name,
+                          patientLastName: booking.patient_lastname,
+                          status: booking.status,
+                          duration: booking.duration,
+                          patientNotes: booking.patient_notes,
+                          proNotes: booking.pro_notes
+                        },
+                        // Propiedades específicas para bookings
+                        color: '#14C4B9',
+                        className: 'booking-event',
+                      })),
                     // Mapeo de holidays
                     ...store.inactivityByPro.map((inactivity) => ({
                       title: 'Holiday',
@@ -464,7 +472,7 @@ export default function Calendar() {
 
         {/* BOOKING DETAILS  */}
         {showBookingDetails ? (
-          <form onSubmit={(e) => handleBookingEditSubmit(e)} className="bg-white position-fixed top-0 end-0 bottom-0 min-vh-100 py-5 px-4 shadow" style={{ zIndex: "2", width: "100%", maxWidth: "450px" }} >
+          <form onSubmit={(e) => handleBookingEditSubmit(e)} className="bg-white position-fixed top-0 end-0 bottom-0 min-vh-100 py-5 px-4 shadow overflow-scroll" style={{ zIndex: "1100", width: "100%", maxWidth: "450px" }} >
 
             <div className="d-flex justify-content-between mb-5">
               <h5 className="me-4 text-black-50 text-decoration-underline fw-bold" >BOOKING DETAILS</h5>
@@ -472,10 +480,10 @@ export default function Calendar() {
             </div>
             <div className="rounded bg-light p-3 text-black-50 fw-light">
               <label className="small mb-1 fw-bold text-black-50">Specialization</label>
-              <input className={`d-block small mb-3 text-black-50 p-1 rounded border-0  w-100`} type="text" value={selectedEvent.extendedProps.specialization} disabled></input>
+              <input className={`d-block small mb-3 text-black-50 p-1 rounded border-0  w-100`} type="text" value={selectedEvent.extendedProps.specialization ?? ''} disabled></input>
 
               <label htmlFor="edited-service" className="small mb-1 fw-bold text-black-50">Service</label>
-              <select id="edited-service" className={`w-100 small mb-3 text-black-50 p-1 rounded border-0 ${bookingEdit ? "bg-white p-2" : ""}`} value={editedProService != '' ? editedProService : selectedEvent.extendedProps.service} disabled={!bookingEdit} onChange={(e) => setEditedProService(e.target.value)}>
+              <select id="edited-service" className={`w-100 small mb-3 text-black-50 p-1 rounded border-0 ${bookingEdit ? "bg-white p-2" : ""}`} value={editedProService != "" ? editedProService : selectedEvent.extendedProps.proServiceId} disabled={!bookingEdit} onChange={(e) => setEditedProService(e.target.value)}>
                 <option value="" disabled>Select a service</option>
                 {store.proServicesByPro.map((proService) => {
                   return (
@@ -514,7 +522,7 @@ export default function Calendar() {
 
         {/* ADD BOOKING  */}
         {showAddBooking ? (
-          <div className="bg-white position-fixed top-0 end-0 bottom-0 min-vh-100 py-5 px-4 shadow" style={{ zIndex: "2", width: "100%", maxWidth: "450px" }} >
+          <div className="bg-white position-fixed top-0 end-0 bottom-0 min-vh-100 py-5 px-4 shadow overflow-scroll" style={{ zIndex: "1100", width: "100%", maxWidth: "500px" }} >
 
             <div className="d-flex justify-content-between mb-5">
               <h5 className="me-4 text-black-50 text-decoration-underline fw-bold" >ADD NEW BOOKING</h5>
@@ -593,10 +601,10 @@ export default function Calendar() {
                     <input value={newPatientEmail} onChange={(e) => handleNewPatientEmail(e.target.value)} type='text' placeholder="Email" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
                     <input value={newPatientPhone} onChange={(e) => handleNewPatientPhone(e.target.value)} type='text' placeholder="Phone" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
                   </div>}
-                  <input type='submit' value="Save Booking" className="ms-auto mt-3 btn btn-sm border-0 text-white" style={{ backgroundColor: "#14C4B9" }} />
+                <input type='submit' value="Save Booking" className="ms-auto mt-3 btn btn-sm border-0 text-white" style={{ backgroundColor: "#14C4B9" }} />
               </form>
             </div>
-            
+
 
           </div>
 

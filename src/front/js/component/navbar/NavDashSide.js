@@ -186,7 +186,7 @@ export default function NavDashSide() {
         </li>
 
       </ul>
-      <div className="menu-button d-flex justify-content-center p-2 border-top " onClick={handleCompressMenu}>
+      <div className="menu-button d-flex justify-content-center p-2 border-top " onClick={handleCompressMenu} style={{ cursor: "pointer" }}>
         {!compressedMenu ? (
           <span className="ms-auto fs-3 text-black-50">{'<'}</span>
         ) : (
