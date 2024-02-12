@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
-import bgImage from '../../img/herodocdate.png';
+import bgImage from '../../img/herodoc.png';
 
 
 export default function Home() {

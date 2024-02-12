@@ -359,7 +359,7 @@ export default function BookingPage() {
       const nerMinutes = fullDate.getMinutes().toString().padStart(2, '0')
       const seconds = fullDate.getSeconds().toString().padStart(2, '0')
       const finalTime = `${hours}:${nerMinutes}:${seconds}`
-  
+
       booking.ending_time = finalTime
       return booking;
     }
@@ -388,10 +388,10 @@ export default function BookingPage() {
   return (
     <>
       <section className="p-5 bg-light">
-        <div className="d-flex justify-content-center" style={{ minHeight: "70vh" }}>
+        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "85vh" }}>
           <div style={{ width: "100%", maxWidth: "650px" }}>
             <div className="d-flex align-items-center">
-              <h4 className="text-black-50">Calendar:<span style={{ color: "#14C4B9", width: "100%", maxWidth: "450px" }}> {userName}</span></h4>
+              <h4 className="text-black-50">Book a visit with <span style={{ color: "#14C4B9", width: "100%", maxWidth: "450px" }}> {userName}</span></h4>
             </div>
             {/* SERVICE SELECTION */}
             <div id="booking-calendar" className="m-auto bg-white rounded border mb-4 p-3 text-black-50">
