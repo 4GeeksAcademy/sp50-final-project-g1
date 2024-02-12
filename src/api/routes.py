@@ -303,7 +303,7 @@ def specific_booking(bookingid):
         booking.pro_notes = data.get('pro_notes', booking.pro_notes)
         booking.patient_notes = data.get('patient_notes', booking.patient_notes)
         db.session.commit()
-        return jsonify({"message": "Record updated successfully"}), 200
+        return jsonify(booking.serialize()), 200
 
 
 #  Delete a specific record in the 'booking' table
