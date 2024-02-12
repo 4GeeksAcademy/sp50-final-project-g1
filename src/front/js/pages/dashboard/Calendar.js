@@ -36,6 +36,8 @@ export default function Calendar() {
   const [editedHour, setEditedHour] = useState('');
   const [editedNote, setEditedNote] = useState('');
 
+  const [businessHoursList, setBusinessHoursList] = useState(store.businessHours)
+
 
   // Fetch data
   useEffect(() => {
@@ -97,6 +99,9 @@ export default function Calendar() {
         // Llamada a la comprobacion de token si hay
         checkAndUpdateAccessToken()
 
+        //Creación businessHours en el calendar
+        getBusinessHoursList()
+
 
       } catch (error) {
         console.error('Error al obtener datos del profesional:', error)
@@ -136,20 +141,62 @@ export default function Calendar() {
     return booking;
   }
 
-  const handleBookingEditSubmit = (e) => {
+  const handleBookingEditSubmit = async (e) => {
     e.preventDefault();
     setBookingEdit(!bookingEdit);
-
     const updatedBooking = {
-      BookingId: selectedEvent.extendedProps.id,
-      ProService: editedProService !== '' && editedProService !== undefined ? editedProService : selectedEvent.extendedProps.service,
+      id: selectedEvent.extendedProps.id,
+      pro_service_id: editedProService !== '' && editedProService !== undefined ? parseInt(editedProService) : selectedEvent.extendedProps.proServiceId,
       date: editedDate !== '' && editedDate !== undefined ? editedDate : selectedEvent.extendedProps.date,
-      hour: editedHour !== '' && editedHour !== undefined ? editedHour : selectedEvent.extendedProps.startTime,
-      proNote: editedNote !== '' && editedNote !== undefined ? editedNote : selectedEvent.extendedProps.proNotes,
+      starting_time: editedHour !== '' && editedHour !== undefined ? editedHour : selectedEvent.extendedProps.startTime,
+      pro_notes: editedNote !== '' && editedNote !== undefined ? editedNote : selectedEvent.extendedProps.proNotes,
     };
-    console.log(updatedBooking);
+    const finalBooking = await actions.updateBooking(updatedBooking)
+    store.bookingsByPro = [...store.bookingsByPro.filter((booking) => booking.id != finalBooking.id), finalBooking]
+    setShowBookingDetails(false)
+    setEditedProService("")
+    setEditedDate("")
+    setEditedHour("")
+    setEditedNote("")
   };
 
+  const getBusinessHoursList = () => {
+    const uniqueBusinessHours = [];
+    store.hoursByPro.forEach(hour => {
+      if (hour.starting_hour_morning !== null && hour.ending_hour_morning !== null) {
+        const existingMorningIndex = uniqueBusinessHours.findIndex(item => item.startTime === hour.starting_hour_morning && item.endTime === hour.ending_hour_morning)
+        if (existingMorningIndex === -1) {
+          uniqueBusinessHours.push({
+            daysOfWeek: [hour.working_day],
+            startTime: hour.starting_hour_morning,
+            endTime: hour.ending_hour_morning
+          });
+        } else {
+          if (!uniqueBusinessHours[existingMorningIndex].daysOfWeek.includes(hour.working_day)) {
+            uniqueBusinessHours[existingMorningIndex].daysOfWeek.push(hour.working_day)
+          }
+        }
+      }
+      if (hour.starting_hour_after !== null && hour.ending_hour_after !== null) {
+        const existingAfterIndex = uniqueBusinessHours.findIndex(item => item.startTime === hour.starting_hour_after && item.endTime === hour.ending_hour_after)
+    
+        if (existingAfterIndex === -1) {
+          uniqueBusinessHours.push({
+            daysOfWeek: [hour.working_day],
+            startTime: hour.starting_hour_after,
+            endTime: hour.ending_hour_after
+          });
+        } else {
+          if (!uniqueBusinessHours[existingAfterIndex].daysOfWeek.includes(hour.working_day)) {
+            uniqueBusinessHours[existingAfterIndex].daysOfWeek.push(hour.working_day)
+          }
+        }
+      }
+    })
+    setBusinessHoursList(uniqueBusinessHours)
+    store.businessHours = uniqueBusinessHours
+  }
+  
 
 
   // Logica para la actualización de google token si es necesario.
@@ -413,6 +460,7 @@ export default function Calendar() {
               weekends={true}
               eventClick={handleEventClick}
               allDaySlot={false}
+              businessHours={businessHoursList}
               events={
                 endingDatesLoaded
                   ? [
@@ -513,10 +561,7 @@ export default function Calendar() {
                 : <button className="ms-auto btn btn-sm btn-light" onClick={() => setBookingEdit(!bookingEdit)}>Edit</button>
               }
             </div>
-
           </form>
-
-
         ) : (null)}
 
 

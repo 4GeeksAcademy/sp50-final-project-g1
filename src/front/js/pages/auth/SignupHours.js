@@ -120,21 +120,14 @@ export default function SignupHours() {
     <>
       <section id="signupPersonalData" className="bg-light d-flex align-items-center" style={{ minHeight: '80vh' }}>
         <div className="container py-5">
-
-
           <div className="col-md-7 col-lg-8 m-auto bg-white p-5" style={{ border: "solid #D1D1D1 6px", borderRadius: "18px" }}>
             <h5>Working Days and Hours</h5>
             <hr />
             <form className="needs-validation" noValidate="" onSubmit={(e) => handleNext(e)}>
-
-
               <div id="hours">
                 <p className="small text-black-50 fw-light">Select your working days. Define your hours shift within every day of work</p>
-
                 <div className="p-4 mb-5 rounded" style={{ backgroundColor: "#E0F3F3" }}>
                   <div className="mb-3">
-
-
                     <div className="d-flex text-center small text-black-50">
                       <span className="col-2"></span>
                       <span className="col-5 ">Morning hours</span>
@@ -142,7 +135,6 @@ export default function SignupHours() {
                     </div>
                     {dayList.map((day) => (
                       <div key={day.id} className="form-check d-flex align-items-center mb-3 border-bottom border-white p-3">
-
                         <div className="col-2">
                           <input
                             type="checkbox"
@@ -156,7 +148,6 @@ export default function SignupHours() {
                             {day.name}
                           </label>
                         </div>
-
                         <div id="first-shift" className="border-morningStart border-white d-flex px-3 col-5">
                           <input
                             type="time"
@@ -176,7 +167,6 @@ export default function SignupHours() {
                             disabled={!days.includes(day.id)}
                           />
                         </div>
-
                         <div di="second-shift" className="border-morningStart border-white d-flex px-3 col-5">
                           <input
                             type="time"
@@ -196,29 +186,20 @@ export default function SignupHours() {
                             disabled={!days.includes(day.id)}
                           />
                         </div>
-
-
                       </div>
                     ))}
-
                     <div className="invalid-feedback">
                       Please select at least one day.
                     </div>
-
                   </div>
                 </div>
-
               </div>
-
-
               <div className="d-flex justify-content-between align-items-center border-top p-3">
-                <Link to="/signup/specialization" className="text-decoration-none"><p className="text-black">{"<"} Back</p></Link>
+                <Link to="/" className="text-decoration-none"><p className="text-black btn btn-secondary btn-sm" style={{ backgroundColor: "#efefef", border: "none" }}>Continue Later</p></Link>
                 <input className="btn btn-primary btn-lg" type="submit" value="Submit" style={{ backgroundColor: "#14C4B9", border: "none" }}></input>
               </div>
-
             </form>
           </div>
-
         </div>
       </section>
 

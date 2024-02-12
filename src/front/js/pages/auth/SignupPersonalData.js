@@ -90,7 +90,7 @@ export default function SignupPersonalData() {
                 </div>
 
                 <div className="d-flex justify-content-between align-items-center border-top p-3">
-                  <Link to="/signup/" className="text-decoration-none"><p className="text-black">{"<"} Back</p></Link>
+                  <Link to="/" className="text-decoration-none"><p className="text-black btn btn-secondary btn-sm" style={{ backgroundColor: "#efefef", border: "none" }}>Continue Later</p></Link>
                   <input type="submit" value="Next" className="btn btn-primary btn-lg" style={{ backgroundColor: "#14C4B9", border: "none" }} ></input>
                 </div>
 
