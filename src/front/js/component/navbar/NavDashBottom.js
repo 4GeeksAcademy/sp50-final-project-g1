@@ -19,7 +19,7 @@ export default function NavDashBottom() {
 
   return (
 
-    <div id="dash-navigation" className=" bg-white p-3 w-100">
+    <div id="dash-navigation" className=" bg-white p-3 w-100 position-fixed bottom-0 " style={{ zIndex: "1" }}>
       <ul className="d-flex list-unstyled justify-content-between">
 
         {/* CALENDAR */}

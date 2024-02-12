@@ -24,8 +24,7 @@ export default function NavDashTop() {
       </div>
 
       <div className="ms-auto">
-        <button className="btn btn-sm btn-light border-0 ms-auto text-black-50">Support</button>
-        <button className="btn btn-sm ms-3 text-white border-0" onClick={handleLogout} style={{ backgroundColor: "#14C4B9" }}>Logout</button>
+        <span className="text-white text-decoration-underline" style={{ cursor: "pointer" }} onClick={handleLogout} >Logout</span>
       </div>
     </div>
   )
