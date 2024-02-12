@@ -1,0 +1,36 @@
+.fc .fc-daygrid-day.fc-day-today {
+  background-color: #87d8d4;
+}
+
+.fc .fc-timegrid-week {
+  background-color: #87d8d4;
+}
+
+.fc-day-future > div > a{
+  text-decoration: none;
+  color: rgb(41, 136, 129);
+  font-size:  12px
+}
+
+.fc-day-past > div > a{
+  text-decoration: none;
+  color: rgb(41, 136, 129);
+  font-size:  12px
+}
+
+.fc-day-today > div > a{
+  text-decoration: none;
+  color: rgb(41, 136, 129);
+  font-size:  13px;
+  font-weight: bolder;
+}
+.fc-toolbar-title {
+  text-decoration: none;
+  color: rgb(144, 144, 144);
+  font-size:  20px !important;;
+}
+
+.fc .fc-button-group > .fc-button {
+  padding: 5px !important;
+  font-size: 14px;
+}

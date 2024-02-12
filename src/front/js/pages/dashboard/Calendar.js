@@ -1,8 +1,10 @@
 import React, { useContext, useState, useEffect } from "react";
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
+import dayGridPlugin from '@fullcalendar/daygrid'
 import { Context } from "../../store/appContext";
 import "../../../styles/addBooking.css"
+import "../../../styles/calendar.css"
 
 export default function Calendar() {
 
@@ -179,7 +181,7 @@ export default function Calendar() {
       }
       if (hour.starting_hour_after !== null && hour.ending_hour_after !== null) {
         const existingAfterIndex = uniqueBusinessHours.findIndex(item => item.startTime === hour.starting_hour_after && item.endTime === hour.ending_hour_after)
-    
+
         if (existingAfterIndex === -1) {
           uniqueBusinessHours.push({
             daysOfWeek: [hour.working_day],
@@ -196,7 +198,7 @@ export default function Calendar() {
     setBusinessHoursList(uniqueBusinessHours)
     store.businessHours = uniqueBusinessHours
   }
-  
+
 
 
   // Logica para la actualización de google token si es necesario.
@@ -450,17 +452,20 @@ export default function Calendar() {
           <hr />
           <div className="p-3 rounded bg-white border text-black-50">
             <FullCalendar
-              plugins={[timeGridPlugin]}
+              plugins={[timeGridPlugin, dayGridPlugin]}
               initialView='timeGridWeek'
               headerToolbar={{
                 left: 'prev,next,today',
                 center: 'title',
-                right: 'timeGridWeek,timeGridDay' // user can switch between the two
+                right: 'dayGridMonth,timeGridWeek,timeGridDay' // user can switch between the two
               }}
+              monthStartFormat={{ month: 'short', day: 'numeric' }}
+              nowIndicator={true}
               weekends={true}
               eventClick={handleEventClick}
               allDaySlot={false}
               businessHours={businessHoursList}
+              height={600}
               events={
                 endingDatesLoaded
                   ? [
