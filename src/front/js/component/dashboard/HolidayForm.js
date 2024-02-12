@@ -88,7 +88,7 @@ export default function HolidayForm() {
       <div className="text-black-50 mx-auto" style={{ marginBottom: "6rem", width: "100%", maxWidth: "750px" }}>
         <div className="d-flex">
           <h4 className=" text-decoration-underline">HOLIDAYS</h4>
-          <button className="ms-auto btn-sm text-white border-0" style={{ backgroundColor: "#14C4B9", border: "none" }} onClick={handleAddHoliday}>Add New</button>
+          <button className="ms-auto btn-sm text-white border-0 general-button" onClick={handleAddHoliday}>Add New</button>
         </div>
         <hr />
 
@@ -187,8 +187,7 @@ export default function HolidayForm() {
                 <input
                   type='submit'
                   value="Add Holiday"
-                  className="btn btn-sm border-0 text-white"
-                  style={{ backgroundColor: "#14C4B9" }}
+                  className="btn btn-sm border-0 text-white general-button"
                 />
               </form>
             ) : (

@@ -8,6 +8,8 @@ import iconPatients from '../../../img/icon-patients.png';
 import iconLocation from '../../../img/icon-location.png';
 import iconServices from '../../../img/icon-services.png';
 
+import "../../../styles/navDashSide.css"
+
 export default function NavDashSide() {
   const location = useLocation();
   const [currentUrl, setCurrentUrl] = useState(location.pathname);
@@ -38,16 +40,16 @@ export default function NavDashSide() {
         <li className="mb-5">
           <Link to="/dashboard/calendar" className="text-decoration-none" >
             {currentUrl === "/dashboard/calendar" ? (
-              <div>
+              <div className='side-icon selected'>
                 <span className="p-1 me-2 rounded-circle d-inline-block" style={{ backgroundColor: "#14C4B9" }}>
-                  <img src={iconCalendar} width="30" height="30" className="p-1" ></img>
+                  <img src={iconCalendar} width="35" height="35" className="p-1" ></img>
                 </span>
                 {!compressedMenu ? (
                   <span className="fw-bold" style={{ color: "#14C4B9" }}>CALENDAR</span>
                 ) : null}
               </div>
             ) : (
-              <div>
+              <div className='side-icon'>
                 <span className="p-1 me-2 rounded-circle d-inline-block bg-secondary">
                   <img src={iconCalendar} width="30" height="30" className="p-1" ></img>
                 </span>
@@ -63,16 +65,16 @@ export default function NavDashSide() {
         <li className="mb-5">
           <Link to="/dashboard/working-day" className="text-decoration-none" >
             {currentUrl === "/dashboard/working-day" ? (
-              <div>
+              <div className='side-icon selected'>
                 <span className="p-1 me-2 rounded-circle d-inline-block" style={{ backgroundColor: "#14C4B9" }}>
-                  <img src={iconHours} width="30" height="30" className="p-1" ></img>
+                  <img src={iconHours} width="35" height="35" className="p-1" ></img>
                 </span>
                 {!compressedMenu ? (
                   <span className="fw-bold" style={{ color: "#14C4B9" }}>DAY & HOLIDAY</span>
                 ) : null}
               </div>
             ) : (
-              <div>
+              <div className='side-icon'>
                 <span className="p-1 me-2 rounded-circle d-inline-block bg-secondary">
                   <img src={iconHours} width="30" height="30" className="p-1" ></img>
                 </span>
@@ -88,16 +90,16 @@ export default function NavDashSide() {
         <li className="mb-5">
           <Link to="/dashboard/account-data" className="text-decoration-none" >
             {currentUrl === "/dashboard/account-data" ? (
-              <div>
+              <div className='side-icon selected'>
                 <span className="p-1 me-2 rounded-circle d-inline-block" style={{ backgroundColor: "#14C4B9" }}>
-                  <img src={iconAccount} width="30" height="30" className="p-1" ></img>
+                  <img src={iconAccount} width="35" height="35" className="p-1" ></img>
                 </span>
                 {!compressedMenu ? (
                   <span className="fw-bold" style={{ color: "#14C4B9" }}>ACCOUNT DATA</span>
                 ) : null}
               </div>
             ) : (
-              <div>
+              <div className='side-icon'>
                 <span className="p-1 me-2 rounded-circle d-inline-block bg-secondary">
                   <img src={iconAccount} width="30" height="30" className="p-1" ></img>
                 </span>
@@ -113,16 +115,16 @@ export default function NavDashSide() {
         <li className="mb-5">
           <Link to="/dashboard/patients-list" className="text-decoration-none" >
             {currentUrl === "/dashboard/patients-list" ? (
-              <div>
+              <div className='side-icon selected'>
                 <span className="p-1 me-2 rounded-circle d-inline-block" style={{ backgroundColor: "#14C4B9" }}>
-                  <img src={iconPatients} width="30" height="30" className="p-1" ></img>
+                  <img src={iconPatients} width="35" height="35" className="p-1" ></img>
                 </span>
                 {!compressedMenu ? (
                   <span className="fw-bold" style={{ color: "#14C4B9" }}>PATIENTS</span>
                 ) : null}
               </div>
             ) : (
-              <div>
+              <div className='side-icon'>
                 <span className="p-1 me-2 rounded-circle d-inline-block bg-secondary">
                   <img src={iconPatients} width="30" height="30" className="p-1" ></img>
                 </span>
@@ -139,16 +141,16 @@ export default function NavDashSide() {
         <li className="mb-5">
           <Link to="/dashboard/studio" className="text-decoration-none" >
             {currentUrl === "/dashboard/studio" ? (
-              <div>
+              <div className='side-icon selected'>
                 <span className="p-1 me-2 rounded-circle d-inline-block" style={{ backgroundColor: "#14C4B9" }}>
-                  <img src={iconLocation} width="30" height="30" className="p-1" ></img>
+                  <img src={iconLocation} width="35" height="35" className="p-1" ></img>
                 </span>
                 {!compressedMenu ? (
                   <span className="fw-bold" style={{ color: "#14C4B9" }}>MY STUDIO</span>
                 ) : null}
               </div>
             ) : (
-              <div>
+              <div className='side-icon'>
                 <span className="p-1 me-2 rounded-circle d-inline-block bg-secondary">
                   <img src={iconLocation} width="30" height="30" className="p-1" ></img>
                 </span>
@@ -164,16 +166,16 @@ export default function NavDashSide() {
         <li className="mb-5">
           <Link to="/dashboard/services" className="text-decoration-none" >
             {currentUrl === "/dashboard/services" ? (
-              <div>
+              <div className='side-icon selected'>
                 <span className="p-1 me-2 rounded-circle d-inline-block" style={{ backgroundColor: "#14C4B9" }}>
-                  <img src={iconServices} width="30" height="30" className="p-1" ></img>
+                  <img src={iconServices} width="35" height="35" className="p-1" ></img>
                 </span>
                 {!compressedMenu ? (
                   <span className="fw-bold" style={{ color: "#14C4B9" }}>SERVICES</span>
                 ) : null}
               </div>
             ) : (
-              <div>
+              <div className='side-icon'>
                 <span className="p-1 me-2 rounded-circle d-inline-block bg-secondary">
                   <img src={iconServices} width="30" height="30" className="p-1" ></img>
                 </span>
@@ -186,11 +188,11 @@ export default function NavDashSide() {
         </li>
 
       </ul>
-      <div className="menu-button d-flex justify-content-center p-2 border-top " onClick={handleCompressMenu} style={{ cursor: "pointer" }}>
+      <div className="menu-button d-flex justify-content-center p-2 border-top" onClick={handleCompressMenu} style={{ cursor: "pointer" }}>
         {!compressedMenu ? (
-          <span className="ms-auto fs-3 text-black-50">{'<'}</span>
+          <span className="ms-auto fs-3 compressor">{'<'}</span>
         ) : (
-          <span className="fs-3 text-black-50">{'>'}</span>
+          <span className="fs-3 compressor">{'>'}</span>
         )}
       </div>
     </div>

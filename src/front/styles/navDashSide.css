@@ -1,0 +1,15 @@
+.side-icon:hover img{
+        transform: rotateZ(18deg);
+        transition: 0.1s;     
+}
+.selected img{
+        transform: rotateZ(18deg);
+}
+
+.compressor:hover {
+        color: #14C4B9;
+        text-shadow: #14C4B9;
+        border-bottom: 1px solid #14C4B9;
+        transition: 0.1s;
+}
+
