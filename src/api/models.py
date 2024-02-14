@@ -145,7 +145,9 @@ class ProServices(db.Model):
                 "service_id": self.service_id,
                 "price": self.price,
                 "duration": self.duration,
-                "service_name": self.services.service_name}
+                "service_name": self.services.service_name,
+                "specialization": self.services.specialization
+                }
 
 class Patients(db.Model):
     __tablename__ = "patients"

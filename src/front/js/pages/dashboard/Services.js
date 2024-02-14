@@ -4,7 +4,7 @@ import { Context } from "../../store/appContext";
 
 export default function Services() {
   const { store, actions } = useContext(Context)
-  console.log(store.servicesByPro)
+  console.log('pro service ', store.proServicesByPro)
 
   const [editStatus, setEditStatus] = useState(false)
 
@@ -29,18 +29,22 @@ export default function Services() {
               {/* header  */}
               <div className="me-auto d-flex fw-bold small text-black-50 border-bottom py-3 mb-4" >
                 <span className="" style={{ width: "35%" }}>Specialization</span>
-                <span className="" style={{ width: "50%" }}>Service</span>
+                <span className="" style={{ width: "35%" }}>Service</span>
+                <span className="" style={{ width: "15%" }}>Duration</span>
+                <span className="" style={{ width: "15%" }}>Price</span>
                 {editStatus ? (
                   <span className="ms-auto" style={{ width: "25px" }}></span>
                 ) : null}
               </div>
 
               {/* services  */}
-              {store.servicesByPro != '' ? (
-                store.servicesByPro.map(service =>
+              {store.proServicesByPro != '' ? (
+                store.proServicesByPro.map(service =>
                   <div key={service.id} className="me-auto d-flex small text-black-50 mb-3" >
                     <span className="" style={{ width: "35%" }}>{service.specialization}</span>
-                    <span className="" style={{ width: "50%" }}>{service.service_name}</span>
+                    <span className="" style={{ width: "35%" }}>{service.service_name}</span>
+                    <span className="" style={{ width: "15%" }}>{service.duration} min.</span>
+                    <span className="" style={{ width: "15%" }}>{service.price} €</span>
                     {editStatus ? (
                       <span className="ms-auto btn-danger btn-sm m-0" style={{ width: "25px" }}>X</span>
                     ) : null}
@@ -52,7 +56,7 @@ export default function Services() {
           </div>
 
           {/* edit button  */}
-          {/* <div className="text-black-50 mx-auto d-flex">
+          <div className="text-black-50 mx-auto d-flex">
             <div className="ms-auto">
               {editStatus ? (
                 <>
@@ -62,7 +66,7 @@ export default function Services() {
                 <button className="btn btn-small bg-white border" onClick={() => setEditStatus(!editStatus)}>Edit</button>
               )}
             </div>
-          </div> */}
+          </div>
 
         </form>
 

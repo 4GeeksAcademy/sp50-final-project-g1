@@ -504,7 +504,7 @@ export default function Calendar() {
       {!store.isLoggedIn ? navigate("/login") : 
       <div className="pt-4 " style={{ minHeight: "80vh" }}>
         <div id='account-data' className="align-items-center bg-light py-3 container">
-          <div className="text-black-50 mx-auto" style={{ marginBottom: "6rem", width: "100%", maxWidth: "650px" }}>
+          <div className="text-black-50 mx-auto" style={{ marginBottom: "6rem", width: "100%", maxWidth: "1500px" }}>
             <div className="d-flex">
               <h4 className=" text-decoration-underline">MY CALENDAR</h4>
               <button className="btn btn-sm ms-auto text-white general-button" onClick={handleAddBookingForm}>Add New Booking</button>
@@ -525,7 +525,7 @@ export default function Calendar() {
                 eventClick={handleEventClick}
                 allDaySlot={false}
                 businessHours={businessHoursList}
-                height={600}
+                height={750}
                 events={
                   endingDatesLoaded
                     ? [
@@ -582,11 +582,14 @@ export default function Calendar() {
                         type: "Holiday"
                       },
                       // Propiedades específicas para holidays
+
                       color: getColorByType(inactivity.type),
+
                       className: 'holiday-event',
                     }))
                 }
               />
+
             </div>
           </div>
 
