@@ -369,11 +369,11 @@ export default function BookingPage() {
       'description': `${finalEvent.specialization}: ${finalEvent.service_name}`,
       'start': {
         'dateTime': `${finalEvent.date}T${finalEvent.starting_time}:00`,
-        'timeZone': `Europe/London`,
+        'timeZone': `${finalEvent.time_zone}`,
       },
       'end': {
         'dateTime': `${finalEvent.date}T${finalEvent.ending_time}`,
-        'timeZone': `Europe/London`,
+        'timeZone': `${finalEvent.time_zone}`,
       },
     };
     await fetch(process.env.BACKEND_URL + `/create-event/${store.currentPro.id}`, {

@@ -75,11 +75,11 @@ export default function AccountData() {
               'description': `${booking.specialization}: ${booking.service_name}`,
               'start': {
                 'dateTime': `${booking.date}T${booking.starting_time}:00`,
-                'timeZone': `Europe/London`,
+                'timeZone': `${booking.time_zone}`,
               },
               'end': {
                 'dateTime': `${booking.date}T${booking.ending_time}`,
-                'timeZone': `Europe/London`,
+                'timeZone': `${booking.time_zone}`,
               },
             };
             console.log(googleEvent)

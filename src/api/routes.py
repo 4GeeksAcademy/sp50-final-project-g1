@@ -23,13 +23,47 @@ CORS(api)  # Allow CORS requests to this API
 
 
 # Prueba festivos
-def get_holidays(year):
-    es_holidays = holidays.Spain(years=year)
-    return [{"date": date, "holiday": holiday} for date, holiday in sorted(es_holidays.items())]
+def get_holidays(year, country):
+    if country == "Germany":
+        holidays_country = holidays.Germany(years=year, observed=False, language="de")
+    elif country == "Spain":
+        holidays_country = holidays.Spain(years=year, observed=False, language="es")
+    elif country == "France":
+        holidays_country = holidays.France(years=year, observed=False, language="fr")
+    elif country == "Italy":
+        holidays_country = holidays.Italy(years=year, observed=False, language="it")
+    elif country == "United Kingdom":
+        holidays_country = holidays.UnitedKingdom(years=year, observed=False, language="en")
+    elif country == "Portugal":
+        holidays_country = holidays.Portugal(years=year, observed=False, language="pt")
+    elif country == "Netherlands":
+        holidays_country = holidays.Netherlands(years=year, observed=False, language="nl")
+    elif country == "Belgium":
+        holidays_country = holidays.Belgium(years=year, observed=False, language="nl")
+    elif country == "Switzerland":
+        holidays_country = holidays.Switzerland(years=year, observed=False, language="de")
+    elif country == "Austria":
+        holidays_country = holidays.Austria(years=year, observed=False, language="de")
+    elif country == "Greece":
+        holidays_country = holidays.Greece(years=year, observed=False, language="el")
+    elif country == "Sweden":
+        holidays_country = holidays.Sweden(years=year, observed=False, language="sv")
+    elif country == "Norway":
+        holidays_country = holidays.Norway(years=year, observed=False, language="no")
+    elif country == "Denmark":
+        holidays_country = holidays.Denmark(years=year, observed=False, language="da")
+    elif country == "Finland":
+        holidays_country = holidays.Finland(years=year, observed=False, language="fi")
+    elif country == "Ireland":
+        holidays_country = holidays.Ireland(years=year, observed=False, language="en")
+    else:
+        return []
 
-@api.route('/get_holidays/<int:year>', methods=['GET'])
-def api_get_holidays(year):
-    holidays_list = get_holidays(year)
+    return [{"date": date, "holiday": holiday} for date, holiday in sorted(holidays_country.items())]
+
+@api.route('/get_holidays/<int:year>/<string:country>', methods=['GET'])
+def api_get_holidays(year, country):
+    holidays_list = get_holidays(year, country)
     return jsonify({"holidays": holidays_list})
 
 
@@ -609,7 +643,8 @@ def handle_inactivitydays():
                                         ending_date=data.get('ending_date'),
                                         starting_hour=data.get('starting_hour'),
                                         ending_hour=data.get('ending_hour'),
-                                        title=data.get("title"))
+                                        title=data.get("title"),
+                                        type=data.get("type"))
         db.session.add(new_inactivity)
         db.session.commit()
         return jsonify({"message": "Record added successfully"}), 201
@@ -629,6 +664,7 @@ def handle_inactivityday(inactivitydaysid):
         inactivity_day.starting_hour = data.get('service_id', inactivity_day.starting_hour)
         inactivity_day.ending_hour = data.get('ending_hour', inactivity_day.ending_hour)
         inactivity_day.title = data.get('title', inactivity_day.title)
+        inactivity_day.type = data.get('type', inactivity_day.type)
         db.session.commit()
         return jsonify({"message": "inactivity_day updated successfully"}), 200
     if request.method == 'DELETE':

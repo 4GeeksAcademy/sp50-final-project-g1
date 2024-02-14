@@ -1,3 +1,9 @@
-/* 
-    General Styles used on every website (Don't Repeat Yourself)
-*/
+.general-button {
+    background-color: #14C4B9;
+    transition: 0s;
+  }
+  .general-button:hover {
+    cursor: pointer;
+    background-color: #14b1a6;
+    transition: 0s;
+  }

@@ -24,8 +24,8 @@ const getState = ({getStore, getActions, setStore}) => {
 			},
 
 			//Holidays test
-			getHolidays: async (year) => {
-				const url = process.env.BACKEND_URL + `/get_holidays/${year}`
+			getHolidays: async (year, country) => {
+				const url = process.env.BACKEND_URL + `/get_holidays/${year}/${country}`
 				const options = {
 					method: "GET",
 					headers: {
