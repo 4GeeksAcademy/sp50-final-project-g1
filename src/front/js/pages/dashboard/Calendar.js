@@ -310,6 +310,12 @@ export default function Calendar() {
 
 
   // Click on event
+
+  const handleDeleteBooking = (bookingId) => {
+    const bookingObj = { bookingId }
+    console.log(bookingObj)
+  }
+
   const handleEventClick = (arg) => {
     setSelectedEvent(arg.event);
     if (arg.event._def.extendedProps.type != "booking") {
@@ -632,7 +638,10 @@ export default function Calendar() {
                 </div>
                 <div className="mt-3 d-flex">
                   {bookingEdit ?
-                    <input type="submit" value="Save" className="ms-auto btn btn-sm text-white" style={{ backgroundColor: "#14C4B9" }} ></input>
+                    <div>
+                      <input type="submit" value="Save" className="ms-auto btn btn-sm text-white" style={{ backgroundColor: "#14C4B9" }} ></input>
+                      <button className="ms-auto btn btn-sm btn-danger" onClick={() => handleDeleteBooking(selectedEvent.extendedProps.id)}>Delete</button>
+                    </div>
                     : <button className="ms-auto btn btn-sm btn-light" onClick={() => setBookingEdit(!bookingEdit)}>Edit</button>
                   }
                 </div>
