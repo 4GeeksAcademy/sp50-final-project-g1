@@ -15,10 +15,22 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 import datetime
 import json
+import holidays
 
 
 api = Blueprint('api', __name__)
 CORS(api)  # Allow CORS requests to this API
+
+
+# Prueba festivos
+def get_holidays(year):
+    es_holidays = holidays.Spain(years=year)
+    return [{"date": date, "holiday": holiday} for date, holiday in sorted(es_holidays.items())]
+
+@api.route('/get_holidays/<int:year>', methods=['GET'])
+def api_get_holidays(year):
+    holidays_list = get_holidays(year)
+    return jsonify({"holidays": holidays_list})
 
 
 # LOGIN - authentication - token generation
@@ -596,7 +608,8 @@ def handle_inactivitydays():
                                         pro_id=data['pro_id'],
                                         ending_date=data.get('ending_date'),
                                         starting_hour=data.get('starting_hour'),
-                                        ending_hour=data.get('ending_hour'))
+                                        ending_hour=data.get('ending_hour'),
+                                        title=data.get("title"))
         db.session.add(new_inactivity)
         db.session.commit()
         return jsonify({"message": "Record added successfully"}), 201
@@ -615,6 +628,7 @@ def handle_inactivityday(inactivitydaysid):
         inactivity_day.ending_date = data.get('ending_date', inactivity_day.ending_date)
         inactivity_day.starting_hour = data.get('service_id', inactivity_day.starting_hour)
         inactivity_day.ending_hour = data.get('ending_hour', inactivity_day.ending_hour)
+        inactivity_day.title = data.get('title', inactivity_day.title)
         db.session.commit()
         return jsonify({"message": "inactivity_day updated successfully"}), 200
     if request.method == 'DELETE':

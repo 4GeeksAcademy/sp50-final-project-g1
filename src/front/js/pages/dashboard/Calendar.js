@@ -107,6 +107,10 @@ export default function Calendar() {
         //Creación businessHours en el calendar
         getBusinessHoursList()
 
+        //Test Holidays
+        const festivos = await actions.getHolidays(2024)
+        console.log("-----FESTIVOS-----", festivos)
+
 
       } catch (error) {
         console.error('Error al obtener datos del profesional:', error)

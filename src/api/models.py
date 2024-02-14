@@ -56,6 +56,7 @@ class Locations(db.Model):
                 "address": self.address,
                 "city": self.city,
                 "country": self.country,
+                "time_zone": self.time_zone,
                 "pro_id": self.pro_id,
                 "time_zone": self.time_zone}
 
@@ -87,22 +88,26 @@ class Hours(db.Model):
 class InactivityDays(db.Model):
     __tablename__ = "inactivity"
     id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String)
     starting_date = db.Column(db.String, nullable=False)
     ending_date = db.Column(db.String)
     starting_hour = db.Column(db.String)
     ending_hour = db.Column(db.String)
+    type = db.Column(db.String)
     pro_id = db.Column(db.ForeignKey("pros.id"), nullable=False)
     pro = db.relationship("Pros")
 
     def __repr__(self):
-        return f'<Inactivity Days {self.id}, {self.pro_id}, {self.starting_date}, {self.ending_date}, {self.starting_hour}, {self.ending_hour}>'
+        return f'<Inactivity Days {self.id}, {self.title}, {self.pro_id}, {self.starting_date}, {self.ending_date}, {self.starting_hour}, {self.ending_hour}>'
 
     def serialize(self):
         return {"id": self.id,
+                "title": self.title,
                 "starting_date": self.starting_date,
                 "ending_date": self.ending_date,
                 "starting_hour": self.starting_hour,
                 "ending_hour": self.ending_hour,
+                "type": self.type,
                 "pro_id": self.pro_id,}
 
 class Services(db.Model):

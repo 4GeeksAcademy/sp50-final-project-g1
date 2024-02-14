@@ -19,9 +19,29 @@ const getState = ({getStore, getActions, setStore}) => {
 		},
 		actions: {
       
-      selectDay: (day) => {
-        setStore({ patientSelectedDay: day })
-      },
+			selectDay: (day) => {
+				setStore({ patientSelectedDay: day })
+			},
+
+			//Holidays test
+			getHolidays: async (year) => {
+				const url = process.env.BACKEND_URL + `/get_holidays/${year}`
+				const options = {
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+						},
+					}
+					const response = await fetch(url, options)
+					if(response.ok){
+						const data = await response.json()
+						return data
+					}
+					else {
+						return ("Error con Holidays")
+					}
+			},
+
 
       
 			// Login
