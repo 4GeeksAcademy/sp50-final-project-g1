@@ -107,6 +107,9 @@ export default function Calendar() {
         //Creación businessHours en el calendar
         getBusinessHoursList()
 
+        // National Holidays
+        getHolidays()
+
 
       } catch (error) {
         console.error('Error al obtener datos del profesional:', error)
@@ -133,6 +136,40 @@ export default function Calendar() {
     }
 
   }, [detailsLoaded, store.bookingsByPro])
+
+  const getHolidays = async() => {
+    if (store.inactivityByPro.length === 0) {
+      const year = new Date().getFullYear()
+      const festivos = await actions.getHolidays(year, store.currentLocations[0].country)
+      const months = {
+        "Jan": "01",
+        "Feb": "02",
+        "Mar": "03",
+        "Apr": "04",
+        "May": "05",
+        "Jun": "06",
+        "Jul": "07",
+        "Aug": "08",
+        "Sep": "09",
+        "Oct": "10",
+        "Nov": "11",
+        "Dec": "12"
+      }
+      festivos.holidays.map(async(holiday) => {
+        const parts = holiday.date.split(" ")
+        const day = parts[1]
+        const month = months[parts[2]]
+        const year = parts[3]
+        let finalInactivity = {
+          "pro_id": store.currentPro.id,
+          "title": holiday.holiday,
+          "starting_date": `${year}-${month}-${day}`,
+          "type": "nHoliday"
+        }
+        await actions.newInactivity(finalInactivity)
+      })
+    }
+  }
 
   function getEndingDate(booking, date, starting_time, minutes) {
     const fullDate = new Date(`${date}T${starting_time}`)
@@ -275,7 +312,7 @@ export default function Calendar() {
   // Click on event
   const handleEventClick = (arg) => {
     setSelectedEvent(arg.event);
-    if (arg.event._def.extendedProps.type === "Holiday") {
+    if (arg.event._def.extendedProps.type != "booking") {
       return false
     }
     else {
@@ -383,11 +420,11 @@ export default function Calendar() {
         'description': `${finalBooked.specialization}: ${finalBooked.service_name}`,
         'start': {
           'dateTime': `${finalBooked.date}T${finalBooked.starting_time}:00`,
-          'timeZone': `Europe/London`,
+          'timeZone': `${finalBooked.time_zone}`,
         },
         'end': {
           'dateTime': `${finalBooked.date}T${finalBooked.ending_time}`,
-          'timeZone': `Europe/London`,
+          'timeZone': `${finalBooked.time_zone}`,
         },
       };
       console.log(googleEvent)
@@ -428,11 +465,11 @@ export default function Calendar() {
         'description': `${finalBooked.specialization}: ${finalBooked.service_name}`,
         'start': {
           'dateTime': `${finalBooked.date}T${finalBooked.starting_time}:00`,
-          'timeZone': `Europe/London`,
+          'timeZone': `${finalBooked.time_zone}`,
         },
         'end': {
           'dateTime': `${finalBooked.date}T${finalBooked.ending_time}`,
-          'timeZone': `Europe/London`,
+          'timeZone': `${finalBooked.time_zone}`,
         },
       };
       console.log(googleEvent)
@@ -447,6 +484,19 @@ export default function Calendar() {
     }
 
   }
+
+  const getColorByType = (type) => {
+    switch (type) {
+      case 'nHoliday':
+        return '#14C4B9a4'
+      case 'pHoliday':
+        return '#5628a1a4'
+      case 'pEvent':
+        return '#d67112a4'
+      default:
+        return '#000000'
+    }
+  };
 
 
   return (
@@ -498,7 +548,8 @@ export default function Calendar() {
                             status: booking.status,
                             duration: booking.duration,
                             patientNotes: booking.patient_notes,
-                            proNotes: booking.pro_notes
+                            proNotes: booking.pro_notes,
+                            type: "booking"
                           },
                           // Propiedades específicas para bookings
                           /* color: '#14C4B9', */
@@ -506,22 +557,22 @@ export default function Calendar() {
                         })),
                       // Mapeo de holidays
                       ...store.inactivityByPro.map((inactivity) => ({
-                        title: 'Holiday',
+                        title: inactivity.title,
                         start: !inactivity.starting_hour ?
                           `${inactivity.starting_date}T00:00:00` : `${inactivity.starting_date}T${inactivity.starting_hour}`,
                         end: !inactivity.ending_date && !inactivity.ending_hour ?
                           `${inactivity.starting_date}T23:59:59` : inactivity.ending_date && !inactivity.ending_hour ?
                             `${inactivity.ending_date}T23:59:59` : `${inactivity.ending_date}T${inactivity.ending_hour}`,
                         extendedProps: {
-                          type: "Holiday"
+                          type: inactivity.type
                         },
                         // Propiedades específicas para holidays
-                        color: '#186357',
+                        color: getColorByType(inactivity.type),
                         className: 'holiday-event',
                       })),
                     ]
                     : store.inactivityByPro.map((inactivity) => ({
-                      title: 'Holiday',
+                      title: inactivity.title,
                       start: !inactivity.starting_hour ?
                         `${inactivity.starting_date}T00:00:00` : `${inactivity.starting_date}T${inactivity.starting_hour}`,
                       end: !inactivity.ending_date && !inactivity.ending_hour ?
@@ -531,7 +582,9 @@ export default function Calendar() {
                         type: "Holiday"
                       },
                       // Propiedades específicas para holidays
-                      color: '#87d8d4a4',
+
+                      color: getColorByType(inactivity.type),
+
                       className: 'holiday-event',
                     }))
                 }

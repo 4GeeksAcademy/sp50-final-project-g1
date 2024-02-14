@@ -13,6 +13,7 @@ export default function SignupLocation() {
   const [country, setCountry] = useState('')
   const [city, setCity] = useState('')
   const [address, setAddress] = useState("")
+  const [timeZone, setTimeZone] = useState("")
   /* const [duration, setDuration] = useState("") */
 
 
@@ -25,6 +26,7 @@ export default function SignupLocation() {
       country,
       city,
       address,
+      "time_zone": timeZone,
       "pro_id": store.currentPro.id,
     }
 
@@ -81,9 +83,27 @@ export default function SignupLocation() {
 
                   <div className="mb-3">
                     <label htmlFor="country" className="form-label">Country</label>
-                    <input type="text" className="form-control" id="country" placeholder="Spain" required="" value={country} onChange={(e) => setCountry(e.target.value)} />
+                    <select className="form-control" id="country" required="" value={country} onChange={(e) => setCountry(e.target.value)}>
+                      <option value="" disabled selected hidden>Select a country</option>
+                      <option value="Germany">Germany</option>
+                      <option value="Spain">Spain</option>
+                      <option value="France">France</option>
+                      <option value="Italy">Italy</option>
+                      <option value="United Kingdom">United Kingdom</option>
+                      <option value="Portugal">Portugal</option>
+                      <option value="Netherlands">Netherlands</option>
+                      <option value="Belgium">Belgium</option>
+                      <option value="Switzerland">Switzerland</option>
+                      <option value="Austria">Austria</option>
+                      <option value="Greece">Greece</option>
+                      <option value="Sweden">Sweden</option>
+                      <option value="Norway">Norway</option>
+                      <option value="Denmark">Denmark</option>
+                      <option value="Finland">Finland</option>
+                      <option value="Ireland">Ireland</option>
+                    </select>
                     <div className="invalid-feedback">
-                      Valid last name is required.
+                        A valid country is required.
                     </div>
                   </div>
 
@@ -101,6 +121,33 @@ export default function SignupLocation() {
                     <div className="invalid-feedback">
                       Valid last name is required.
                     </div>
+                  </div>
+
+                  <div className="mb-3">
+                    <label htmlFor="lastName" className="form-label">Time Zone</label>
+                    <select className="form-control" id="timezone" required="" value={timeZone} onChange={(e) => setTimeZone(e.target.value)}>
+                      <option value="" disabled selected hidden>Select a timezone</option>
+                      <option value="Atlantic/Canary">Europe/Canary Islands</option>
+                      <option value="Europe/Berlin">Europe/Berlin</option>
+                      <option value="Europe/Madrid">Europe/Madrid</option>
+                      <option value="Europe/Paris">Europe/Paris</option>
+                      <option value="Europe/Rome">Europe/Rome</option>
+                      <option value="Europe/London">Europe/London</option>
+                      <option value="Europe/Lisbon">Europe/Lisbon</option>
+                      <option value="Europe/Amsterdam">Europe/Amsterdam</option>
+                      <option value="Europe/Brussels">Europe/Brussels</option>
+                      <option value="Europe/Zurich">Europe/Zurich</option>
+                      <option value="Europe/Vienna">Europe/Vienna</option>
+                      <option value="Europe/Athens">Europe/Athens</option>
+                      <option value="Europe/Stockholm">Europe/Stockholm</option>
+                      <option value="Europe/Oslo">Europe/Oslo</option>
+                      <option value="Europe/Copenhagen">Europe/Copenhagen</option>
+                      <option value="Europe/Helsinki">Europe/Helsinki</option>
+                      <option value="Europe/Dublin">Europe/Dublin</option>
+                  </select>
+                  <div className="invalid-feedback">
+                      A valid timezone is required.
+                  </div>
                   </div>
 
                 </div>
