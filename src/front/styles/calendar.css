@@ -1,5 +1,48 @@
+
+.fc-event-title {
+  color: white;
+  font-weight: 300 !important;
+  margin-left: 5px;
+}
+
+.fc-daygrid-day-number {
+  text-decoration: none;
+  color: rgba(128, 128, 128, 0.397)
+}
+
+.fc-event-time{
+  color:white;
+  display: none;
+}
+
+.fc-col-header-cell-cushion{
+  color: rgb(41, 136, 129);
+  font-size:  14px;
+  text-decoration: none;
+  font-weight: 400;
+}
+
+.fc-daygrid-event-dot{
+  display: none;
+}
+
 .fc .fc-daygrid-day.fc-day-today {
-  background-color: #87d8d4;
+  background-color: #fbf35858;
+  border: #989898;
+  border-width: 2px;
+}
+
+.bank-holiday{
+  background-color: #13d5c8a4;
+  border: none;
+}
+.private-holiday{
+  background-color: #5628a1a4;
+  border: none;
+}
+.private-event{
+  background-color: #50c100a4;
+  border: none;
 }
 
 .fc .fc-timegrid-week {
