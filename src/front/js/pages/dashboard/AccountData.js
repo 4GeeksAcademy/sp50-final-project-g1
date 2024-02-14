@@ -106,7 +106,7 @@ export default function AccountData() {
   });
 
   return (
-    <div className="" style={{ minHeight: "80vh" }}>
+    <div className="" style={{ minHeight: "90vh" }}>
       <div id='account-data' className="align-items-center bg-light py-5 container">
 
         <div className="text-black-50 mx-auto" style={{ marginBottom: "6rem", width: "100%", maxWidth: "750px" }}>

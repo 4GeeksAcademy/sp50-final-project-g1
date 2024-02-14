@@ -20,7 +20,7 @@ export default function PatientsList() {
   }
 
   return (
-    <div className="" style={{ minHeight: "80vh" }}>
+    <div className="" style={{ minHeight: "90vh" }}>
       <div id='account-data' className="align-items-center bg-light py-5 container">
         <div className="text-black-50 mx-auto" style={{ width: "100%", maxWidth: "750px" }}>
           <h4 className=" text-decoration-underline mb-1 p-0">MY PATIENTS</h4>

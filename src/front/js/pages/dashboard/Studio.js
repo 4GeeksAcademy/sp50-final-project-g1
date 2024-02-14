@@ -16,7 +16,7 @@ export default function Studio() {
   console.log('location', store.currentLocations)
 
   return (
-    <div className="" style={{ minHeight: "80vh" }}>
+    <div className="" style={{ minHeight: "90vh" }}>
       <div id='account-data' className="align-items-center bg-light py-5 container">
 
         <form onSubmit={handleEditSubmit} className="m-auto" style={{ width: "100%", maxWidth: "750px" }}>

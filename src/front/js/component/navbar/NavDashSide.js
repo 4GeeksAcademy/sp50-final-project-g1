@@ -95,7 +95,7 @@ export default function NavDashSide() {
                   <img src={iconAccount} width="35" height="35" className="p-1" ></img>
                 </span>
                 {!compressedMenu ? (
-                  <span className="fw-bold" style={{ color: "#14C4B9" }}>MY ACCOUNT DATA</span>
+                  <span className="fw-bold" style={{ color: "#14C4B9" }}>MY ACCOUNT</span>
                 ) : null}
               </div>
             ) : (
@@ -104,7 +104,7 @@ export default function NavDashSide() {
                   <img src={iconAccount} width="30" height="30" className="p-1" ></img>
                 </span>
                 {!compressedMenu ? (
-                  <span className="text-black-50">MY ACCOUNT DATA</span>
+                  <span className="text-black-50">MY ACCOUNT</span>
                 ) : null}
               </div>
             )}

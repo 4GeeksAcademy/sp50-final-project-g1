@@ -16,7 +16,7 @@ export default function NavDashTop() {
   }
 
   return (
-    <div id='dash-menu' className="bg-secondary p-4 d-flex align-items-center" style={{ height: "10vh" }}>
+    <div id='dash-menu' className="bg-secondary px-4 d-flex align-items-center" style={{ height: "5vh" }}>
       <div className="">
         <Link to="/dashboard/calendar" className="text-black-50 text-decoration-none fs-3">
           <img src={logoGray} width="120" className="me-3 rounded"></img>

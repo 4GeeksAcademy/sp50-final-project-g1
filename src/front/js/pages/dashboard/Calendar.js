@@ -137,7 +137,7 @@ export default function Calendar() {
 
   }, [detailsLoaded, store.bookingsByPro])
 
-  const getHolidays = async() => {
+  const getHolidays = async () => {
     if (store.inactivityByPro.length === 0) {
       const year = new Date().getFullYear()
       const festivos = await actions.getHolidays(year, store.currentLocations[0].country)
@@ -155,7 +155,7 @@ export default function Calendar() {
         "Nov": "11",
         "Dec": "12"
       }
-      festivos.holidays.map(async(holiday) => {
+      festivos.holidays.map(async (holiday) => {
         const parts = holiday.date.split(" ")
         const day = parts[1]
         const month = months[parts[2]]
@@ -501,62 +501,77 @@ export default function Calendar() {
 
   return (
     <>
-      {!store.isLoggedIn ? navigate("/login") : 
-      <div className="pt-4 " style={{ minHeight: "80vh" }}>
-        <div id='account-data' className="align-items-center bg-light py-3 container">
-          <div className="text-black-50 mx-auto" style={{ marginBottom: "6rem", width: "100%", maxWidth: "1500px" }}>
-            <div className="d-flex">
-              <h4 className=" text-decoration-underline">MY CALENDAR</h4>
-              <button className="btn btn-sm ms-auto text-white general-button" onClick={handleAddBookingForm}>Add New Booking</button>
-            </div>
-            <hr />
-            <div className="p-3 rounded bg-white border text-black-50">
-              <FullCalendar
-                plugins={[timeGridPlugin, dayGridPlugin]}
-                initialView='timeGridWeek'
-                headerToolbar={{
-                  left: 'prev,next,today',
-                  center: 'title',
-                  right: 'dayGridMonth,timeGridWeek,timeGridDay' // user can switch between the two
-                }}
-                monthStartFormat={{ month: 'short', day: 'numeric' }}
-                nowIndicator={true}
-                weekends={true}
-                eventClick={handleEventClick}
-                allDaySlot={false}
-                businessHours={businessHoursList}
-                height={750}
-                events={
-                  endingDatesLoaded
-                    ? [
-                      // Mapeo de bookings
-                      ...store.bookingsByPro.map((booking) => (
-                        {
-                          title: booking.service_name,
-                          start: `${booking.date}T${booking.starting_time}:00`,
-                          end: `${booking.date}T${booking.ending_time}`,
+      {!store.isLoggedIn ? navigate("/login") :
+        <div className="pt-4 " style={{ minHeight: "90vh" }}>
+          <div id='account-data' className="align-items-center bg-light container">
+            <div className="text-black-50 mx-auto" style={{ marginBottom: "6rem", width: "100%", maxWidth: "1500px" }}>
+              <div className="d-flex">
+                <h4 className=" text-decoration-underline">MY CALENDAR</h4>
+                <button className="btn btn-sm ms-auto text-white general-button" onClick={handleAddBookingForm}>Add New Booking</button>
+              </div>
+              <hr />
+              <div className="p-3 rounded bg-white border text-black-50">
+                <FullCalendar
+                  plugins={[timeGridPlugin, dayGridPlugin]}
+                  initialView='timeGridWeek'
+                  headerToolbar={{
+                    left: 'prev,next,today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay' // user can switch between the two
+                  }}
+                  monthStartFormat={{ month: 'short', day: 'numeric' }}
+                  nowIndicator={true}
+                  weekends={true}
+                  eventClick={handleEventClick}
+                  allDaySlot={false}
+                  businessHours={businessHoursList}
+                  height={750}
+                  events={
+                    endingDatesLoaded
+                      ? [
+                        // Mapeo de bookings
+                        ...store.bookingsByPro.map((booking) => (
+                          {
+                            title: booking.service_name,
+                            start: `${booking.date}T${booking.starting_time}:00`,
+                            end: `${booking.date}T${booking.ending_time}`,
+                            extendedProps: {
+                              booking: booking,
+                              id: booking.id,
+                              date: booking.date,
+                              startTime: booking.starting_time,
+                              specialization: booking.specialization,
+                              service: booking.service_name,
+                              proServiceId: booking.pro_service_id,
+                              patientName: booking.patient_name,
+                              patientLastName: booking.patient_lastname,
+                              status: booking.status,
+                              duration: booking.duration,
+                              patientNotes: booking.patient_notes,
+                              proNotes: booking.pro_notes,
+                              type: "booking"
+                            },
+                            // Propiedades específicas para bookings
+                            /* color: '#14C4B9', */
+                            className: 'booking-event',
+                          })),
+                        // Mapeo de holidays
+                        ...store.inactivityByPro.map((inactivity) => ({
+                          title: inactivity.title,
+                          start: !inactivity.starting_hour ?
+                            `${inactivity.starting_date}T00:00:00` : `${inactivity.starting_date}T${inactivity.starting_hour}`,
+                          end: !inactivity.ending_date && !inactivity.ending_hour ?
+                            `${inactivity.starting_date}T23:59:59` : inactivity.ending_date && !inactivity.ending_hour ?
+                              `${inactivity.ending_date}T23:59:59` : `${inactivity.ending_date}T${inactivity.ending_hour}`,
                           extendedProps: {
-                            booking: booking,
-                            id: booking.id,
-                            date: booking.date,
-                            startTime: booking.starting_time,
-                            specialization: booking.specialization,
-                            service: booking.service_name,
-                            proServiceId: booking.pro_service_id,
-                            patientName: booking.patient_name,
-                            patientLastName: booking.patient_lastname,
-                            status: booking.status,
-                            duration: booking.duration,
-                            patientNotes: booking.patient_notes,
-                            proNotes: booking.pro_notes,
-                            type: "booking"
+                            type: inactivity.type
                           },
-                          // Propiedades específicas para bookings
-                          /* color: '#14C4B9', */
-                          className: 'booking-event',
+                          // Propiedades específicas para holidays
+                          color: getColorByType(inactivity.type),
+                          className: 'holiday-event',
                         })),
-                      // Mapeo de holidays
-                      ...store.inactivityByPro.map((inactivity) => ({
+                      ]
+                      : store.inactivityByPro.map((inactivity) => ({
                         title: inactivity.title,
                         start: !inactivity.starting_hour ?
                           `${inactivity.starting_date}T00:00:00` : `${inactivity.starting_date}T${inactivity.starting_hour}`,
@@ -564,178 +579,163 @@ export default function Calendar() {
                           `${inactivity.starting_date}T23:59:59` : inactivity.ending_date && !inactivity.ending_hour ?
                             `${inactivity.ending_date}T23:59:59` : `${inactivity.ending_date}T${inactivity.ending_hour}`,
                         extendedProps: {
-                          type: inactivity.type
+                          type: "Holiday"
                         },
                         // Propiedades específicas para holidays
+
                         color: getColorByType(inactivity.type),
+
                         className: 'holiday-event',
-                      })),
-                    ]
-                    : store.inactivityByPro.map((inactivity) => ({
-                      title: inactivity.title,
-                      start: !inactivity.starting_hour ?
-                        `${inactivity.starting_date}T00:00:00` : `${inactivity.starting_date}T${inactivity.starting_hour}`,
-                      end: !inactivity.ending_date && !inactivity.ending_hour ?
-                        `${inactivity.starting_date}T23:59:59` : inactivity.ending_date && !inactivity.ending_hour ?
-                          `${inactivity.ending_date}T23:59:59` : `${inactivity.ending_date}T${inactivity.ending_hour}`,
-                      extendedProps: {
-                        type: "Holiday"
-                      },
-                      // Propiedades específicas para holidays
+                      }))
+                  }
+                />
 
-                      color: getColorByType(inactivity.type),
-
-                      className: 'holiday-event',
-                    }))
-                }
-              />
-
+              </div>
             </div>
+
+            {/* BOOKING DETAILS  */}
+            {showBookingDetails ? (
+              <form onSubmit={(e) => handleBookingEditSubmit(e)} className="bg-white position-fixed top-0 end-0 bottom-0 min-vh-100 py-5 px-4 shadow overflow-scroll" style={{ zIndex: "1100", width: "100%", maxWidth: "450px" }} >
+
+                <div className="d-flex justify-content-between mb-5">
+                  <h5 className="me-4 text-black-50 text-decoration-underline fw-bold" >BOOKING DETAILS</h5>
+                  <button type="button" className="btn-close" onClick={handleCloseCanvas} ></button>
+                </div>
+                <div className="rounded bg-light p-3 text-black-50 fw-light">
+                  <label className="small mb-1 fw-bold text-black-50">Specialization</label>
+                  <input className={`d-block small mb-3 text-black-50 p-1 rounded border-0  w-100`} type="text" value={selectedEvent.extendedProps.specialization ?? ''} disabled></input>
+
+                  <label htmlFor="edited-service" className="small mb-1 fw-bold text-black-50">Service</label>
+                  <select id="edited-service" className={`w-100 small mb-3 text-black-50 p-1 rounded border-0 ${bookingEdit ? "bg-white p-2" : ""}`} value={editedProService != "" ? editedProService : selectedEvent.extendedProps.proServiceId} disabled={!bookingEdit} onChange={(e) => setEditedProService(e.target.value)}>
+                    <option value="" disabled>Select a service</option>
+                    {store.proServicesByPro.map((proService) => {
+                      return (
+                        <option key={proService.id} value={proService.id}>{proService.service_name}</option>
+                      )
+                    })}
+                  </select>
+
+                  <label className="small mb-1 fw-bold text-black-50">Date</label>
+                  <input className={`d-block small mb-3 text-black-50 p-1 rounded border-0 ${bookingEdit ? "bg-white p-2" : ""} w-100`} type="date" value={editedDate != "" ? editedDate : selectedEvent.extendedProps.date} disabled={!bookingEdit} onChange={(e) => setEditedDate(e.target.value)}></input>
+                  <label className="small mb-1 fw-bold text-black-50">Visit Start Hour</label>
+                  <input className={`d-block small mb-3 text-black-50 p-1 rounded border-0 ${bookingEdit ? "bg-white p-2" : ""} w-100`} type="time" value={editedHour != "" ? editedHour : selectedEvent.extendedProps.startTime} disabled={!bookingEdit} onChange={(e) => setEditedHour(e.target.value)}></input>
+                  <label className="small mb-1 fw-bold text-black-50">Duration</label>
+                  <input className={`d-block small mb-3 text-black-50 p-1 rounded border-0 w-100`} type="text" value={`${selectedEvent.extendedProps.duration ?? ''} minutes`} disabled></input>
+                  <label className="small mb-1 fw-bold text-black-50">Patient</label>
+                  <input className={`d-block small mb-3 text-black-50 p-1 rounded border-0 w-100`} type="text" value={`${selectedEvent.extendedProps.patientName ?? ''} ${selectedEvent.extendedProps.patientLastName}`} disabled></input>
+                  <label className="small mb-1 fw-bold text-black-50">Status</label>
+                  <input className={`d-block small mb-3 text-black-50 p-1 rounded border-0 w-100`} type="text" value={selectedEvent.extendedProps.status ?? ''} disabled></input>
+                  <label className="small mb-1 fw-bold text-black-50">Patient notes</label>
+                  <input className={`d-block small mb-3 text-black-50 p-1 rounded border-0  w-100`} type="text" value={selectedEvent.extendedProps.patientNotes ?? ''} disabled></input>
+                  <label className="small mb-1 fw-bold text-black-50">My notes</label>
+                  <input className={`d-block small mb-3 text-black-50 p-1 rounded border-0 ${bookingEdit ? "bg-white p-2" : ""} w-100`} type="text" value={editedNote != "" ? editedNote : selectedEvent.extendedProps.proNotes} disabled={!bookingEdit} onChange={(e) => setEditedNote(e.target.value)}></input>
+                </div>
+                <div className="mt-3 d-flex">
+                  {bookingEdit ?
+                    <input type="submit" value="Save" className="ms-auto btn btn-sm text-white" style={{ backgroundColor: "#14C4B9" }} ></input>
+                    : <button className="ms-auto btn btn-sm btn-light" onClick={() => setBookingEdit(!bookingEdit)}>Edit</button>
+                  }
+                </div>
+              </form>
+            ) : (null)}
+
+
+            {/* ADD BOOKING  */}
+            {showAddBooking ? (
+              <div className="bg-white position-fixed top-0 end-0 bottom-0 min-vh-100 py-5 px-4 shadow overflow-scroll" style={{ zIndex: "1100", width: "100%", maxWidth: "500px" }} >
+
+                <div className="d-flex justify-content-between mb-5">
+                  <h5 className="me-4 text-black-50 text-decoration-underline fw-bold" >ADD NEW BOOKING</h5>
+                  <button type="button" className="btn-close" onClick={handleAddBookingForm} ></button>
+                </div>
+
+                <div className="rounded bg-light p-3 text-black-50 fw-light">
+                  <form onSubmit={(e) => handleSaveBooking(e)}>
+                    <div>
+                      <h5 className="mb-4 text-decoration-underline">Booking Details</h5>
+                      <label className="form-label">Date & Time</label>
+                      <input type='date' onChange={(e) => handleBookingDate(e.target.value)} className="d-block mb-3 p-2 w-100 rounded border-0"></input>
+                      <input type='time' onChange={(e) => handleBookingTime(e.target.value)} className="d-block mb-3 p-2 w-100 rounded border-0"></input>
+                      <div className="mb-3">
+                        <label htmlFor="service" className="form-label">Service</label>
+                        <select id="service" className="form-select w-100" value={selectedProService} required onChange={(e) => handleSelectedProService(e.target.value)}>
+                          <option value="" disabled>Select a service</option>
+                          {store.proServicesByPro.map((proService) => {
+                            return (
+                              <option key={proService.id} value={proService.id}>{proService.service_name}</option>
+                            )
+                          })}
+                        </select>
+                      </div>
+                      <div className="mb-3">
+                        <label htmlFor="notes" className="form-label">Notes</label>
+                        <textarea id="notes" value={proNotes} placeholder="My Notes" className="form-control w-100" onChange={(e) => handleProNotes(e.target.value)}></textarea>
+                      </div>
+                    </div>
+
+                    {!newPatient ?
+                      <div>
+                        <h5 className="mb-2 text-decoration-underline">Patient details</h5>
+                        <div className="">
+                          <input type="checkbox" className="form-check-input me-2 mb-3" id="newPatient" value={newPatient} checked={newPatient} onChange={handleNewPatient} />
+                          <label className="form-check-label me-5" htmlFor='holidayType'>
+                            <span>New patient</span>
+                          </label>
+                        </div>
+                        <div className="autocomplete">
+                          <input className="d-block mb-3 p-2 w-100 rounded border-0" type="text" id="patient" value={inputValue} onChange={handleInputChange} placeholder="Search for a patient..." />
+                          {filteredPatients.length > 0 && (
+                            <div className="autocomplete-dropdown">
+
+                              {filteredPatients.map((patient) => (
+                                <div key={patient.id} className="autocomplete-option" onClick={() => handleSelectPatient(patient)} >
+                                  {patient.name} {patient.lastname}
+                                </div>
+                              ))}
+
+                            </div>
+                          )}
+
+                        </div>
+                        <input value={patientEmail} readOnly disabled type='text' placeholder="Email" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
+                        <input value={patientPhone} readOnly disabled type='text' placeholder="Phone" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
+                      </div>
+                      :
+                      <div>
+                        <h5 className="mb-2 text-decoration-underline">Patient details</h5>
+                        <div className="">
+                          <input
+                            type="checkbox"
+                            className="form-check-input me-2 mb-3"
+                            id="newPatient"
+                            value={newPatient}
+                            checked={newPatient}
+                            onChange={handleNewPatient}
+                          />
+                          <label className="form-check-label me-5" htmlFor='holidayType'>
+                            <span>New patient</span>
+                          </label>
+                        </div>
+                        <input value={newPatientName} onChange={(e) => handleNewPatientName(e.target.value)} type='text' placeholder="Name" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
+                        <input value={newPatientLastname} onChange={(e) => handleNewPatientLastname(e.target.value)} type='text' placeholder="Last Name" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
+                        <input value={newPatientEmail} onChange={(e) => handleNewPatientEmail(e.target.value)} type='text' placeholder="Email" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
+                        <input value={newPatientPhone} onChange={(e) => handleNewPatientPhone(e.target.value)} type='text' placeholder="Phone" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
+                      </div>}
+                    <input type='submit' value="Save Booking" className="ms-auto mt-3 btn btn-sm border-0 text-white general-button" />
+                  </form>
+                </div>
+
+
+              </div>
+
+
+            ) : (null)}
+
+
           </div>
-
-          {/* BOOKING DETAILS  */}
-          {showBookingDetails ? (
-            <form onSubmit={(e) => handleBookingEditSubmit(e)} className="bg-white position-fixed top-0 end-0 bottom-0 min-vh-100 py-5 px-4 shadow overflow-scroll" style={{ zIndex: "1100", width: "100%", maxWidth: "450px" }} >
-
-              <div className="d-flex justify-content-between mb-5">
-                <h5 className="me-4 text-black-50 text-decoration-underline fw-bold" >BOOKING DETAILS</h5>
-                <button type="button" className="btn-close" onClick={handleCloseCanvas} ></button>
-              </div>
-              <div className="rounded bg-light p-3 text-black-50 fw-light">
-                <label className="small mb-1 fw-bold text-black-50">Specialization</label>
-                <input className={`d-block small mb-3 text-black-50 p-1 rounded border-0  w-100`} type="text" value={selectedEvent.extendedProps.specialization ?? ''} disabled></input>
-
-                <label htmlFor="edited-service" className="small mb-1 fw-bold text-black-50">Service</label>
-                <select id="edited-service" className={`w-100 small mb-3 text-black-50 p-1 rounded border-0 ${bookingEdit ? "bg-white p-2" : ""}`} value={editedProService != "" ? editedProService : selectedEvent.extendedProps.proServiceId} disabled={!bookingEdit} onChange={(e) => setEditedProService(e.target.value)}>
-                  <option value="" disabled>Select a service</option>
-                  {store.proServicesByPro.map((proService) => {
-                    return (
-                      <option key={proService.id} value={proService.id}>{proService.service_name}</option>
-                    )
-                  })}
-                </select>
-
-                <label className="small mb-1 fw-bold text-black-50">Date</label>
-                <input className={`d-block small mb-3 text-black-50 p-1 rounded border-0 ${bookingEdit ? "bg-white p-2" : ""} w-100`} type="date" value={editedDate != "" ? editedDate : selectedEvent.extendedProps.date} disabled={!bookingEdit} onChange={(e) => setEditedDate(e.target.value)}></input>
-                <label className="small mb-1 fw-bold text-black-50">Visit Start Hour</label>
-                <input className={`d-block small mb-3 text-black-50 p-1 rounded border-0 ${bookingEdit ? "bg-white p-2" : ""} w-100`} type="time" value={editedHour != "" ? editedHour : selectedEvent.extendedProps.startTime} disabled={!bookingEdit} onChange={(e) => setEditedHour(e.target.value)}></input>
-                <label className="small mb-1 fw-bold text-black-50">Duration</label>
-                <input className={`d-block small mb-3 text-black-50 p-1 rounded border-0 w-100`} type="text" value={`${selectedEvent.extendedProps.duration ?? ''} minutes`} disabled></input>
-                <label className="small mb-1 fw-bold text-black-50">Patient</label>
-                <input className={`d-block small mb-3 text-black-50 p-1 rounded border-0 w-100`} type="text" value={`${selectedEvent.extendedProps.patientName ?? ''} ${selectedEvent.extendedProps.patientLastName}`} disabled></input>
-                <label className="small mb-1 fw-bold text-black-50">Status</label>
-                <input className={`d-block small mb-3 text-black-50 p-1 rounded border-0 w-100`} type="text" value={selectedEvent.extendedProps.status ?? ''} disabled></input>
-                <label className="small mb-1 fw-bold text-black-50">Patient notes</label>
-                <input className={`d-block small mb-3 text-black-50 p-1 rounded border-0  w-100`} type="text" value={selectedEvent.extendedProps.patientNotes ?? ''} disabled></input>
-                <label className="small mb-1 fw-bold text-black-50">My notes</label>
-                <input className={`d-block small mb-3 text-black-50 p-1 rounded border-0 ${bookingEdit ? "bg-white p-2" : ""} w-100`} type="text" value={editedNote != "" ? editedNote : selectedEvent.extendedProps.proNotes} disabled={!bookingEdit} onChange={(e) => setEditedNote(e.target.value)}></input>
-              </div>
-              <div className="mt-3 d-flex">
-                {bookingEdit ?
-                  <input type="submit" value="Save" className="ms-auto btn btn-sm text-white" style={{ backgroundColor: "#14C4B9" }} ></input>
-                  : <button className="ms-auto btn btn-sm btn-light" onClick={() => setBookingEdit(!bookingEdit)}>Edit</button>
-                }
-              </div>
-            </form>
-          ) : (null)}
-
-
-          {/* ADD BOOKING  */}
-          {showAddBooking ? (
-            <div className="bg-white position-fixed top-0 end-0 bottom-0 min-vh-100 py-5 px-4 shadow overflow-scroll" style={{ zIndex: "1100", width: "100%", maxWidth: "500px" }} >
-
-              <div className="d-flex justify-content-between mb-5">
-                <h5 className="me-4 text-black-50 text-decoration-underline fw-bold" >ADD NEW BOOKING</h5>
-                <button type="button" className="btn-close" onClick={handleAddBookingForm} ></button>
-              </div>
-
-              <div className="rounded bg-light p-3 text-black-50 fw-light">
-                <form onSubmit={(e) => handleSaveBooking(e)}>
-                  <div>
-                    <h5 className="mb-4 text-decoration-underline">Booking Details</h5>
-                    <label className="form-label">Date & Time</label>
-                    <input type='date' onChange={(e) => handleBookingDate(e.target.value)} className="d-block mb-3 p-2 w-100 rounded border-0"></input>
-                    <input type='time' onChange={(e) => handleBookingTime(e.target.value)} className="d-block mb-3 p-2 w-100 rounded border-0"></input>
-                    <div className="mb-3">
-                      <label htmlFor="service" className="form-label">Service</label>
-                      <select id="service" className="form-select w-100" value={selectedProService} required onChange={(e) => handleSelectedProService(e.target.value)}>
-                        <option value="" disabled>Select a service</option>
-                        {store.proServicesByPro.map((proService) => {
-                          return (
-                            <option key={proService.id} value={proService.id}>{proService.service_name}</option>
-                          )
-                        })}
-                      </select>
-                    </div>
-                    <div className="mb-3">
-                      <label htmlFor="notes" className="form-label">Notes</label>
-                      <textarea id="notes" value={proNotes} placeholder="My Notes" className="form-control w-100" onChange={(e) => handleProNotes(e.target.value)}></textarea>
-                    </div>
-                  </div>
-
-                  {!newPatient ?
-                    <div>
-                      <h5 className="mb-2 text-decoration-underline">Patient details</h5>
-                      <div className="">
-                        <input type="checkbox" className="form-check-input me-2 mb-3" id="newPatient" value={newPatient} checked={newPatient} onChange={handleNewPatient} />
-                        <label className="form-check-label me-5" htmlFor='holidayType'>
-                          <span>New patient</span>
-                        </label>
-                      </div>
-                      <div className="autocomplete">
-                        <input className="d-block mb-3 p-2 w-100 rounded border-0" type="text" id="patient" value={inputValue} onChange={handleInputChange} placeholder="Search for a patient..." />
-                        {filteredPatients.length > 0 && (
-                          <div className="autocomplete-dropdown">
-
-                            {filteredPatients.map((patient) => (
-                              <div key={patient.id} className="autocomplete-option" onClick={() => handleSelectPatient(patient)} >
-                                {patient.name} {patient.lastname}
-                              </div>
-                            ))}
-
-                          </div>
-                        )}
-
-                      </div>
-                      <input value={patientEmail} readOnly disabled type='text' placeholder="Email" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
-                      <input value={patientPhone} readOnly disabled type='text' placeholder="Phone" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
-                    </div>
-                    :
-                    <div>
-                      <h5 className="mb-2 text-decoration-underline">Patient details</h5>
-                      <div className="">
-                        <input
-                          type="checkbox"
-                          className="form-check-input me-2 mb-3"
-                          id="newPatient"
-                          value={newPatient}
-                          checked={newPatient}
-                          onChange={handleNewPatient}
-                        />
-                        <label className="form-check-label me-5" htmlFor='holidayType'>
-                          <span>New patient</span>
-                        </label>
-                      </div>
-                      <input value={newPatientName} onChange={(e) => handleNewPatientName(e.target.value)} type='text' placeholder="Name" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
-                      <input value={newPatientLastname} onChange={(e) => handleNewPatientLastname(e.target.value)} type='text' placeholder="Last Name" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
-                      <input value={newPatientEmail} onChange={(e) => handleNewPatientEmail(e.target.value)} type='text' placeholder="Email" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
-                      <input value={newPatientPhone} onChange={(e) => handleNewPatientPhone(e.target.value)} type='text' placeholder="Phone" className="d-block mb-3 p-2 w-100 rounded border-0"></input>
-                    </div>}
-                  <input type='submit' value="Save Booking" className="ms-auto mt-3 btn btn-sm border-0 text-white general-button" />
-                </form>
-              </div>
-
-
-            </div>
-
-
-          ) : (null)}
-
-
         </div>
-      </div>
-    }
-     
+      }
+
     </>
   )
 }
