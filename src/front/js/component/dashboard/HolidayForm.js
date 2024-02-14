@@ -117,7 +117,7 @@ export default function HolidayForm() {
     <>
       <div className="text-black-50 mx-auto" style={{ marginBottom: "6rem", width: "100%", maxWidth: "750px" }}>
         <div className="d-flex">
-          <h4 className=" text-decoration-underline">HOLIDAYS</h4>
+          <h4 className=" text-decoration-underline">MY NON-WORKING HOURS</h4>
           <button className="ms-auto btn-sm text-white border-0 general-button" onClick={handleAddHoliday}>Add New</button>
         </div>
         <hr />
@@ -174,7 +174,7 @@ export default function HolidayForm() {
         <div className="bg-white position-fixed top-0 end-0 bottom-0 min-vh-100 py-5 px-4 w-25 shadow" style={{ zIndex: "2" }} >
 
           <div className="d-flex justify-content-between mb-5">
-            <h5 className="me-4 text-black-50 text-decoration-underline fw-bold" >ADD NEW HOLIDAY</h5>
+            <h5 className="me-4 text-black-50 text-decoration-underline fw-bold" >NEW NON-WORKING TIME</h5>
             <button type="button" className="btn-close" onClick={handleAddHoliday}></button>
           </div>
 
@@ -190,7 +190,7 @@ export default function HolidayForm() {
                 onChange={handleHolidayType}
               />
               <label className="form-check-label me-5" htmlFor='holidayType'>
-                <span>Single Day Holiday</span>
+                <span>Single Day</span>
               </label>
             </div>
 
@@ -201,7 +201,7 @@ export default function HolidayForm() {
             {!holidayType ? (
               <form onSubmit={handleHolidaySubmit}>
                 {/* LONG PERIOD HOLIDAY  */}
-                <h5 className="mb-3 text-decoration-underline">Holiday Period</h5>
+                <h5 className="mb-3 text-decoration-underline">Time Period</h5>
                 <span className="small mb-2 text-black-50">Start Date</span>
                 <input
                   type='date'
@@ -247,7 +247,7 @@ export default function HolidayForm() {
             ) : (
               <form onSubmit={handleHolidaySubmit}>
                 {/* SINGLE DAY HOLIDAY */}
-                <h5 className="mb-3 text-decoration-underline">Single day break</h5>
+                <h5 className="mb-3 text-decoration-underline">Single day</h5>
                 <span className="small mb-2 text-black-50">Date</span>
                 <input
                   type='date'

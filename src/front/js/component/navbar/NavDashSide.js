@@ -45,7 +45,7 @@ export default function NavDashSide() {
                   <img src={iconCalendar} width="35" height="35" className="p-1" ></img>
                 </span>
                 {!compressedMenu ? (
-                  <span className="fw-bold" style={{ color: "#14C4B9" }}>CALENDAR</span>
+                  <span className="fw-bold" style={{ color: "#14C4B9" }}>MY CALENDAR</span>
                 ) : null}
               </div>
             ) : (
@@ -54,7 +54,7 @@ export default function NavDashSide() {
                   <img src={iconCalendar} width="30" height="30" className="p-1" ></img>
                 </span>
                 {!compressedMenu ? (
-                  <span className="text-black-50">CALENDAR</span>
+                  <span className="text-black-50">MY CALENDAR</span>
                 ) : null}
               </div>
             )}
@@ -70,7 +70,7 @@ export default function NavDashSide() {
                   <img src={iconHours} width="35" height="35" className="p-1" ></img>
                 </span>
                 {!compressedMenu ? (
-                  <span className="fw-bold" style={{ color: "#14C4B9" }}>DAY & HOLIDAY</span>
+                  <span className="fw-bold" style={{ color: "#14C4B9" }}>MY HOURS</span>
                 ) : null}
               </div>
             ) : (
@@ -79,7 +79,7 @@ export default function NavDashSide() {
                   <img src={iconHours} width="30" height="30" className="p-1" ></img>
                 </span>
                 {!compressedMenu ? (
-                  <span className="text-black-50">DAY & HOLIDAY</span>
+                  <span className="text-black-50">MY HOURS</span>
                 ) : null}
               </div>
             )}
@@ -95,7 +95,7 @@ export default function NavDashSide() {
                   <img src={iconAccount} width="35" height="35" className="p-1" ></img>
                 </span>
                 {!compressedMenu ? (
-                  <span className="fw-bold" style={{ color: "#14C4B9" }}>ACCOUNT DATA</span>
+                  <span className="fw-bold" style={{ color: "#14C4B9" }}>MY ACCOUNT DATA</span>
                 ) : null}
               </div>
             ) : (
@@ -104,7 +104,7 @@ export default function NavDashSide() {
                   <img src={iconAccount} width="30" height="30" className="p-1" ></img>
                 </span>
                 {!compressedMenu ? (
-                  <span className="text-black-50">ACCOUNT DATA</span>
+                  <span className="text-black-50">MY ACCOUNT DATA</span>
                 ) : null}
               </div>
             )}
@@ -120,7 +120,7 @@ export default function NavDashSide() {
                   <img src={iconPatients} width="35" height="35" className="p-1" ></img>
                 </span>
                 {!compressedMenu ? (
-                  <span className="fw-bold" style={{ color: "#14C4B9" }}>PATIENTS</span>
+                  <span className="fw-bold" style={{ color: "#14C4B9" }}>MY PATIENTS</span>
                 ) : null}
               </div>
             ) : (
@@ -129,7 +129,7 @@ export default function NavDashSide() {
                   <img src={iconPatients} width="30" height="30" className="p-1" ></img>
                 </span>
                 {!compressedMenu ? (
-                  <span className="text-black-50">PATIENTS</span>
+                  <span className="text-black-50">MY PATIENTS</span>
                 ) : null}
               </div>
             )}
@@ -171,7 +171,7 @@ export default function NavDashSide() {
                   <img src={iconServices} width="35" height="35" className="p-1" ></img>
                 </span>
                 {!compressedMenu ? (
-                  <span className="fw-bold" style={{ color: "#14C4B9" }}>SERVICES</span>
+                  <span className="fw-bold" style={{ color: "#14C4B9" }}>MY SERVICES</span>
                 ) : null}
               </div>
             ) : (
@@ -180,7 +180,7 @@ export default function NavDashSide() {
                   <img src={iconServices} width="30" height="30" className="p-1" ></img>
                 </span>
                 {!compressedMenu ? (
-                  <span className="text-black-50">SERVICES</span>
+                  <span className="text-black-50">MY SERVICES</span>
                 ) : null}
               </div>
             )}
