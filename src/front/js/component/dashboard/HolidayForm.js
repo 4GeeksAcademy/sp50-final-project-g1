@@ -96,7 +96,7 @@ export default function HolidayForm() {
       case "pEvent":
         return "pevent-class"
       default:
-        return "" 
+        return ""
     }
   };
 
@@ -109,7 +109,7 @@ export default function HolidayForm() {
     }
   };
 
-  
+
 
 
   return (
@@ -225,15 +225,15 @@ export default function HolidayForm() {
                 />
                 <div className="rounded bg-dark bg-opacity-10 p-3 text-black-50 mb-3 fw-lightmb-4">
                   <div>
-                    <input type="checkbox" className="form-check-input me-2" id="nholiday" value="nHoliday" onChange={handleTypeChange} checked={selectedType.includes("nHoliday")} />
+                    <input type="checkbox" className="form-check-input me-2" id="nholiday" value="nHoliday" onChange={handleTypeChange} checked={selectedType === "nHoliday"} />
                     <label htmlFor="nHoliday">Bank holiday</label>
                   </div>
                   <div>
-                    <input type="checkbox" className="form-check-input me-2" id="pholiday" value="pHoliday" onChange={handleTypeChange} checked={selectedType.includes("pHoliday")} />
+                    <input type="checkbox" className="form-check-input me-2" id="pholiday" value="pHoliday" onChange={handleTypeChange} checked={selectedType === "pHoliday"} />
                     <label htmlFor="pHoliday">Personal holiday</label>
                   </div>
                   <div>
-                    <input type="checkbox" className="form-check-input me-2" id="pevent" value="pEvent" onChange={handleTypeChange} checked={selectedType.includes("pEvent")} />
+                    <input type="checkbox" className="form-check-input me-2" id="pevent" value="pEvent" onChange={handleTypeChange} checked={selectedType === "pEvent"} />
                     <label htmlFor="pEvent">Personal event</label>
                   </div>
                 </div>
@@ -242,7 +242,7 @@ export default function HolidayForm() {
                   value="Add Holiday"
                   className="btn btn-sm border-0 text-white general-button"
                 />
-                
+
               </form>
             ) : (
               <form onSubmit={handleHolidaySubmit}>
@@ -276,7 +276,7 @@ export default function HolidayForm() {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)} // Aggiorna la data di inizio
                 />
-                
+
                 <div className="rounded bg-dark bg-opacity-10 p-3 text-black-50 mb-3 fw-lightmb-4">
                   <div>
                     <input type="checkbox" className="form-check-input me-2" id="nholiday" value="nHoliday" onChange={handleTypeChange} checked={selectedType.includes("nHoliday")} />

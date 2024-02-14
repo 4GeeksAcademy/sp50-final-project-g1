@@ -488,11 +488,11 @@ export default function Calendar() {
   const getColorByType = (type) => {
     switch (type) {
       case 'nHoliday':
-        return '#14C4B9a4'
+        return 'bank-holiday'
       case 'pHoliday':
-        return '#5628a1a4'
+        return 'private-holiday'
       case 'pEvent':
-        return '#d67112a4'
+        return 'private-event'
       default:
         return '#000000'
     }
@@ -567,8 +567,8 @@ export default function Calendar() {
                             type: inactivity.type
                           },
                           // Propiedades específicas para holidays
-                          color: getColorByType(inactivity.type),
-                          className: 'holiday-event',
+                          // color: getColorByType(inactivity.type),
+                          className: getColorByType(inactivity.type),
                         })),
                       ]
                       : store.inactivityByPro.map((inactivity) => ({
@@ -583,9 +583,9 @@ export default function Calendar() {
                         },
                         // Propiedades específicas para holidays
 
-                        color: getColorByType(inactivity.type),
+                        // color: getColorByType(inactivity.type),
 
-                        className: 'holiday-event',
+                        className: getColorByType(inactivity.type),
                       }))
                   }
                 />
