@@ -660,6 +660,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				}
 				else{
 					/* alert("Sorry, somenthing went wrong.") */
+					return false
 					console.log("Error :", response.status, response.statusText)
 				}
 			},

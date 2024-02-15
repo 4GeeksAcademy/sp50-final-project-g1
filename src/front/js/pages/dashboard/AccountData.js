@@ -102,7 +102,7 @@ export default function AccountData() {
         .catch(error => console.error('Error:', error))
     },
     flow: 'auth-code',
-    scope: "openid email profile https://www.googleapis.com/auth/calendar"
+    scope: "openid email profile https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/gmail.send"
   });
 
   return (
