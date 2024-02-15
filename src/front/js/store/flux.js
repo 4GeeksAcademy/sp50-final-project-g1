@@ -76,19 +76,28 @@ const getState = ({getStore, getActions, setStore}) => {
 				}
 			},
 
-			authentication: async(token) => {
+			authentication: async() => {
+				const store = getStore()
 				const url = process.env.BACKEND_URL + '/dashboard'
 				const options = {
 				method: "GET",
 				headers: {
 					"Content-Type": "application/json",
-					"Authorization": `Bearer ${token}`
+					"Authorization": `Bearer ${store.token}`
 					},
 				}
 				const response = await fetch(url, options)
 				if(response.ok) {
 					const data = await response.json()
 					return data
+				}
+				else {
+					const data = await response.json()
+					if (data.msg === "Token has expired") {
+						localStorage.removeItem("token")
+						setStore({token: ""})
+						setStore({isLoggedIn: false})
+					}
 				}
 				
 			},
@@ -660,6 +669,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				}
 				else{
 					/* alert("Sorry, somenthing went wrong.") */
+					return false
 					console.log("Error :", response.status, response.statusText)
 				}
 			},

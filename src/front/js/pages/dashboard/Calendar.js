@@ -115,7 +115,6 @@ export default function Calendar() {
         console.error('Error al obtener datos del profesional:', error)
       }
     };
-
     if (store.bookingsByPro.length === 0) {
       fetchData()
     }
@@ -200,6 +199,7 @@ export default function Calendar() {
     setEditedDate("")
     setEditedHour("")
     setEditedNote("")
+    setBookingEdit(false)
   };
 
   const getBusinessHoursList = () => {
@@ -311,9 +311,16 @@ export default function Calendar() {
 
   // Click on event
 
-  const handleDeleteBooking = (bookingId) => {
-    const bookingObj = { bookingId }
-    console.log(bookingObj)
+  const handleDeleteBooking = async(e, bookingId) => {
+    e.preventDefault()
+    await actions.deleteBooking(bookingId)
+    console.log("booking deleted")
+    const response = await actions.getBookingsByPro(store.currentPro.id)
+    if (response === false) {
+      store.bookingsByPro = []
+    }
+    setShowBookingDetails(false)
+    return
   }
 
   const handleEventClick = (arg) => {
@@ -333,6 +340,7 @@ export default function Calendar() {
     setEditedProService('')
     setEditedHour('')
     setEditedNote('')
+    setBookingEdit(false)
   }
 
   const handleAddBookingForm = () => {
@@ -504,6 +512,18 @@ export default function Calendar() {
     }
   };
 
+  const handleEndEvent = (inactivity) => {
+    if (!inactivity.ending_date && !inactivity.ending_hour) {
+      return `${inactivity.starting_date}T23:59:59`
+    }
+    if (inactivity.ending_date && !inactivity.ending_hour) {
+      return `${inactivity.ending_date}T23:59:59`
+    }
+    if (!inactivity.ending_date && inactivity.ending_hour) {
+      return `${inactivity.starting_date}T${inactivity.ending_hour}`
+    }
+  }
+
 
   return (
     <>
@@ -566,14 +586,11 @@ export default function Calendar() {
                           title: inactivity.title,
                           start: !inactivity.starting_hour ?
                             `${inactivity.starting_date}T00:00:00` : `${inactivity.starting_date}T${inactivity.starting_hour}`,
-                          end: !inactivity.ending_date && !inactivity.ending_hour ?
-                            `${inactivity.starting_date}T23:59:59` : inactivity.ending_date && !inactivity.ending_hour ?
-                              `${inactivity.ending_date}T23:59:59` : `${inactivity.ending_date}T${inactivity.ending_hour}`,
+                          end: handleEndEvent(inactivity),
                           extendedProps: {
                             type: inactivity.type
                           },
                           // Propiedades específicas para holidays
-                          // color: getColorByType(inactivity.type),
                           className: getColorByType(inactivity.type),
                         })),
                       ]
@@ -581,16 +598,11 @@ export default function Calendar() {
                         title: inactivity.title,
                         start: !inactivity.starting_hour ?
                           `${inactivity.starting_date}T00:00:00` : `${inactivity.starting_date}T${inactivity.starting_hour}`,
-                        end: !inactivity.ending_date && !inactivity.ending_hour ?
-                          `${inactivity.starting_date}T23:59:59` : inactivity.ending_date && !inactivity.ending_hour ?
-                            `${inactivity.ending_date}T23:59:59` : `${inactivity.ending_date}T${inactivity.ending_hour}`,
+                        end: handleEndEvent(inactivity),
                         extendedProps: {
                           type: "Holiday"
                         },
                         // Propiedades específicas para holidays
-
-                        // color: getColorByType(inactivity.type),
-
                         className: getColorByType(inactivity.type),
                       }))
                   }
@@ -638,10 +650,11 @@ export default function Calendar() {
                 </div>
                 <div className="mt-3 d-flex">
                   {bookingEdit ?
-                    <div>
-                      <input type="submit" value="Save" className="ms-auto btn btn-sm text-white" style={{ backgroundColor: "#14C4B9" }} ></input>
-                      <button className="ms-auto btn btn-sm btn-danger" onClick={() => handleDeleteBooking(selectedEvent.extendedProps.id)}>Delete</button>
+                    <div className="d-flex justify-content-between">
+                      <div><input type="submit" value="Save" className="ms-auto btn btn-sm text-white" style={{ backgroundColor: "#14C4B9" }} ></input></div>
+                      <div className="ms-2"><button className="ms-auto btn btn-sm btn-danger ms-5" onClick={(e) => handleDeleteBooking(e, selectedEvent.extendedProps.id)}>Delete</button></div>
                     </div>
+                    
                     : <button className="ms-auto btn btn-sm btn-light" onClick={() => setBookingEdit(!bookingEdit)}>Edit</button>
                   }
                 </div>

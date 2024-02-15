@@ -2,6 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 import os
+from os.path import join, abspath
 from flask import Flask, request, jsonify, Blueprint
 from flask_cors import CORS
 from api.models import db, Pros, Hours, Patients, Bookings, Locations, ProServices, Services, InactivityDays
@@ -13,6 +14,11 @@ import requests
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
+from google.auth.transport.requests import Request
+import base64
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
 import datetime
 import json
 import holidays
@@ -20,6 +26,94 @@ import holidays
 
 api = Blueprint('api', __name__)
 CORS(api)  # Allow CORS requests to this API
+
+# Envio de emails
+def enviar_correo(receiver, subject, body, pro):
+    try:
+        # Cargar las credenciales desde el archivo
+        TOKEN_PATH = {
+            "token": pro["google_access_token"],
+            "refresh_token": pro["google_refresh_token"],
+            "token_uri": "https://oauth2.googleapis.com/token",
+            "client_id": os.getenv("GOOGLE_CLIENT_ID"),
+            "client_secret": os.getenv("GOOGLE_CLIENT_SECRET"),
+            "scopes": ["https://www.googleapis.com/auth/gmail.send"],
+            "expiry": pro["google_access_expires"]
+        }
+        SCOPES = ['https://www.googleapis.com/auth/gmail.send']
+        creds = Credentials.from_authorized_user_info(TOKEN_PATH, SCOPES)
+
+        servicio_gmail = build('gmail', 'v1', credentials=creds)
+
+        mensaje = MIMEMultipart()
+        mensaje['to'] = receiver
+        mensaje['subject'] = subject
+
+        # Contenido HTML con una imagen incrustada
+        contenido_html = f"""
+                        <html>
+                            <head>
+                                <style>
+                                    body {{
+                                        font-family: 'Arial', sans-serif;
+                                        background-color: #f0f0f0;
+                                    }}
+                                    p {{
+                                        color: #333;
+                                        font-size: 14px;
+                                    }}
+                                </style>
+                            </head>
+                            <body>
+                                <p>{body}</p>
+                                <img src="cid:imagen_id">
+                            </body>
+                        </html>
+                        """
+
+        mensaje.attach(MIMEText(contenido_html, 'html'))
+
+        # Obtener la ruta absoluta de la imagen
+        ruta_imagen = join(abspath('src/front/img'), 'docdate_logo.png')
+
+        # Agregar la imagen como un archivo adjunto y referenciarla en el contenido HTML
+        with open(ruta_imagen, 'rb') as imagen_file:
+            imagen_adjunta = MIMEImage(imagen_file.read())
+            imagen_adjunta.add_header('Content-ID', '<imagen_id>')
+            mensaje.attach(imagen_adjunta)
+
+        mensaje_codificado = base64.urlsafe_b64encode(mensaje.as_bytes())
+        mensaje_codificado = mensaje_codificado.decode('utf-8')
+
+        servicio_gmail.users().messages().send(userId='me', body={'raw': mensaje_codificado}).execute()
+
+        print("Correo enviado exitosamente")
+    except Exception as e:
+        print(f'Error al enviar el correo: {str(e)}')
+
+@api.route('/enviar_correo/<int:proid>', methods=['POST'])
+def endpoint_enviar_correo(proid):
+    pro = Pros.query.get(proid)
+    pro_data = {
+        "name": pro.name,
+        "lastname": pro.lastname,
+        "google_access_token": pro.google_access_token,
+        "google_refresh_token": pro.google_refresh_token,
+        "google_access_expires":pro.google_access_expires
+    }
+    data = request.json
+    receiver = data.get('receiver')
+    subject = data.get('subject')
+    body = data.get('body')
+
+    if not receiver or not subject or not body:
+        return jsonify({'error': 'Se requieren receiver, subject y body del correo'}), 400
+
+    try:
+        enviar_correo(receiver, subject, body, pro_data)
+        return jsonify({'mensaje': 'Correo enviado exitosamente'})
+    except Exception as e:
+        return jsonify({'error': f'Error al enviar el correo: {str(e)}'}), 500
 
 
 # Prueba festivos
