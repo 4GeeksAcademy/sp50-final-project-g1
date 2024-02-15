@@ -16,7 +16,7 @@ export default function Home() {
       fetchData()
     }
 
-  }, [store.isLoggedIn])
+  }, [store.isLoggedIn, store.token])
 
   return (
     <section id='hero' className="p-5">

@@ -7,9 +7,46 @@ export default function Studio() {
   const { store, actions } = useContext(Context)
 
   const [editStatus, setEditStatus] = useState(false)
+  const [country, setCountry] = useState("")
+  const [city, setCity] = useState("")
+  const [address, setAddress] = useState("")
+  const [timeZone, setTimeZone] = useState("")
 
-  const handleEditSubmit = (e) => {
+  useEffect(()=>{
+    const fetchProServices = async() => {
+      try {
+        const response = await actions.authentication(store.token);
+
+        if (!response) {
+          console.error('Error: Respuesta de autenticación no válida');
+          return;
+        }
+        const proId = response.logged_in_as
+        await actions.getPro(proId)
+        await actions.getLocationsByPro(proId)
+        setCity(store.currentLocations[0].city)
+        setCountry(store.currentLocations[0].country)
+        setAddress(store.currentLocations[0].address)
+        setTimeZone(store.currentLocations[0].time_zone)
+      }
+      
+      catch (error) {
+      console.error('Error al obtener datos del profesional:', error)
+      }
+    }
+    fetchProServices()
+  }, [store.isLoggedIn, store.token])
+
+  const handleEditSubmit = async(e) => {
     e.preventDefault()
+    const location = store.currentLocations[0]
+    location.city = city
+    location.country = country
+    location.adress = address
+    location.time_zone = timeZone
+    console.log(location)
+    await actions.updateLocation(location)
+    console.log("location")
     setEditStatus(!editStatus)
   }
 
@@ -29,24 +66,79 @@ export default function Studio() {
               {/* header  */}
 
 
-              {/* services  */}
-              {store.servicesByPro != '' ? (
+              {/* location details  */}
+              {store.currentLocations != '' ? (
                 store.currentLocations.map((studio, index) =>
                   <div key={studio.id}>
                     <div className="me-auto d-flex fw-bold small text-black-50 p-2 mb-2" >
-                      <span className="fs-5">{studio.name}</span>
+                      <span className="fs-5" style={{ color: "#14C4B9"}}>{studio.name}</span>
                     </div>
-                    <ul className="me-auto small text-black-50 mb-2" >
-                      <li className="" >{studio.country}</li>
-                      <li className="" >{studio.city}</li>
-                      <li className="" >{studio.address}</li>
-                      {editStatus ? (
-                        <span className="ms-auto btn-danger btn-sm m-0" style={{ width: "25px" }}>X</span>
-                      ) : null}
+                    <ul className="me-auto small text-black-50 mb-2" style={{listStyle: "none"}} >
+                      {!editStatus ?
+                        (<>
+                          <li className="mb-1" ><b>Country: </b>{studio.country}</li>
+                          <li className="mb-1" ><b>City: </b>{studio.city}</li>
+                          <li className="mb-1" ><b>Address: </b>{studio.address}</li>
+                          <li className="mb-1" ><b>Time zone: </b>{studio.time_zone}</li>
+                        </>) : 
+                        (<>
+                          <li className="mb-1" ><select className="form-control" id="country" required="" value={country} onChange={(e) => setCountry(e.target.value)}>
+                                                <option value="" disabled selected hidden>Select a country</option>
+                                                <option value="Germany">Germany</option>
+                                                <option value="Spain">Spain</option>
+                                                <option value="France">France</option>
+                                                <option value="Italy">Italy</option>
+                                                <option value="United Kingdom">United Kingdom</option>
+                                                <option value="Portugal">Portugal</option>
+                                                <option value="Netherlands">Netherlands</option>
+                                                <option value="Belgium">Belgium</option>
+                                                <option value="Switzerland">Switzerland</option>
+                                                <option value="Austria">Austria</option>
+                                                <option value="Greece">Greece</option>
+                                                <option value="Sweden">Sweden</option>
+                                                <option value="Norway">Norway</option>
+                                                <option value="Denmark">Denmark</option>
+                                                <option value="Finland">Finland</option>
+                                                <option value="Ireland">Ireland</option>
+                                              </select></li>
+                          <li className="mb-1" ><input className="form-control" value={city} onChange={(e) => setCity(e.target.value)}/></li>
+                          <li className="mb-1" ><input className="form-control" value={address} onChange={(e) => setAddress(e.target.value)}/></li>
+                          <li className="mb-1" ><select className="form-control" id="timezone" required="" value={timeZone} onChange={(e) => setTimeZone(e.target.value)}>
+                                                  <option value="" disabled selected hidden>Select a timezone</option>
+                                                  <option value="Atlantic/Canary">Europe/Canary Islands</option>
+                                                  <option value="Europe/Berlin">Europe/Berlin</option>
+                                                  <option value="Europe/Madrid">Europe/Madrid</option>
+                                                  <option value="Europe/Paris">Europe/Paris</option>
+                                                  <option value="Europe/Rome">Europe/Rome</option>
+                                                  <option value="Europe/London">Europe/London</option>
+                                                  <option value="Europe/Lisbon">Europe/Lisbon</option>
+                                                  <option value="Europe/Amsterdam">Europe/Amsterdam</option>
+                                                  <option value="Europe/Brussels">Europe/Brussels</option>
+                                                  <option value="Europe/Zurich">Europe/Zurich</option>
+                                                  <option value="Europe/Vienna">Europe/Vienna</option>
+                                                  <option value="Europe/Athens">Europe/Athens</option>
+                                                  <option value="Europe/Stockholm">Europe/Stockholm</option>
+                                                  <option value="Europe/Oslo">Europe/Oslo</option>
+                                                  <option value="Europe/Copenhagen">Europe/Copenhagen</option>
+                                                  <option value="Europe/Helsinki">Europe/Helsinki</option>
+                                                  <option value="Europe/Dublin">Europe/Dublin</option>
+                                                </select></li>
+                        </>) }
                     </ul>
-                  </div>
+                  </div> 
                 )
               ) : null}
+            </div>
+          </div>
+          <div className="text-black-50 mx-auto d-flex">
+            <div className="ms-auto">
+              {editStatus ? (
+                <>
+                  <input type='submit' value='Save' className="btn btn-small text-white" style={{ backgroundColor: "#14C4B9" }}></input>
+                </>
+              ) : (
+                <button className="btn btn-small bg-white border" onClick={() => setEditStatus(!editStatus)}>Edit</button>
+              )}
             </div>
           </div>
 

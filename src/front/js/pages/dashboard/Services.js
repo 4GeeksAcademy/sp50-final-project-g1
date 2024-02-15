@@ -6,6 +6,30 @@ export default function Services() {
 
   const [editStatus, setEditStatus] = useState(false)
   const [serviceData, setServiceData] = useState([])
+  const [fetch, setFetch] = useState(false)
+
+
+  useEffect(()=>{
+    const fetchProServices = async() => {
+      try {
+        const response = await actions.authentication(store.token);
+
+        if (!response) {
+          console.error('Error: Respuesta de autenticación no válida');
+          return;
+        }
+        const proId = response.logged_in_as
+        await actions.getPro(proId)
+        await actions.getProServicesByPro(proId)
+        setFetch(false)
+      }
+      
+      catch (error) {
+      console.error('Error al obtener datos del profesional:', error)
+      }
+    }
+    fetchProServices()
+  }, [store.isLoggedIn, store.token, fetch])
 
   useEffect(() => {
     setServiceData(store.proServicesByPro.map(service => ({
@@ -15,14 +39,16 @@ export default function Services() {
     })));
   }, [store.proServicesByPro]);
 
-  const handleEditSubmit = (e) => {
+  const handleEditSubmit = async(e) => {
     e.preventDefault();
     const dataForBackend = servicesObject(serviceData);
-    console.log(dataForBackend);
-    // Qui puoi inviare i dati aggiornati al backend
+    dataForBackend.map(async(proService) => {
+      await actions.updateProService(proService)
+    })
+    store.bookingsByPro = []
+    setFetch(true)
     setEditStatus(!editStatus);
   }
-
 
   const servicesObject = (services) => {
     const updatedServices = services.map(service => ({
@@ -36,7 +62,6 @@ export default function Services() {
 
     return updatedServices;
   }
-
 
   const handleChange = (index, field, value) => {
     const updatedServiceData = [...serviceData];
@@ -62,10 +87,10 @@ export default function Services() {
             <hr />
             <div className="p-4 rounded bg-white border text-black-50">
               <div className="me-auto d-flex fw-bold small text-black-50 border-bottom py-3 mb-4" >
-                <span className="" style={{ width: "30%" }}>Specialization</span>
-                <span className="" style={{ width: "40%" }}>Service</span>
-                <span className="" style={{ width: "15%" }}>Duration</span>
-                <span className="" style={{ width: "15%" }}>Price</span>
+                <span className="" style={{ width: "25%" }}>Specialization</span>
+                <span className="" style={{ width: "25%" }}>Service</span>
+                <span className="" style={{ width: "25%" }}>Duration</span>
+                <span className="" style={{ width: "25%" }}>Price</span>
                 {editStatus ? (
                   <span className="ms-auto" style={{ width: "25px" }}></span>
                 ) : null}
