@@ -133,6 +133,7 @@ class ProServices(db.Model):
     pro_id = db.Column(db.ForeignKey("pros.id"), nullable=False)
     duration = db.Column(db.Integer, nullable=False)
     service_id = db.Column(db.ForeignKey("services.id"), nullable=False)
+    activated = db.Column(db.Boolean)
     services = db.relationship("Services")
     pros = db.relationship("Pros")
 
@@ -146,7 +147,8 @@ class ProServices(db.Model):
                 "price": self.price,
                 "duration": self.duration,
                 "service_name": self.services.service_name,
-                "specialization": self.services.specialization
+                "specialization": self.services.specialization,
+                "activated": self.activated
                 }
 
 class Patients(db.Model):

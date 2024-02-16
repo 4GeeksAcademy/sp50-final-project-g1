@@ -77,6 +77,7 @@ const getState = ({getStore, getActions, setStore}) => {
 			},
 
 			authentication: async() => {
+				const actions = getActions()
 				const store = getStore()
 				const url = process.env.BACKEND_URL + '/dashboard'
 				const options = {
@@ -94,9 +95,7 @@ const getState = ({getStore, getActions, setStore}) => {
 				else {
 					const data = await response.json()
 					if (data.msg === "Token has expired") {
-						localStorage.removeItem("token")
-						setStore({token: ""})
-						setStore({isLoggedIn: false})
+						actions.logout()
 					}
 				}
 				

@@ -92,11 +92,10 @@ export default function SignupSpecialization() {
           service_id:el,
           pro_id: store.currentPro.id,
           price: parseInt(prices[el]),
-          duration: parseInt(durations[el])
+          duration: parseInt(durations[el]),
+          activated: true
         })
     }
-
-    console.log(finalServices)
 
     for (const item of finalServices) {
         await actions.newProService(item)
