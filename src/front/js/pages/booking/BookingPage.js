@@ -329,6 +329,10 @@ export default function BookingPage() {
         setShowBookingInfo(false)
         await newGoogleEvent(newBooking)
         console.log("gEventCreated")
+        const emailSent = await actions.sendEmail(store.currentPro.id, newBooking.id, patientEmail)
+        console.log("EMAIL DATA:", store.currentPro.id, newBooking.id, patientEmail)
+        console.log(emailSent)
+        
       }
       else {
         booking.patient_id = isPatient.id
@@ -337,6 +341,9 @@ export default function BookingPage() {
         setShowBookingInfo(false)
         await newGoogleEvent(newBooking)
         console.log("gEventCreated")
+        const emailSent = await actions.sendEmail(store.currentPro.id, newBooking.id, patientEmail)
+        console.log("EMAIL DATA:", store.currentPro.id, newBooking.id, patientEmail)
+        console.log(emailSent)
       }
     }
     if (!isPatient) {
@@ -348,6 +355,9 @@ export default function BookingPage() {
       setShowBookingInfo(false)
       await newGoogleEvent(newBooking)
       console.log("gEventCreated")
+      const emailSent = await actions.sendEmail(store.currentPro.id, newBooking.id, patientEmail)
+      console.log("EMAIL DATA:", store.currentPro.id, newBooking.id, patientEmail)
+      console.log(emailSent)
     }
   }
 
