@@ -14,17 +14,21 @@ export default function Studio() {
   const [studioName, setStudioName] = useState("")
 
   useEffect(()=>{
-    const fetchProServices = async() => {
+    const fetchProLocations = async() => {
       try {
-        const response = await actions.authentication(store.token);
-
-        if (!response) {
-          console.error('Error: Respuesta de autenticación no válida');
-          return;
+        if (!Object.keys(store.currentPro).length) {
+          const response = await actions.authentication(store.token)
+          const proId = response.logged_in_as
+          await actions.getPro(proId)
+          if (!response) {
+          console.error('Error: Respuesta de autenticación no válida')
+          return
+          }
         }
-        const proId = response.logged_in_as
-        await actions.getPro(proId)
-        await actions.getLocationsByPro(proId)
+          
+        
+        
+        await actions.getLocationsByPro(store.currentPro.id)
         setCity(store.currentLocations[0].city)
         setCountry(store.currentLocations[0].country)
         setAddress(store.currentLocations[0].address)
@@ -36,7 +40,10 @@ export default function Studio() {
       console.error('Error al obtener datos del profesional:', error)
       }
     }
-    fetchProServices()
+    
+      fetchProLocations()
+    
+    
   }, [store.isLoggedIn, store.token])
 
   const handleEditSubmit = async(e) => {

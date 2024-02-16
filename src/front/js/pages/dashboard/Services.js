@@ -12,24 +12,30 @@ export default function Services() {
   useEffect(()=>{
     const fetchProServices = async() => {
       try {
-        const response = await actions.authentication(store.token);
-
-        if (!response) {
-          console.error('Error: Respuesta de autenticación no válida');
-          return;
+      
+        if (!Object.keys(store.currentPro).length) {
+          const response = await actions.authentication(store.token)
+          const proId = response.logged_in_as
+          await actions.getPro(proId)
+          if (!response) {
+          console.error('Error: Respuesta de autenticación no válida')
+          return
+          }
         }
-        const proId = response.logged_in_as
-        await actions.getPro(proId)
-        await actions.getProServicesByPro(proId)
-        setFetch(false)
+        
+        
+        await actions.getProServicesByPro(store.currentPro.id)
+        
       }
       
       catch (error) {
       console.error('Error al obtener datos del profesional:', error)
       }
     }
-    fetchProServices()
-  }, [store.isLoggedIn, store.token, fetch])
+    if(!Object.keys(store.proServicesByPro).length) {
+      fetchProServices()
+    }
+  }, [store.isLoggedIn, store.token])
 
   useEffect(() => {
     setServiceData(store.proServicesByPro.map(service => ({
@@ -46,7 +52,6 @@ export default function Services() {
       await actions.updateProService(proService)
     })
     store.bookingsByPro = []
-    setFetch(true)
     setEditStatus(!editStatus);
   }
 
