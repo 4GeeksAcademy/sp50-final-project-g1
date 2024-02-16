@@ -53,9 +53,10 @@ export default function Services() {
   const servicesObject = (services) => {
     const updatedServices = services.map(service => ({
       id: service.id,
-      proId: store.currentPro.id,
+      pro_id: store.currentPro.id,
       specialization: service.specialization,
       service_name: service.service_name,
+      activated: service.activated,
       duration: service.newDuration,
       price: service.newPrice
     }));
@@ -66,15 +67,18 @@ export default function Services() {
   const handleChange = (index, field, value) => {
     const updatedServiceData = [...serviceData];
     updatedServiceData[index][field] = value;
+    console.log(updatedServiceData)
     setServiceData(updatedServiceData);
   }
 
+
+
   const editStyle = {
-    width: "25%",
+    width: "20%",
     border: '1px solid #989898',
   }
   const fixedStyle = {
-    width: "25%",
+    width: "20%",
     border: 'none',
   }
 
@@ -87,10 +91,11 @@ export default function Services() {
             <hr />
             <div className="p-4 rounded bg-white border text-black-50">
               <div className="me-auto d-flex fw-bold small text-black-50 border-bottom py-3 mb-4" >
-                <span className="" style={{ width: "25%" }}>Specialization</span>
-                <span className="" style={{ width: "25%" }}>Service</span>
-                <span className="" style={{ width: "25%" }}>Duration</span>
-                <span className="" style={{ width: "25%" }}>Price</span>
+                <span className="me-3 p-1" style={{ width: "20%" }}>Specialization</span>
+                <span className="me-3 p-1" style={{ width: "20%" }}>Service</span>
+                <span className="me-3 p-1" style={{ width: "20%" }}>Duration</span>
+                <span className="me-3 p-1" style={{ width: "20%" }}>Price</span>
+                <span className="me-3 p-1" style={{ width: "20%" }}>Active</span>
                 {editStatus ? (
                   <span className="ms-auto" style={{ width: "25px" }}></span>
                 ) : null}
@@ -98,8 +103,9 @@ export default function Services() {
 
               {serviceData.map((service, index) => (
                 <div key={service.id} className="me-auto d-flex small text-black-50 mb-3" >
-                  <input className="me-3 p-1 rounded" style={{ width: "25%", border: 'none' }} disabled value={service.specialization} />
-                  <input className="me-3 p-1 rounded" style={{ width: "25%", border: 'none' }} disabled value={service.service_name} />
+                  
+                  <input className="me-3 p-1 rounded fw-bold" style={{ width: "20%", border: 'none', color: "#14C4B9" }} disabled value={service.specialization} />
+                  <input className="me-3 p-1 rounded fw-bold" style={{ width: "20%", border: 'none', color: "#14C4B9" }} disabled value={service.service_name} />
                   <input
                     className="me-3 p-1 rounded"
                     style={editStatus ? editStyle : fixedStyle}
@@ -114,9 +120,9 @@ export default function Services() {
                     value={service.newPrice}
                     onChange={(e) => handleChange(index, 'newPrice', e.target.value)}
                   />
-                  {editStatus ? (
-                    <span className="ms-auto btn-danger btn-sm m-0" style={{ width: "25px" }}>X</span>
-                  ) : null}
+                  <div style={fixedStyle}>
+                    <input type="checkbox" checked={service.activated} disabled={!editStatus} onChange={(e) => handleChange(index, 'activated', e.target.checked)}></input>
+                  </div>
                 </div>
               ))}
             </div>

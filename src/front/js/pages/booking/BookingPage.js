@@ -398,10 +398,12 @@ export default function BookingPage() {
               <label htmlFor="booking-service" className="form-label visually-hidden">Select a Service</label>
               <select id="booking-service" className="form-select w-100" onChange={(event) => handleServiceSelection(event.target.value)}>
                 <option value="">Select a service</option>
-                {store.proServicesByPro ? (
-                  store.proServicesByPro.map(service => (
-                    <option key={service.id} value={JSON.stringify({ id: service.id, duration: service.duration, name: service.service_name })}>{service.service_name}</option>
-                  ))
+                {store.proServicesByPro ? 
+                  store.proServicesByPro.map(service => {
+                    if (service.activated === true) {
+                    return (<option key={service.id} value={JSON.stringify({ id: service.id, duration: service.duration, name: service.service_name })}>{service.service_name}</option>)
+                    }
+                  }
                 ) : ("No service for this calendar")}
               </select>
             </div>

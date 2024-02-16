@@ -52,7 +52,7 @@ export default function Calendar() {
 
         if (!response) {
           console.error('Error: Respuesta de autenticación no válida');
-          return;
+          
         }
 
         const proId = response.logged_in_as;

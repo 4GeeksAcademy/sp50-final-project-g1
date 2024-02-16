@@ -11,6 +11,7 @@ export default function Studio() {
   const [city, setCity] = useState("")
   const [address, setAddress] = useState("")
   const [timeZone, setTimeZone] = useState("")
+  const [studioName, setStudioName] = useState("")
 
   useEffect(()=>{
     const fetchProServices = async() => {
@@ -28,6 +29,7 @@ export default function Studio() {
         setCountry(store.currentLocations[0].country)
         setAddress(store.currentLocations[0].address)
         setTimeZone(store.currentLocations[0].time_zone)
+        setStudioName(store.currentLocations[0].name)
       }
       
       catch (error) {
@@ -44,13 +46,12 @@ export default function Studio() {
     location.country = country
     location.adress = address
     location.time_zone = timeZone
+    location.name = studioName
     console.log(location)
     await actions.updateLocation(location)
     console.log("location")
     setEditStatus(!editStatus)
   }
-
-  console.log('location', store.currentLocations)
 
   return (
     <div className="" style={{ minHeight: "90vh" }}>
@@ -69,20 +70,25 @@ export default function Studio() {
               {/* location details  */}
               {store.currentLocations != '' ? (
                 store.currentLocations.map((studio, index) =>
-                  <div key={studio.id}>
-                    <div className="me-auto d-flex fw-bold small text-black-50 p-2 mb-2" >
-                      <span className="fs-5" style={{ color: "#14C4B9"}}>{studio.name}</span>
-                    </div>
+                  <div key={studio.id} className="p-3">
+                    
                     <ul className="me-auto small text-black-50 mb-2" style={{listStyle: "none"}} >
                       {!editStatus ?
+                        (<div className="d-flex justify-content-between"><div>
+                            <li className="mb-2" ><b>Country: </b>{studio.country}</li>
+                            <li className="mb-2" ><b>City: </b>{studio.city}</li>
+                            <li className="mb-2" ><b>Address: </b>{studio.address}</li>
+                            <li className="mb-2" ><b>Time zone: </b>{studio.time_zone}</li>
+                          </div>
+                          <div className="ms-auto me-4 fw-bold small text-black-50 p-2 mb-2" >
+                            <h2><span className="fw-bold" style={{ color: "#14C4B9"}}>{studio.name}</span></h2>
+                          </div>
+                          
+                        </div>) : 
                         (<>
-                          <li className="mb-1" ><b>Country: </b>{studio.country}</li>
-                          <li className="mb-1" ><b>City: </b>{studio.city}</li>
-                          <li className="mb-1" ><b>Address: </b>{studio.address}</li>
-                          <li className="mb-1" ><b>Time zone: </b>{studio.time_zone}</li>
-                        </>) : 
-                        (<>
-                          <li className="mb-1" ><select className="form-control" id="country" required="" value={country} onChange={(e) => setCountry(e.target.value)}>
+                          <li className="mb-2" ><span className="fw-bold" style={{ color: "#14C4B9"}}>Studio name</span><input className="form-control" value={studioName} onChange={(e) => setStudioName(e.target.value)}/></li>
+                          <li className="mb-2" ><span className="fw-bold" style={{ color: "#14C4B9"}}>Country</span>
+                                              <select className="form-control" id="country" required="" value={country} onChange={(e) => setCountry(e.target.value)}>
                                                 <option value="" disabled selected hidden>Select a country</option>
                                                 <option value="Germany">Germany</option>
                                                 <option value="Spain">Spain</option>
@@ -101,9 +107,10 @@ export default function Studio() {
                                                 <option value="Finland">Finland</option>
                                                 <option value="Ireland">Ireland</option>
                                               </select></li>
-                          <li className="mb-1" ><input className="form-control" value={city} onChange={(e) => setCity(e.target.value)}/></li>
-                          <li className="mb-1" ><input className="form-control" value={address} onChange={(e) => setAddress(e.target.value)}/></li>
-                          <li className="mb-1" ><select className="form-control" id="timezone" required="" value={timeZone} onChange={(e) => setTimeZone(e.target.value)}>
+                          <li className="mb-2" ><span className="fw-bold" style={{ color: "#14C4B9"}}>City</span><input className="form-control" value={city} onChange={(e) => setCity(e.target.value)}/></li>
+                          <li className="mb-2" ><span className="fw-bold" style={{ color: "#14C4B9"}}>Address</span><input className="form-control" value={address} onChange={(e) => setAddress(e.target.value)}/></li>
+                          <li className="mb-2" ><span className="fw-bold" style={{ color: "#14C4B9"}}>Time zone</span>
+                                                <select className="form-control" id="timezone" required="" value={timeZone} onChange={(e) => setTimeZone(e.target.value)}>
                                                   <option value="" disabled selected hidden>Select a timezone</option>
                                                   <option value="Atlantic/Canary">Europe/Canary Islands</option>
                                                   <option value="Europe/Berlin">Europe/Berlin</option>

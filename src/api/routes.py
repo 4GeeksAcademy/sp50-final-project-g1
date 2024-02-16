@@ -626,7 +626,8 @@ def handle_proservices():
         new_proservice = ProServices(pro_id=data['pro_id'],
                                      service_id=data['service_id'],
                                      duration=data['duration'],
-                                     price=data.get('price'))
+                                     price=data.get('price'),
+                                     activated=data.get('activated'))
         db.session.add(new_proservice)
         db.session.commit()
         return jsonify({"message": "Record added successfully"}), 201
@@ -645,6 +646,7 @@ def handle_proservice(proserviceid):
         pro_service.pro_id = data.get('pro_id', pro_service.pro_id)
         pro_service.service_id = data.get('service_id', pro_service.service_id)
         pro_service.duration = data.get('duration', pro_service.duration)
+        pro_service.activated = data.get('activated', pro_service.activated)
         db.session.commit()
         return jsonify({"message": "service updated successfully"}), 200
     if request.method == 'DELETE':
