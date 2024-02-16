@@ -47,37 +47,41 @@ export default function Calendar() {
   // Fetch data
   useEffect(() => {
     const fetchData = async () => {
+      
       try {
-        const response = await actions.authentication(store.token);
 
-        if (!response) {
-          console.error('Error: Respuesta de autenticación no válida');
-          
+        if (!Object.keys(store.currentPro).length) {
+          const response = await actions.authentication(store.token)
+          const proId = response.logged_in_as
+          await actions.getPro(proId)
+          if (!response) {
+          console.error('Error: Respuesta de autenticación no válida')
+          return
+          }
         }
+       
 
-        const proId = response.logged_in_as;
-        await actions.getPro(proId);
         // console.log("-----PRO-----", store.currentPro);
 
-        await actions.getLocationsByPro(proId);
+        await actions.getLocationsByPro(store.currentPro.id);
         // console.log("-----PRO-LOCATIONS-----", store.currentLocations);
 
-        await actions.getBookingsByPro(proId);
+        await actions.getBookingsByPro(store.currentPro.id);
         // console.log("-----PRO-BOOKINGS-----", store.bookingsByPro);
 
-        await actions.getServicesByPro(proId);
+        await actions.getServicesByPro(store.currentPro.id);
         // console.log("-----SERVICES-BY-PRO-----", store.servicesByPro);
 
-        await actions.getProServicesByPro(proId);
+        await actions.getProServicesByPro(store.currentPro.id);
         // console.log("-----PRO-SERVICES-----", store.proServicesByPro);
 
-        await actions.getHoursByPro(proId);
+        await actions.getHoursByPro(store.currentPro.id);
         // console.log("-----PRO-HOURS-----", store.hoursByPro);
 
         await actions.getHoursByLocation(store.currentLocations[0].id);
         // console.log("-----LOCATION-HOURS-----", store.hoursByLocation);
 
-        await actions.getInactivityByPro(proId);
+        await actions.getInactivityByPro(store.currentPro.id);
         // console.log("-----PRO-INACTIVITY-----", store.inactivityByPro);
 
         let patientsMap = new Map();
@@ -102,7 +106,7 @@ export default function Calendar() {
         setDetailsLoaded(true)
 
         // Llamada a la comprobacion de token si hay
-        checkAndUpdateAccessToken()
+        /* checkAndUpdateAccessToken() */
 
         //Creación businessHours en el calendar
         getBusinessHoursList()
@@ -115,7 +119,7 @@ export default function Calendar() {
         console.error('Error al obtener datos del profesional:', error)
       }
     };
-    if (store.bookingsByPro.length === 0) {
+    if (store.bookingsByPro.length === 0 || !Object.keys(store.currentPro).length) {
       fetchData()
     }
   }, [store.isLoggedIn, store.token, store.bookingsByPro])
@@ -441,7 +445,7 @@ export default function Calendar() {
           'timeZone': `${finalBooked.time_zone}`,
         },
       };
-      console.log(googleEvent)
+      await checkAndUpdateAccessToken()
       await fetch(process.env.BACKEND_URL + `/create-event/${store.currentPro.id}`, {
         method: 'POST',
         headers: {

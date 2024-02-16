@@ -31,16 +31,15 @@ export default function AccountData() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await actions.authentication(store.token);
-
-        if (!response) {
-          console.error('Error: Respuesta de autenticación no válida');
+        if (!Object.keys(store.currentPro).length) {
+          const response = await actions.authentication(store.token)
+          const proId = response.logged_in_as
+          await actions.getPro(proId)
+          if (!response) {
+          console.error('Error: Respuesta de autenticación no válida')
           return
+          }
         }
-
-        const proId = response.logged_in_as
-        await actions.getPro(proId)
-        console.log("-----PRO-----", store.currentPro)
         setEmail(store.currentPro.email)
         setGoogleCalendar(store.currentPro.email)
         setUserName(store.currentPro.bookingpage_url)

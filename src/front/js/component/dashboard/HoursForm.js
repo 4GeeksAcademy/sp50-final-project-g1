@@ -18,16 +18,32 @@ export default function HoursForm() {
 
   // Effect on page
   useEffect(() => {
-    if (!store.isLoggedIn) {
-      // navigate('/login');
-    } else {
       const fetchData = async () => {
-        const response = await actions.authentication(store.token);
-        const proId = response.logged_in_as;
-        await actions.getPro(proId);
-        await actions.getHoursByPro(proId);
-        await actions.getLocationsByPro(proId);
-        setDays(store.hoursByPro.map(shift => shift.working_day));
+        if (!Object.keys(store.currentPro).length) {
+          const response = await actions.authentication(store.token)
+          const proId = response.logged_in_as
+          await actions.getPro(proId)
+          if (!response) {
+          console.error('Error: Respuesta de autenticación no válida')
+          return
+          }
+        }
+        await actions.getPro(store.currentPro.id);
+        await actions.getHoursByPro(store.currentPro.id);
+        await actions.getLocationsByPro(store.currentPro.id);
+        getHours()
+      };
+      if (!Object.keys(store.currentPro).length || !Object.keys(store.hoursByPro).length) {
+        fetchData();
+      }
+      else {
+        getHours()
+      }
+    
+  }, [store.isLoggedIn, store.token]);
+
+  const getHours = () => {
+    setDays(store.hoursByPro.map(shift => shift.working_day));
         let morningHoursStart = {}
         let morningHoursEnd = {}
         let afterHoursStart = {}
@@ -42,10 +58,7 @@ export default function HoursForm() {
         setMorningEnd(morningHoursEnd)
         setAfternoonStart(afterHoursStart)
         setAfternoonEnd(afterHoursEnd)
-      };
-      fetchData();
-    }
-  }, [store.isLoggedIn, store.token]);
+  }
 
 
   const handleEditWorking = () => {

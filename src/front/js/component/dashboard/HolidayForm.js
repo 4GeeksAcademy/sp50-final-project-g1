@@ -11,7 +11,7 @@ export default function HolidayForm() {
 
   const { store, actions } = useContext(Context)
 
-  const [currentInactivityDays, setCurrentInactivityDays] = useState([])
+  const [currentInactivityDays, setCurrentInactivityDays] = useState(store.inactivityByPro)
   const [editStatus, setEditStatus] = useState(false)
   const [showAddHoliday, setShowAddHoliday] = useState(false)
   const [holidayType, setHolidayType] = useState(false)
@@ -24,19 +24,24 @@ export default function HolidayForm() {
 
   // Effect on page load
   useEffect(() => {
-    if (!store.isLoggedIn) {
-      navigate('/login')
-    } else {
+ 
       const fetchData = async () => {
-        const response = await actions.authentication(store.token)
-        const proId = response.logged_in_as
-        await actions.getPro(proId)
-        await actions.getInactivityByPro(proId)
+        if (!Object.keys(store.currentPro).length) {
+          const response = await actions.authentication(store.token)
+          const proId = response.logged_in_as
+          await actions.getPro(proId)
+          if (!response) {
+          console.error('Error: Respuesta de autenticación no válida')
+          return
+          }
+        }
+        await actions.getPro(store.currentPro.id)
+        await actions.getInactivityByPro(store.currentPro.id)
 
         setCurrentInactivityDays(store.inactivityByPro)
       };
       fetchData()
-    }
+    
   }, [store.isLoggedIn, store.token]);
 
 

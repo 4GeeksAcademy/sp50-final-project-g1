@@ -8,13 +8,53 @@ export default function PatientsList() {
   const { store, actions } = useContext(Context)
   const [patientsList, setPatientsList] = useState(store.patientsByPro)
 
+  useEffect(() => {
+ 
+    const fetchData = async () => {
+      if (!Object.keys(store.currentPro).length) {
+        const response = await actions.authentication(store.token)
+        const proId = response.logged_in_as
+        await actions.getPro(proId)
+        if (!response) {
+        console.error('Error: Respuesta de autenticación no válida')
+        return
+        }
+      }
+      await actions.getBookingsByPro(store.currentPro.id)
+      let patientsMap = new Map();
 
+        store.bookingsByPro.forEach((booking) => {
+          const patient = {
+            "id": booking.patient_id,
+            "name": booking.patient_name,
+            "lastname": booking.patient_lastname,
+            "email": booking.patient_email,
+            "phone": booking.patient_phone
+          };
+
+          patientsMap.set(patient.id, patient)
+        });
+      
+
+        const finalPatients = Array.from(patientsMap.values())
+        store.patientsByPro = finalPatients
+        setPatientsList(store.patientsByPro)
+        store.bookingsByPro = []
+
+      setCurrentInactivityDays(store.inactivityByPro)
+    };
+    if (!Object.keys(store.patientsByPro).length) {
+      fetchData();
+    }
+    
+  
+}, [store.isLoggedIn, store.token]);
 
   const handleSearchInput = (query) => {
     const newList = store.patientsByPro.filter(patient =>
       patient.name.toLowerCase().includes(query.toLowerCase()) ||
       patient.email.toLowerCase().includes(query.toLowerCase()) ||
-      patient.phone.includes(query)
+      patient.phone.includes(query) 
     )
     setPatientsList(newList)
   }
