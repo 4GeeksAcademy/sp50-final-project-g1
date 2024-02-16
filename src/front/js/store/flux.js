@@ -101,6 +101,27 @@ const getState = ({getStore, getActions, setStore}) => {
 				
 			},
 
+			sendEmail: async(pro_id, booking_id, patient_email) => {
+				const url = process.env.BACKEND_URL + `/mail/${pro_id}/${booking_id}`
+				const options = {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						"subject": "YOUR APPOINTMET",
+						"receiver": patient_email
+					})
+				}
+				const response = await fetch(url, options)
+				if (response.ok) {
+					console.log("Email sent")
+				}
+				else {
+					console.log("Error sending enmail")
+				}
+			},
+
 			getGoogleTokensByPro: async(pro_id) => {
 				const store = getStore()
 				const url = process.env.BACKEND_URL + `/pros/${pro_id}/tokens`;
