@@ -47,7 +47,7 @@ export default function Calendar() {
   // Fetch data
   useEffect(() => {
     const fetchData = async () => {
-      
+
       try {
 
         if (!Object.keys(store.currentPro).length) {
@@ -55,11 +55,11 @@ export default function Calendar() {
           const proId = response.logged_in_as
           await actions.getPro(proId)
           if (!response) {
-          console.error('Error: Respuesta de autenticación no válida')
-          return
+            console.error('Error: Respuesta de autenticación no válida')
+            return
           }
         }
-       
+
 
         // console.log("-----PRO-----", store.currentPro);
 
@@ -105,7 +105,7 @@ export default function Calendar() {
 
         setDetailsLoaded(true)
 
-        // Llamada a la comprobacion de token si hay
+        // Llamada a la comprobacion de token si hay; test 
         /* checkAndUpdateAccessToken() */
 
         //Creación businessHours en el calendar
@@ -315,7 +315,7 @@ export default function Calendar() {
 
   // Click on event
 
-  const handleDeleteBooking = async(e, bookingId) => {
+  const handleDeleteBooking = async (e, bookingId) => {
     e.preventDefault()
     await actions.deleteBooking(bookingId)
     console.log("booking deleted")
@@ -658,7 +658,7 @@ export default function Calendar() {
                       <div><input type="submit" value="Save" className="ms-auto btn btn-sm text-white" style={{ backgroundColor: "#14C4B9" }} ></input></div>
                       <div className="ms-2"><button className="ms-auto btn btn-sm btn-danger ms-5" onClick={(e) => handleDeleteBooking(e, selectedEvent.extendedProps.id)}>Delete</button></div>
                     </div>
-                    
+
                     : <button className="ms-auto btn btn-sm btn-light" onClick={() => setBookingEdit(!bookingEdit)}>Edit</button>
                   }
                 </div>
