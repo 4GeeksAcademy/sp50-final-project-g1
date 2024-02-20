@@ -1,0 +1,104 @@
+
+.fc-event-title {
+  color: white;
+  font-weight: 300 !important;
+  margin-left: 5px;
+}
+
+.fc-daygrid-day-number {
+  text-decoration: none;
+  color: rgba(128, 128, 128, 0.397)
+}
+
+.fc-event-time{
+  color:white;
+  display: none;
+}
+
+.fc-col-header-cell-cushion{
+  color: rgb(41, 136, 129);
+  font-size:  14px;
+  text-decoration: none;
+  font-weight: 400;
+}
+
+.fc-daygrid-event-dot{
+  display: none;
+}
+
+.fc .fc-daygrid-day.fc-day-today {
+  background-color: #fbf35858;
+  border: #989898;
+  border-width: 2px;
+}
+
+.bank-holiday{
+  background-color: #13d5c8a4;
+  border: none;
+}
+.private-holiday{
+  background-color: #5628a1a4;
+  border: none;
+}
+.private-event{
+  background-color: #50c100a4;
+  border: none;
+}
+
+.fc .fc-timegrid-week {
+  background-color: #87d8d4;
+}
+
+.fc-day-future > div > a{
+  text-decoration: none;
+  color: rgb(41, 136, 129);
+  font-size:  12px
+}
+
+.fc-day-past > div > a{
+  text-decoration: none;
+  color: rgb(41, 136, 129);
+  font-size:  12px
+}
+
+.fc-day-today > div > a{
+  text-decoration: none;
+  color: rgb(41, 136, 129);
+  font-size:  13px;
+  font-weight: bolder;
+}
+.fc-toolbar-title {
+  text-decoration: none;
+  color: rgb(144, 144, 144);
+  font-size:  20px !important;;
+}
+
+.fc .fc-button-group > .fc-button {
+  padding: 5px !important;
+  font-size: 14px;
+}
+
+.booking-event {
+  background-color: #14C4B9;
+  border: none;
+}
+.booking-event:hover {
+  cursor: pointer;
+  background-color: #14b1a6;
+}
+.general-button {
+  background-color: #14C4B9;
+  transition: 0s;
+}
+.general-button:hover {
+  cursor: pointer;
+  background-color: #14b1a6;
+  transition: 0s;
+}
+.btn-close:hover{
+  color: #14C4B9 !important;
+  text-shadow: #14C4B9;
+  border-bottom: 2px solid #14C4B9;
+  border-top: 2px solid #14C4B9;
+  
+}

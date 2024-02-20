@@ -1,0 +1,26 @@
+.autocomplete {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+  
+.autocomplete-dropdown {
+    border-radius: 5%;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-top: none;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+  
+.autocomplete-option {
+    padding: 8px;
+    cursor: pointer;
+}
+  
+.autocomplete-option:hover {
+    background-color: #f1f1f1;
+}

@@ -19,6 +19,13 @@ cloudinary = "*"
 flask-admin = "*"
 typing-extensions = "*"
 datetime = "*"
+flask-jwt-extended = "*"
+requests = "*"
+google-api-python-client = "*"
+google-auth-httplib2 = "*"
+google-auth-oauthlib = "*"
+google-auth = "*"
+holidays = "*"
 
 [requires]
 python_version = "3.10"

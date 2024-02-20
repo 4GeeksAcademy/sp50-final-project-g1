@@ -1,3 +1,21 @@
+#############################################
+# PERSONAL SETTING
+
+# Evita l'upload e il download di questi file
+.env
+test.db
+
+# Evita l'upload e il download della cartella "migrations" e di tutto il suo contenuto
+migrations/
+
+# Evita l'upload e il download di app.py nella directory src
+src/app.py
+
+# END PERSONAL SETTING
+#############################################
+
+
+
 # ignore all files starting with .
 .*
 
