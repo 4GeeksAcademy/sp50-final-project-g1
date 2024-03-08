@@ -456,49 +456,90 @@ export default function Calendar() {
       console.log("gEvent created!")
     }
     if (newPatient) {
-      let newPatients = {
-        "name": newPatientName,
-        "lastname": newPatientLastname,
-        "email": newPatientEmail,
-        "phone": newPatientPhone,
-      }
-      const finalPatient = await actions.newPatient(newPatients)
-      store.patientsByPro = [...store.patientsByPro, finalPatient]
-      let newBooking = {
-        "patient_id": finalPatient.id,
-        "pro_service_id": selectedProService,
-        "date": bookingDate,
-        "starting_time": bookingTime,
-        "pro_notes": proNotes,
-        "status": "pending"
-      }
-      const booked = await actions.newBooking(newBooking)
-      alert("Booking saved!")
-      await actions.getBookingsByPro(store.currentPro.id)
+      const isPatient = await actions.getPatientByEmail(newPatientEmail)
+      if (isPatient) {
+        let newBooking = {
+          "patient_id": isPatient.id,
+          "pro_service_id": selectedProService,
+          "date": bookingDate,
+          "starting_time": bookingTime,
+          "pro_notes": proNotes,
+          "status": "pending"
+        }
+        console.log(isPatient)
+        const booked = await actions.newBooking(newBooking)
+        alert("Booking saved!")
+        await actions.getBookingsByPro(store.currentPro.id)
 
-      const finalBooked = getEndingDate(booked, booked.date, booked.starting_time, booked.duration)
+        const finalBooked = getEndingDate(booked, booked.date, booked.starting_time, booked.duration)
 
-      const googleEvent = {
-        'summary': 'DocDate Appointment',
-        'description': `${finalBooked.specialization}: ${finalBooked.service_name}`,
-        'start': {
-          'dateTime': `${finalBooked.date}T${finalBooked.starting_time}:00`,
-          'timeZone': `${finalBooked.time_zone}`,
-        },
-        'end': {
-          'dateTime': `${finalBooked.date}T${finalBooked.ending_time}`,
-          'timeZone': `${finalBooked.time_zone}`,
-        },
-      };
-      console.log(googleEvent)
-      await fetch(process.env.BACKEND_URL + `/create-event/${store.currentPro.id}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ googleEvent }),
-      })
-      console.log("gEvent created!")
+        const googleEvent = {
+          'summary': 'DocDate Appointment',
+          'description': `${finalBooked.specialization}: ${finalBooked.service_name}`,
+          'start': {
+            'dateTime': `${finalBooked.date}T${finalBooked.starting_time}:00`,
+            'timeZone': `${finalBooked.time_zone}`,
+          },
+          'end': {
+            'dateTime': `${finalBooked.date}T${finalBooked.ending_time}`,
+            'timeZone': `${finalBooked.time_zone}`,
+          },
+        };
+        console.log(googleEvent)
+        await fetch(process.env.BACKEND_URL + `/create-event/${store.currentPro.id}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ googleEvent }),
+        })
+        console.log("gEvent created!")
+      }
+      if (!isPatient) {
+        let newPatients = {
+          "name": newPatientName,
+          "lastname": newPatientLastname,
+          "email": newPatientEmail,
+          "phone": newPatientPhone,
+        }
+        const finalPatient = await actions.newPatient(newPatients)
+        store.patientsByPro = [...store.patientsByPro, finalPatient]
+        let newBooking = {
+          "patient_id": finalPatient.id,
+          "pro_service_id": selectedProService,
+          "date": bookingDate,
+          "starting_time": bookingTime,
+          "pro_notes": proNotes,
+          "status": "pending"
+        }
+        const booked = await actions.newBooking(newBooking)
+        alert("Booking saved!")
+        await actions.getBookingsByPro(store.currentPro.id)
+  
+        const finalBooked = getEndingDate(booked, booked.date, booked.starting_time, booked.duration)
+  
+        const googleEvent = {
+          'summary': 'DocDate Appointment',
+          'description': `${finalBooked.specialization}: ${finalBooked.service_name}`,
+          'start': {
+            'dateTime': `${finalBooked.date}T${finalBooked.starting_time}:00`,
+            'timeZone': `${finalBooked.time_zone}`,
+          },
+          'end': {
+            'dateTime': `${finalBooked.date}T${finalBooked.ending_time}`,
+            'timeZone': `${finalBooked.time_zone}`,
+          },
+        };
+        console.log(googleEvent)
+        await fetch(process.env.BACKEND_URL + `/create-event/${store.currentPro.id}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ googleEvent }),
+        })
+        console.log("gEvent created!")
+      }
     }
 
   }
