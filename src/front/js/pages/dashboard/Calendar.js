@@ -466,6 +466,7 @@ export default function Calendar() {
           "pro_notes": proNotes,
           "status": "pending"
         }
+        console.log(isPatient)
         const booked = await actions.newBooking(newBooking)
         alert("Booking saved!")
         await actions.getBookingsByPro(store.currentPro.id)
