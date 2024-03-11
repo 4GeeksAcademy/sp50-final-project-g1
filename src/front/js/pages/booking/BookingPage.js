@@ -61,36 +61,6 @@ export default function BookingPage() {
 
       let apiProBusyResponse = []
 
-
-      // // Add all booking list
-      // if (store.bookingsByPro) {
-      //   apiProBusyResponse = [...apiProBusyResponse, ...store.bookingsByPro];
-      // }
-
-      // if (store.inactivityByPro) {
-      //   store.inactivityByPro.map((inactivity) => {
-
-      //     // Add long period holiday
-      //     if (inactivity.ending_date) {
-      //       const startDateStr = inactivity.starting_date
-      //       const endDateStr = inactivity.ending_date
-      //       function calculateTotalMinutes(startDateStr, endDateStr) {
-      //         const startDate = new Date(startDateStr)
-      //         const endDate = new Date(endDateStr)
-      //         endDate.setDate(endDate.getDate() + 1)
-      //         const minuteDifference = (endDate.getTime() - startDate.getTime()) / (1000 * 60)
-      //         let calculatedBooking = {
-      //           date: inactivity.starting_date,
-      //           starting_time: "00:00",
-      //           duration: minuteDifference
-      //         }
-      //         console.log('bookin holiday period debug: ', calculatedBooking) // debugging
-      //         apiProBusyResponse.push(calculatedBooking)
-      //       }
-      //       calculateTotalMinutes(startDateStr, endDateStr)
-      //     }
-
-
       // Add all booking list
       if (store.bookingsByPro) {
         apiProBusyResponse = [...apiProBusyResponse, ...store.bookingsByPro];
@@ -325,12 +295,16 @@ export default function BookingPage() {
 
   };
 
+  const handleCloseForm = () => {
+    setShowBookingInfo(false)
+    actions.selectDay('')
+  }
+
   const handleHourSelect = (slot) => {
     setSelectedHour(slot);
   };
 
   const handleServiceSelection = (service) => {
-    console.log('service', service)
     setSelectedProService(JSON.parse(service))
   }
 
@@ -483,7 +457,7 @@ export default function BookingPage() {
           <form onSubmit={(e) => handleSubmit(e)}>
             <div className="d-flex justify-content-between mb-4">
               <h5 className="me-4 text-black-50 text-decoration-underline fw-bold" >BOOKING DETAILS</h5>
-              <button type="button" className="btn-close" onClick={() => setShowBookingInfo(false)}></button>
+              <button type="button" className="btn-close" onClick={handleCloseForm}></button>
             </div>
 
             <div className="mb-4 text-black-50 small">
