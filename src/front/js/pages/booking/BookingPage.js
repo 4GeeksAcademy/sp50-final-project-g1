@@ -68,24 +68,39 @@ export default function BookingPage() {
 
       if (store.inactivityByPro) {
         store.inactivityByPro.map((inactivity) => {
+
           // Add long period holiday
           if (inactivity.ending_date) {
-            const startDateStr = inactivity.starting_date
-            const endDateStr = inactivity.ending_date
+            const startDateStr = inactivity.starting_date;
+            const endDateStr = inactivity.ending_date;
+
+            // Function to calculate minutes for each day in the holiday period
             function calculateTotalMinutes(startDateStr, endDateStr) {
-              const startDate = new Date(startDateStr)
-              const endDate = new Date(endDateStr)
-              endDate.setDate(endDate.getDate() + 1)
-              const minuteDifference = (endDate.getTime() - startDate.getTime()) / (1000 * 60)
-              let calculatedBooking = {
-                date: inactivity.starting_date,
-                starting_time: "00:00",
-                duration: minuteDifference
+              const startDate = new Date(startDateStr);
+              const endDate = new Date(endDateStr);
+
+              // Calculate the total number of days in the holiday period
+              const totalDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+
+              // Loop through each day in the holiday period
+              for (let i = 0; i < totalDays; i++) {
+                const currentDate = new Date(startDate.getTime() + (i * 24 * 60 * 60 * 1000));
+                const calculatedBooking = {
+                  date: currentDate.toISOString().split('T')[0],
+                  starting_time: "00:00",
+                  duration: 1440 // Duration for a full day
+                };
+
+                // Push each day of the holiday period to the busy response array
+                apiProBusyResponse.push(calculatedBooking);
               }
-              apiProBusyResponse.push(calculatedBooking)
             }
-            calculateTotalMinutes(startDateStr, endDateStr)
+
+            // Call the function to calculate minutes for each day in the holiday period
+            calculateTotalMinutes(startDateStr, endDateStr);
           }
+
+
           // Full day holiday 
           if (!inactivity.ending_date && !inactivity.starting_hour && !inactivity.ending_hour) {
             let busy = {
@@ -114,6 +129,7 @@ export default function BookingPage() {
             calculateDifferenceMinutes(startingTimeStr, endingTimeStr)
           }
 
+          // calculate partial day holiday - no ending hours (from start to end of day)
           if (inactivity.starting_date && inactivity.starting_hour && !inactivity.ending_hour) {
             const startingTimeStr = inactivity.starting_hour
             function calculateMinutesToEndDay(startingTimeStr) {
@@ -279,12 +295,16 @@ export default function BookingPage() {
 
   };
 
+  const handleCloseForm = () => {
+    setShowBookingInfo(false)
+    actions.selectDay('')
+  }
+
   const handleHourSelect = (slot) => {
     setSelectedHour(slot);
   };
 
   const handleServiceSelection = (service) => {
-    console.log('service', service)
     setSelectedProService(JSON.parse(service))
   }
 
@@ -332,7 +352,7 @@ export default function BookingPage() {
         const emailSent = await actions.sendEmail(store.currentPro.id, newBooking.id, patientEmail)
         console.log("EMAIL DATA:", store.currentPro.id, newBooking.id, patientEmail)
         console.log(emailSent)
-        
+
       }
       else {
         booking.patient_id = isPatient.id
@@ -408,13 +428,13 @@ export default function BookingPage() {
               <label htmlFor="booking-service" className="form-label visually-hidden">Select a Service</label>
               <select id="booking-service" className="form-select w-100" onChange={(event) => handleServiceSelection(event.target.value)}>
                 <option value="">Select a service</option>
-                {store.proServicesByPro ? 
+                {store.proServicesByPro ?
                   store.proServicesByPro.map(service => {
                     if (service.activated === true) {
-                    return (<option key={service.id} value={JSON.stringify({ id: service.id, duration: service.duration, name: service.service_name })}>{service.service_name}</option>)
+                      return (<option key={service.id} value={JSON.stringify({ id: service.id, duration: service.duration, name: service.service_name })}>{service.service_name}</option>)
                     }
                   }
-                ) : ("No service for this calendar")}
+                  ) : ("No service for this calendar")}
               </select>
             </div>
 
@@ -437,7 +457,7 @@ export default function BookingPage() {
           <form onSubmit={(e) => handleSubmit(e)}>
             <div className="d-flex justify-content-between mb-4">
               <h5 className="me-4 text-black-50 text-decoration-underline fw-bold" >BOOKING DETAILS</h5>
-              <button type="button" className="btn-close" onClick={() => setShowBookingInfo(false)}></button>
+              <button type="button" className="btn-close" onClick={handleCloseForm}></button>
             </div>
 
             <div className="mb-4 text-black-50 small">
