@@ -4,6 +4,7 @@ import { Context } from "../../store/appContext";
 
 // components
 import Calendar from "../../component/booking/Calendar";
+import logo from '../../../img/docdate_logo.png';
 
 
 ///////////////////////////////////////
@@ -422,6 +423,10 @@ export default function BookingPage() {
           <div style={{ width: "100%", maxWidth: "650px" }}>
             <div className="d-flex align-items-center">
               <h4 className="text-black-50">Book a visit with <span style={{ color: "#14C4B9", width: "100%", maxWidth: "450px" }}> {userName}</span></h4>
+              <div className="ms-auto">
+                <span className="small text-secondary">Powered by</span>
+                <img src={logo} width="80" className="ms-2 rounded"></img>
+              </div>
             </div>
             {/* SERVICE SELECTION */}
             <div id="booking-calendar" className="m-auto bg-white rounded border mb-4 p-3 text-black-50">
@@ -535,7 +540,7 @@ export default function BookingPage() {
               </>
             ) : (null)}
 
-            <input type="submit" value="Book Now" className="btn btn-sm ms-auto text-white" disabled={!patientEmail || !selectedDay || !selectedHour || !selectedProService || !patientName || !patientLastname} style={{ backgroundColor: "#14C4B9" }}></input>
+            <input type="submit" value="Book Now" className="btn btn-sm ms-auto text-white" disabled={!patientEmail || !selectedDay || !selectedHour || !selectedProService || !patientName || !patientLastname || !consensePrivacy} style={{ backgroundColor: "#14C4B9" }}></input>
 
           </form>
         </div>

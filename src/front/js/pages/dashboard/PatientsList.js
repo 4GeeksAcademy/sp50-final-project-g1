@@ -9,55 +9,62 @@ export default function PatientsList() {
   const [patientsList, setPatientsList] = useState(store.patientsByPro)
 
   useEffect(() => {
- 
+
+    console.log('patient', store.patientsByPro)
+
     const fetchData = async () => {
       if (!Object.keys(store.currentPro).length) {
         const response = await actions.authentication(store.token)
         const proId = response.logged_in_as
         await actions.getPro(proId)
         if (!response) {
-        console.error('Error: Respuesta de autenticación no válida')
-        return
+          console.error('Error: Respuesta de autenticación no válida')
+          return
         }
       }
       await actions.getBookingsByPro(store.currentPro.id)
       let patientsMap = new Map();
 
-        store.bookingsByPro.forEach((booking) => {
-          const patient = {
-            "id": booking.patient_id,
-            "name": booking.patient_name,
-            "lastname": booking.patient_lastname,
-            "email": booking.patient_email,
-            "phone": booking.patient_phone
-          };
+      store.bookingsByPro.forEach((booking) => {
+        const patient = {
+          "id": booking.patient_id,
+          "name": booking.patient_name,
+          "lastname": booking.patient_lastname,
+          "email": booking.patient_email,
+          "phone": booking.patient_phone
+        };
 
-          patientsMap.set(patient.id, patient)
-        });
-      
+        patientsMap.set(patient.id, patient)
+      });
 
-        const finalPatients = Array.from(patientsMap.values())
-        store.patientsByPro = finalPatients
-        setPatientsList(store.patientsByPro)
-        store.bookingsByPro = []
+
+      const finalPatients = Array.from(patientsMap.values())
+      store.patientsByPro = finalPatients
+      setPatientsList(store.patientsByPro)
+      store.bookingsByPro = []
 
       setCurrentInactivityDays(store.inactivityByPro)
     };
     if (!Object.keys(store.patientsByPro).length) {
       fetchData();
     }
-    
-  
-}, [store.isLoggedIn, store.token]);
+
+
+  }, [store.isLoggedIn, store.token]);
 
   const handleSearchInput = (query) => {
-    const newList = store.patientsByPro.filter(patient =>
-      patient.name.toLowerCase().includes(query.toLowerCase()) ||
-      patient.email.toLowerCase().includes(query.toLowerCase()) ||
-      patient.phone.includes(query) 
-    )
-    setPatientsList(newList)
-  }
+    console.log('filter', query.toString());
+    const newList = store.patientsByPro.filter(patient => {
+      const lowerCaseQuery = query.toLowerCase();
+      return (
+        patient.name.toLowerCase().includes(lowerCaseQuery) ||
+        patient.email.toLowerCase().includes(lowerCaseQuery) ||
+        (patient.phone && patient.phone.includes(query))
+      );
+    });
+    setPatientsList(newList);
+  };
+
 
   return (
     <div className="" style={{ minHeight: "90vh" }}>
