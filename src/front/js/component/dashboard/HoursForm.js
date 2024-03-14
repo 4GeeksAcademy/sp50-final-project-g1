@@ -81,6 +81,7 @@ export default function HoursForm() {
         location_id: store.currentLocations[0].id
       })
     }
+    
     console.log('hours', finalHours)
 
     await actions.deleteHoursByPro(store.currentPro.id)
