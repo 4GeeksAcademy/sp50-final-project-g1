@@ -51,8 +51,8 @@ export default function HoursForm() {
         store.hoursByPro.map((item) => {
           morningHoursStart[item.working_day] = item.starting_hour_morning
           morningHoursEnd[item.working_day] = item.ending_hour_morning
-          afterHoursStart[item.working_day] = item.starting_hour_after
-          afterHoursEnd[item.working_day] = item.ending_hour_after
+          afterHoursStart[item.working_day] = item.starting_hour_after === item.ending_hour_morning ? undefined : item.starting_hour_after
+          afterHoursEnd[item.working_day] = item.ending_hour_after === item.ending_hour_morning ? undefined : item.ending_hour_after
         })
         setMorningStart(morningHoursStart)
         setMorningEnd(morningHoursEnd)
@@ -75,12 +75,13 @@ export default function HoursForm() {
         working_day: el,
         starting_hour_morning: morningStart[el],
         ending_hour_morning: morningEnd[el],
-        starting_hour_after: afternoonStart[el],
-        ending_hour_after: afternoonEnd[el],
+        starting_hour_after: afternoonStart[el] ? afternoonStart[el] : morningEnd[el],
+        ending_hour_after: afternoonEnd[el] ? afternoonEnd[el] : morningEnd[el],
         pro_id: store.currentPro.id,
         location_id: store.currentLocations[0].id
       })
     }
+    
     console.log('hours', finalHours)
 
     await actions.deleteHoursByPro(store.currentPro.id)
